@@ -1,0 +1,174 @@
+<div class="alert alert-danger" data-ng-show="flashMessage">
+  {{$root.flashMessage}}
+</div>
+<div data-ng-include src="'views/includes/connection.html'"></div>
+<section data-ng-controller="IndexController" data-ng-init="loadData()">
+  <div class="container">
+    <div id="home" class="row">
+      <div class="col-xs-12 col-md-8">
+
+        <div id="search-form-mobile" class="visible-xs" data-ng-include src="'views/includes/search.html'"></div>
+
+        <h1 translate>Latest Blocks</h1>
+        <div class="alert alert-warning" data-ng-show="cachedData.visible">
+          <strong>Info:</strong> Showing previously loaded blocks.
+          <i>Missed <b> <a href="/block/{{cachedData.missedBlocks.start}}">{{cachedData.missedBlocks.start}}</a></b>
+          <span data-ng-show="cachedData.missedBlocks.diff > 0"> to 
+            <b><a href="/block/{{cachedData.missedBlocks.end}}">{{cachedData.missedBlocks.end}}</a></b>
+          </span>
+          </i>
+        </div>
+        <table class="table table-hover table-striped" style="table-layout: auto">
+          <thead>
+            <tr>
+              <th translate>Block</th>
+              <th translate>Hash</th>
+              <th class="text-right"><span class="ellipsis" translate>TXs</span></th>
+              <th translate>Age</th>
+              
+            </tr>
+          </thead>
+          <tbody>
+          <tr data-ng-show="!blocks.length"><td colspan="4" translate>Waiting for blocks...</td></tr>
+          <tr class="fader" data-ng-repeat="b in blocks | orderBy:'-height'">
+            <td>
+              <a href="block/{{b.hash}}">{{b.height}}</a>
+            </td>
+            <td>
+              <a href="block/{{b.hash}}" data-toggle="tooltip" data-placement="right" title="{{b.hash}}">{{b.hash}}</a>
+            </td>  
+            <td class="text-right">{{b.txlength}}</td>
+            <td><span class="ellipsis">{{humanSince(b.time)}}</span></td>
+          </tr>
+          </tbody>
+        </table>
+        <div class="btn-more">
+          <a href="blocks" class="btn btn-default" translate>See all blocks</a>
+        </div>
+
+        <h2 translate>Latest Transactions</h2>
+        <div class="alert alert-warning" data-ng-show="cachedData.visible">
+          <strong>Info:</strong> Showing previously loaded hash.
+        </div>
+        <table class="table table-hover table-striped" style="table-layout: auto;">
+          <thead>
+            <tr>
+              <th>Block</th>
+              <th>Hash</th>
+              <th class="text-right" translate>Value Out</th>
+            </tr>
+          </thead>
+          <tbody>
+          <tr data-ng-show="!txs.length"><td colspan="3" translate>Waiting for transactions...</td></tr>
+          <tr class="fader" data-ng-repeat="tx in txs | orderBy:'-height'">
+            <td>
+              <a class="ellipsis" href="block/{{tx.height}}">{{tx.height}}</a>
+            </td>
+            <td>
+              <a style="width: 450px" class="ellipsis" href="tx/{{tx.txid}}" data-toggle="tooltip" data-placement="right" title="{{tx.txid}}">{{tx.txid}}</a>
+            </td>
+            <td class="text-right"><span class="ellipsis">{{$root.currency.getConvertion(tx.valueOut)}}</span></td>
+          </tr>
+          </tbody>
+        </table>
+
+      </div>
+      <div class="col-xs-12 col-md-4 col-gray">
+        <h2 translate>Verus Blockchain information</h2>
+        <!-- <table class="table" data-ng-controller="StatusController" data-ng-init="getStatus('Info');getStatus('MiningInfo');getStatus('coinSupply')"> -->
+        <table class="table" data-ng-controller="StatusController" data-ng-init="getBlockchainStatus()">
+          <thead  data-ng-include src="'views/includes/infoStatus.html'"></thead>
+          <tbody>
+            <tr>
+              <td translate>VRSC Version</td>
+              <td class="text-right" >
+                {{info.VRSCversion}}
+                <span class="loader-gif" data-ng-if="!loaded"></span>
+              </td>
+            </tr>
+            <tr>
+              <td translate>Version</td>
+              <td class="text-right">
+                {{info.version}}
+                <span class="loader-gif" data-ng-if="!loaded"></span>
+              </td>
+            </tr>
+            <tr>
+              <td translate>Protocol Version</td>
+              <td class="text-right">
+                {{info.protocolVersion}}
+                <span class="loader-gif" data-ng-if="!loaded"></span>
+              </td>
+            </tr>
+            <tr>
+              <td translate>Blocks</td>
+              <td class="text-right">
+                <a href="block/{{info.blocks}}">{{info.blocks}}</a>
+                <span class="loader-gif" data-ng-if="!loaded"></span>
+              </td>
+            </tr>
+            <tr>
+              <td translate>Circulating Supply Transparent</td>
+              <td class="text-right">
+                {{shortenValue(info.circulatingSupply)}} VRSC
+                <span class="loader-gif" data-ng-if="!loaded"></span>
+              </td>
+            </tr>
+            <tr>
+              <td translate>Circulating Supply in Z addresses</td>
+              <td class="text-right">
+                {{shortenValue(info.circulatingZSupply)}} VRSC
+                <span class="loader-gif" data-ng-if="!loaded"></span>
+              </td>
+            </tr>
+            <tr>
+              <td translate>Circulating Supply Total</td>
+              <td class="text-right">
+                {{shortenValue(info.circulatingSupplyTotal)}} VRSC
+                <span class="loader-gif" data-ng-if="!loaded"></span>
+              </td>
+            </tr>
+            <tr>
+              <td translate>Network Hashrate</td>
+              <td class="text-right">
+                {{convertValue(info.networkHashrate, 'H/s')}}
+                <span class="loader-gif" data-ng-if="!loaded"></span>
+              </td>
+            </tr>
+            <tr>
+             <td translate>Mining Difficulty</td>
+              <td class="text-right">
+                {{convertValue(info.difficulty, '')}}
+                <span class="loader-gif" data-ng-if="!loaded"></span>
+              </td>
+            </tr>
+            <tr>
+              <td translate>Node Connections</td>
+              <td class="text-right">
+                {{info.connections}}
+                <span class="loader-gif" data-ng-if="!loaded"></span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div> <!-- END OF COL-GRAY -->
+      <div class="col-xs-12 col-md-4 col-gray">
+        <h2 translate>What is Verus?</h2>
+
+        <p id="intro">Truth and privacy for all! <strong>Verus</strong> supplies tools for individuals and organizations to build equitable frameworks for social and economic change.</p>
+        <p class="subIntro">Learn more on <a href="https://verus.io" target="_blank" title="Verus Website">verus.io</a></p>
+
+        <p data-ng-if='!currency.testnet'><strong>This explorer is showing the Verus mainnet.</strong></p>
+        <div id="powered" class="row">
+          <div class="powered-text">
+            <small class="text-muted" translate>Powered by</small>
+          </div>
+          <a href="https://verus.io" target="_blank" class="verusio" title="The Verus Foundation"></a>
+          <!--//<a href="https://nodejs.org" target="_blank" class="nodejs" title="NodeJS"></a>
+          <a href="https://angularjs.org" target="_blank" class="angularjs" title="AngularJS"></a>
+          <a href="https://github.com/google/leveldb" target="_blank" class="leveldb" title="LevelDB"></a>//-->
+        </div>
+      </div> <!-- END OF COL-3 -->
+    </div>
+  </div>
+</section>

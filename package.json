@@ -1,0 +1,59 @@
+{
+  "name": "insight-ui-komodo",
+  "description": "An open-source frontend for the Insight API. The Insight API provides you with a convenient, powerful and simple way to query and broadcast data on the verus network and build your own services with it.",
+  "version": "0.4.0",
+  "repository": "git+https://git@github.com/BloodyNora/insight-ui-komodo.git",
+  "contributors": [
+    {
+      "name": "Matias Alejo Garcia",
+      "email": "ematiu@gmail.com"
+    },
+    {
+      "name": "Manuel Araoz",
+      "email": "manuelaraoz@gmail.com"
+    },
+    {
+      "name": "Mario Colque",
+      "email": "colquemario@gmail.com"
+    },
+    {
+      "name": "Gustavo Cortez",
+      "email": "cmgustavo83@gmail.com"
+    },
+    {
+      "name": "Juan Ignacio Sosa Lopez",
+      "email": "bechilandia@gmail.com"
+    },
+    {
+      "name": "Jack Grigg",
+      "email": "jack@z.cash"
+    }
+  ],
+  "bugs": {
+    "url": "https://github.com/BloodyNora/insight-ui-komodo/issues"
+  },
+  "homepage": "https://verus.io",
+  "license": "MIT",
+  "keywords": [
+    "insight",
+    "blockchain",
+    "blockexplorer",
+    "verus",
+    "bitcore",
+    "front-end"
+  ],
+  "bitcoreNode": "bitcore-node-komodo",
+  "devDependencies": {
+    "bower": "^1.8.14",
+    "grunt": "^0.4.5",
+    "grunt-angular-gettext": "^0.2.15",
+    "grunt-cli": "^0.1.13",
+    "grunt-contrib-concat": "^0.3.0",
+    "grunt-contrib-jshint": "~0.8.0",
+    "grunt-contrib-uglify": "^0.3.3",
+    "grunt-contrib-watch": "^1.1.0",
+    "grunt-css": "^0.5.4",
+    "grunt-macreload": "^0.1.4",
+    "grunt-markdown": "^0.5.0"
+  }
+}

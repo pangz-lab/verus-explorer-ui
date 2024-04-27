@@ -1,0 +1,93 @@
+<div class="line-bot row" data-ng-hide="!tx">
+    <div class="col-xs-7 col-md-8">
+        <div class="ellipsis">
+            <a class="btn-expand" title="Show/Hide items details" data-ng-click="itemsExpanded = !itemsExpanded">
+                <span class="glyphicon glyphicon-plus-sign"
+                    data-ng-class="{'glyphicon-minus-sign': itemsExpanded}"></span>
+            </a>
+            <a href="tx/{{tx.txid}}">{{tx.txid}}</a>
+            <span class="btn-copy" clip-copy="tx.txid"></span>
+        </div>
+    </div>
+    <div class="col-xs-5 col-md-4 text-right text-muted">
+        <!-- <div data-ng-show="tx.firstSeenTs">
+      <span translate>first seen at</span>
+      <time>{{tx.firstSeenTs * 1000 | date:'medium'}}</time>
+    </div> -->
+        <!-- <span data-ng-if="!txs.indexLabel">({{txs.indexLabel}})</span> -->
+        <!-- For viewing from address page -->
+        <div data-ng-show="addressTxCount > 0">
+            <a href=""><span ng-click="$root.scrollToTop()">⬆️</span></a>
+            <a href=""><span ng-click="$root.scrollToBottom()">⬇️</span></a>
+            <!-- <span>({{tx.txCounter}})</span> -->
+            <span>({{addressTxCount - $index}})</span>
+        </div>
+        <!-- For viewing from block page -->
+        <div data-ng-show="blockTxCount > 0">
+            <a href=""><span ng-click="$root.scrollToTop()">⬆️</span></a>
+            <a href=""><span ng-click="$root.scrollToBottom()">⬇️</span></a>
+            <!-- <span>({{tx.txCounter}})</span> -->
+            <span>({{blockTxCount - $index}})</span>
+        </div>
+        <div data-ng-show="tx.blocktime && !tx.firstSeenTs">
+            <span translate>mined</span>
+            <time>{{tx.time * 1000 | date:'medium'}}</time>
+        </div>
+    </div>
+</div>
+<!-- SHIELDING and VJOINSPLIT components -->
+<div class="row line-mid" data-ng-include src="'views/transaction/tx_shield_joinsplit_view.html'"></div>
+<div class="row">
+    <div class="col-md-6">
+        <div class="hidden-xs hidden-sm text-center">
+            <span class="lead glyphicon glyphicon-chevron-up text-muted"></span>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="hidden-xs hidden-sm text-center">
+            <span class="lead glyphicon glyphicon-chevron-down text-muted"></span>
+        </div>
+    </div>
+</div>
+
+
+
+<div class="row line-mid">
+    <!-- VIN components -->
+    <div class="col-md-5" data-ng-include src="'views/transaction/tx_vin_view.html'"></div>
+
+    <div class="col-md-1">
+        <div class="hidden-xs hidden-sm text-center">
+            <span class="lead glyphicon glyphicon-chevron-right text-muted"></span>
+        </div>
+        <div class="hidden-md hidden-lg text-center">
+            <span class="lead glyphicon glyphicon-chevron-down text-muted"></span>
+        </div>
+    </div>
+
+    <!-- VOUT components -->
+    <div class="col-md-6" data-ng-include src="'views/transaction/tx_vout_view.html'"></div>
+</div>
+
+<div class="well well-sm bgwhite ellipsis" data-ng-if="itemsExpanded && !block.hash && tx.blockhash">
+    <strong translate>Included in Block</strong> <a class="text-muted"
+        href="block/{{tx.blockhash}}">{{tx.blockhash}}</a>
+    <span class="btn-copy" clip-copy="tx.blockhash"></span>
+</div>
+
+<div class="line-top row" data-ng-hide="!tx">
+    <div class="col-xs-6 col-sm-4 col-md-4">
+        <!-- <span data-ng-show="!tx.isCoinBase &&  !isNaN(parseFloat(tx.fees))" -->
+        <span data-ng-show="!tx.isNewlyCreatedCoin" class="txvalues txvalues-default">
+            <span translate>Fee</span>
+            : {{$root.currency.getConvertion(tx.fees)}}
+        </span>
+    </div>
+    <div class="col-xs-6 col-sm-8 col-md-8 text-right">
+        <span data-ng-show="tx.confirmations" class="txvalues
+      txvalues-success">{{tx.confirmations}} <span translate>Confirmations</span></span>
+        <span data-ng-show="!tx.confirmations" class="txvalues txvalues-danger" translate>Unconfirmed
+            Transaction!</span>
+        <span class="txvalues txvalues-primary">{{$root.currency.getConvertion(tx.valueOut)}}</span>
+    </div>
+</div>
