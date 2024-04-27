@@ -15,7 +15,7 @@
                 <strong>Hash</strong> {{block.hash}}
             </p>
             <div class="col-md-1 text-left">
-                <span class="btn-copy" clip-copy="block.hash"></span>
+                <span class="btn-copy" copy-to-clipboard="{{block.hash}}"></span>
             </div>
           </div>
         </div>
@@ -39,7 +39,7 @@
     <div class="well well-sm ellipsis">
       <strong>BlockHash</strong> 
       <span class="txid text-muted">{{block.hash}}</span>
-      <span class="btn-copy" clip-copy="block.hash"></span>
+      <span class="btn-copy" copy-to-clipboard="{{block.hash}}"></span>
     </div>
     <h2 translate>Summary</h2>
     <div class="row">
@@ -81,7 +81,7 @@
             <td><strong>Merkle Root</strong></td>
             <td class="text-right text-muted">
               <div class="ellipsis">
-                <span class="btn-copy" clip-copy="block.merkleroot"></span>
+                <span class="btn-copy" copy-to-clipboard="{{block.merkleroot}}"></span>
                 <span>{{block.merkleroot}}</span>
               </div>
             </td>
@@ -116,7 +116,7 @@
             <td> <strong>Nonce</strong></td>
             <td class="text-right text-muted">
               <div class="ellipsis">
-                <span class="btn-copy" clip-copy="block.nonce"></span>
+                <span class="btn-copy" copy-to-clipboard="{{block.nonce}}"></span>
                 <span>{{block.nonce}}</span>
               </div>
             </td>
@@ -125,7 +125,7 @@
             <td><strong>Solution</strong></td>
             <td class="text-right text-muted">
               <div class="ellipsis">
-                <span class="btn-copy" clip-copy="block.solution"></span>
+                <span class="btn-copy" copy-to-clipboard="{{block.solution}}"></span>
                 <span>{{block.solution}}</span>
               </div>
             </td>

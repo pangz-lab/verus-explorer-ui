@@ -10,9 +10,17 @@
           <h3 translate>Transaction</h3>
           <div class="ellipsis"> 
             <small>{{tx.txid}}</small> 
-            <span class="btn-copy" clip-copy="tx.txid"></span>
+            <span class="btn-copy" copy-to-clipboard="{{tx.txid}}"></span>
           </div>
       </div>
+
+      <div class="alert alert-danger" data-ng-show="flashMessage">
+        <strong>Oh snap! </strong>{{$root.flashMessage}}
+        <!-- <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button> -->
+      </div>
+
       <div class="col-md-6 col-lg-5 text-right">
         <span data-ng-show="tx.confirmations" class="txvalues
           txvalues-success">{{tx.confirmations}} 
@@ -47,7 +55,7 @@
       <div class="well well-sm ellipsis">
         <strong translate>Transaction</strong> 
         <span class="txid text-muted">{{tx.txid}}</span>
-        <span class="btn-copy" clip-copy="tx.txid"></span>
+        <span class="btn-copy" copy-to-clipboard="{{tx.txid}}"></span>
       </div>
       <h2 translate>Summary</h2>
       <table class="table" style="table-layout: fixed">
@@ -87,7 +95,7 @@
           <td><strong>Coinbase</strong></td>
           <td class="text-muted text-right">
             <div class="ellipsis">
-                <span class="btn-copy ng-isolate-scope" clip-copy="tx.vin[0].coinbase"></span>
+                <span class="btn-copy ng-isolate-scope" copy-to-clipboard="{{tx.vin[0].coinbase}}"></span>
                 <span class="ng-binding">{{tx.vin[0].coinbase}}</span>
             </div>
           </td>

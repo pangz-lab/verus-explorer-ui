@@ -1,6 +1,6 @@
 'use strict';
 
-var ZeroClipboard = window.ZeroClipboard;
+// var ZeroClipboard = window.ZeroClipboard;
 
 angular.module('insight')
   .directive('scroll', function ($window) {
@@ -39,40 +39,59 @@ angular.module('insight')
         });
       }
     };
-  })
-  .directive('clipCopy', function() {
-    ZeroClipboard.config({
-      moviePath: '/lib/zeroclipboard/ZeroClipboard.swf',
-      trustedDomains: ['*'],
-      allowScriptAccess: 'always',
-      forceHandCursor: true
-    });
-
+  }).directive('copyToClipboard', function() {
     return {
-      restric: 'A',
-      scope: { clipCopy: '=clipCopy' },
-      template: '<div class="tooltip fade right in"><div class="tooltip-arrow"></div><div class="tooltip-inner">Copied!</div></div>',
-      link: function(scope, elm) {
-        var clip = new ZeroClipboard(elm);
-
-        clip.on('load', function(client) {
-          var onMousedown = function(client) {
-            client.setText(scope.clipCopy);
-          };
-
-          client.on('mousedown', onMousedown);
-
-          scope.$on('$destroy', function() {
-            client.off('mousedown', onMousedown);
-          });
-        });
-
-        clip.on('noFlash wrongflash', function() {
-          return elm.remove();
-        });
-      }
+        restrict: 'A',
+        template: '<div class="tooltip fade right in"><div class="tooltip-arrow"></div><div class="tooltip-inner">Copied!</div></div>',
+        link: function(scope, element, attrs) {
+            // element.attr('uib-tooltip', 'Click to copy'); // Set tooltip text
+            // element.attr('tooltip-trigger', 'mouseenter'); // Show tooltip on mouse enter
+            // element.attr('tooltip-placement', 'top'); // Set tooltip placement
+            // element.tooltip();
+            element.on('click', function() {
+                this.tooltip('toggle');
+                var textToCopy = attrs.copyToClipboard;
+            
+                navigator.clipboard.writeText(textToCopy)
+                    .then(function() {})
+                    .catch(function(error) { console.error('Unable to copy text to clipboard: ', error);});
+            });
+        }
     };
-  })
+})
+  // .directive('clipCopy', function() {
+  //   ZeroClipboard.config({
+  //     moviePath: '/lib/zeroclipboard/ZeroClipboard.swf',
+  //     trustedDomains: ['*'],
+  //     allowScriptAccess: 'always',
+  //     forceHandCursor: true
+  //   });
+
+  //   return {
+  //     restric: 'A',
+  //     scope: { clipCopy: '=clipCopy' },
+  //     template: '<div class="tooltip fade right in"><div class="tooltip-arrow"></div><div class="tooltip-inner">Copied!</div></div>',
+  //     link: function(scope, elm) {
+  //       var clip = new ZeroClipboard(elm);
+
+  //       clip.on('load', function(client) {
+  //         var onMousedown = function(client) {
+  //           client.setText(scope.clipCopy);
+  //         };
+
+  //         client.on('mousedown', onMousedown);
+
+  //         scope.$on('$destroy', function() {
+  //           client.off('mousedown', onMousedown);
+  //         });
+  //       });
+
+  //       clip.on('noFlash wrongflash', function() {
+  //         return elm.remove();
+  //       });
+  //     }
+  //   };
+  // })
   .directive('focus', function ($timeout) {
     return {
       scope: {

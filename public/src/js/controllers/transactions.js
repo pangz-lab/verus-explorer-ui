@@ -6,7 +6,6 @@ angular.module('insight.transactions')
         $scope,
         $rootScope,
         $routeParams,
-        $location,
         Global,
         VerusExplorerApi
     ) {
@@ -172,15 +171,16 @@ angular.module('insight.transactions')
                     $scope.txs.push(rawTxData);
                 })
                 .catch(function (e) {
-                    if (e.status === 400) {
-                        $rootScope.flashMessage = 'Invalid Transaction ID: ' + $routeParams.txId;
-                    } else if (e.status === 503) {
-                        $rootScope.flashMessage = 'Backend Error. ' + e.data;
-                    } else {
-                        $rootScope.flashMessage = 'Transaction Not Found';
-                    }
+                    $rootScope.flashMessage = 'Failed to load transaction '+txid+'. Reload to try again.';
+                    // if (e.status === 400) {
+                    //     $rootScope.flashMessage = 'Invalid Transaction ID: ' + $routeParams.txId;
+                    // } else if (e.status === 503) {
+                    //     $rootScope.flashMessage = 'Backend Error. ' + e.data;
+                    // } else {
+                    //     $rootScope.flashMessage = 'Transaction Not Found';
+                    // }
 
-                    $location.path('/');
+                    // $location.path('/');
                 });
 
             });
