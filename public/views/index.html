@@ -10,7 +10,7 @@
         <div id="search-form-mobile" class="visible-xs" data-ng-include src="'views/includes/search.html'"></div>
 
         <h1 translate>Latest Blocks</h1>
-        <div class="alert alert-warning" data-ng-show="cachedData.visible">
+        <div class="alert alert-warning fader" data-ng-show="cachedData.visible">
           <strong>Info:</strong> Showing previously loaded blocks.
           <i>Missed <b> <a href="/block/{{cachedData.missedBlocks.start}}">{{cachedData.missedBlocks.start}}</a></b>
           <span data-ng-show="cachedData.missedBlocks.diff > 0"> to 
@@ -18,6 +18,7 @@
           </span>
           </i>
         </div>
+
         <table class="table table-hover table-striped" style="table-layout: auto">
           <thead>
             <tr>
