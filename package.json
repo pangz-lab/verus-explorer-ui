@@ -1,11 +1,11 @@
 {
   "name": "verus-explorer-ui",
-  "description": "Verus Coin Web Explorer",
+  "description": "Verus Coin Explorer",
   "version": "0.0.1",
-  "repository": "git+https://git@github.com/BloodyNora/insight-ui-komodo.git",
+  "repository": "git@github.com:pangz-lab/verus-explorer-ui.git",
   "contributors": [],
   "bugs": {
-    "url": "https://github.com/BloodyNora/insight-ui-komodo/issues"
+    "url": "https://github.com/pangz-lab/verus-explorer-ui/issues"
   },
   "homepage": "https://verus.io",
   "license": "MIT",
