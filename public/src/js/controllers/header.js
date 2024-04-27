@@ -2,7 +2,7 @@
 
 angular.module('insight.system').controller('HeaderController',
   // function($scope, $rootScope, $modal, getSocket, Global, Block) {
-  function($scope, $rootScope, $modal, Global, Block) {
+  function($scope, $rootScope, $modal, Global, $location) {
     $scope.global = Global;
 
     $rootScope.currency = {
@@ -12,6 +12,7 @@ angular.module('insight.system').controller('HeaderController',
       netSymbol: netSymbol,
       symbol: netSymbol
     };
+    // $scope.currentPath = $location.path();
 
     $scope.menu = [{
       'title': 'Blocks',
@@ -51,6 +52,9 @@ angular.module('insight.system').controller('HeaderController',
     //     _getBlock(blockHash);
     //   });
     // });
+    $scope.isActive = function(route) {
+      return route === $location.path();
+    };
 
     $rootScope.isCollapsed = true;
   });
