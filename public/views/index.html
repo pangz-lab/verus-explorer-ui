@@ -75,7 +75,7 @@
 
       </div>
       <div class="col-xs-12 col-md-4 col-gray">
-        <h2 translate>Verus Blockchain information</h2>
+        <h2>{{chainName}} <span translate>Blockchain Information</span></h2>
         <!-- <table class="table" data-ng-controller="StatusController" data-ng-init="getStatus('Info');getStatus('MiningInfo');getStatus('coinSupply')"> -->
         <table class="table" data-ng-controller="StatusController" data-ng-init="getBlockchainStatus()">
           <thead  data-ng-include src="'views/includes/infoStatus.html'"></thead>
@@ -154,7 +154,7 @@
         </table>
       </div> <!-- END OF COL-GRAY -->
       <div class="col-xs-12 col-md-4 col-gray">
-        <h2 translate>What is Verus?</h2>
+        <h2><span translate>What is</span> {{chainName}}?</h2>
 
         <p id="intro">Truth and privacy for all! <strong>Verus</strong> supplies tools for individuals and organizations to build equitable frameworks for social and economic change.</p>
         <p class="subIntro">Learn more on <a href="https://verus.io" target="_blank" title="Verus Website">verus.io</a></p>

@@ -2,7 +2,7 @@
 
 var testnet = false;
 var netSymbol = testnet ? 'VRSCTEST' : 'VRSC';
-const chainName = "Verus";
+const chainName = "vARRR";
 const coinpaprikaEndpointKey = "vrsc-verus-coin";
 // const apiServer = testnet ? 'http://127.0.0.1:27486' : 'http://localhost:3001';
 // const apiServer = testnet ? 'http://127.0.0.1:27486' : 'https://api.verus.services';

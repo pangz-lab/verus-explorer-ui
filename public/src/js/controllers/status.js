@@ -12,6 +12,7 @@ angular
         LocalStore,
         WsEventDataManager
     ) {
+        $scope.chainName = chainName;
         $scope.global = Global;
         $scope.info = { blocks: 0 };
         $scope.sync = { syncPercentage: 0 };

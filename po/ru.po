@@ -538,8 +538,8 @@ msgid "Waiting for transactions..."
 msgstr "Ожидание транзакций..."
 
 #: public/views/index.html:63
-msgid "What is Verus?"
-msgstr "What is Verus?"
+msgid "What is"
+msgstr "What is"
 
 #: public/views/block_list.html:34
 msgid "by date."

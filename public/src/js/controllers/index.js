@@ -11,6 +11,7 @@ angular
         WsEventDataManager
     ) {
         $scope.global = Global;
+        $scope.chainName = chainName;
 
         const wsTopic = VerusWssClient.getMessageTopic();
         $scope.$on(wsTopic, function(_, rawEventData) {
