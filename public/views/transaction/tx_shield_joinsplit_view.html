@@ -114,12 +114,13 @@
                 data-ng-class="{ 'hidden': itemsExpanded}">
                 <button type="button" class="btn btn-info btn-sm" ng-hide="sizeJSNoExpanded != tx.vjoinsplit.length"
                     ng-click="currentJSNoExpanded=0; sizeJSNoExpanded=5">
-                    <i class="glyphicon glyphicon-chevron-up"></i>
-                    <span translate>Show less</span></button>
+                    ▲
+                    <span translate>Show less</span>
+                </button>
                 <button type="button" class="btn btn-info btn-sm"
                     ng-hide="currentJSNoExpanded >= tx.vjoinsplit.length/sizeJSNoExpanded - 1"
                     ng-click="currentJSNoExpanded=0; sizeJSNoExpanded=tx.vjoinsplit.length">
-                    <i class="glyphicon glyphicon-chevron-down"></i>
+                    ▼
                     <span translate>Show more</span></button>
             </div>
         </div>
@@ -184,12 +185,14 @@
             <div class="showmore_collapse text-left" data-ng-show="tx.vjoinsplit.length > 5 && !fromVjsCollapsed"
                 data-ng-class="{ 'hidden': !itemsExpanded}">
                 <button type="button" class="btn btn-info btn-sm" ng-hide="sizeJSExpanded != tx.vjoinsplit.length"
-                    ng-click="currentJSExpanded=0; sizeJSExpanded=5"><i class="glyphicon glyphicon-chevron-up"></i>
-                    <span translate>Show less</span></button>
+                    ng-click="currentJSExpanded=0; sizeJSExpanded=5">
+                    ▲
+                    <span translate>Show less</span>
+                </button>
                 <button type="button" class="btn btn-info btn-sm"
                     ng-hide="currentJSExpanded >= tx.vjoinsplit.length/sizeJSExpanded - 1"
                     ng-click="currentJSExpanded=0; sizeJSExpanded=tx.vjoinsplit.length">
-                    <i class="glyphicon glyphicon-chevron-down"></i>
+                    ▼
                     <span translate>Show more</span></button>
             </div>
         </div>

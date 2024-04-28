@@ -40,7 +40,11 @@
     <div class="well well-sm ellipsis">
       <strong translate>Address</strong> 
       <span class="text-muted">{{address.addrStr}}</span>
-      <span class="btn-copy" copy-to-clipboard="{{address.addrStr}}"></span>
+        <!-- <button tooltip-placement="top" uib-tooltip="On the top" type="button" class="btn btn-default">
+        </button> -->
+        <span class="btn-copy" copy-to-clipboard="{{address.addrStr}}"></span>
+        <!-- <div class="tooltip fade right in"><div class="tooltip-arrow"></div><div class="tooltip-inner">Copied!</div></div> -->
+        <!-- <button tooltip-placement="top" uib-tooltip="TOP" type="button" class="btn btn-default">TOP</button> -->
     </div>
     <h2 translate>Summary <small>confirmed</small></h2>
     <div class="row" data-ng-hide="!address.addrStr">

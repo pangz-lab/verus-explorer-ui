@@ -56,12 +56,14 @@
         <div class="showmore_collapse text-left" data-ng-show="tx.vin.length > 5"
             data-ng-class="{ 'hidden': itemsExpanded}">
             <button type="button" class="btn btn-info btn-sm" ng-hide="sizeInNoExpanded != tx.vin.length"
-                ng-click="currentInNoExpanded=0; sizeInNoExpanded=5"><i class="glyphicon glyphicon-chevron-up"></i>
-                <span translate>Show less</span></button>
+                ng-click="currentInNoExpanded=0; sizeInNoExpanded=5">
+                ▲
+                <span translate>Show less</span>
+            </button>
             <button type="button" class="btn btn-info btn-sm"
                 ng-hide="currentInNoExpanded >= tx.vin.length/sizeInNoExpanded - 1"
-                ng-click="currentInNoExpanded=0; sizeInNoExpanded=tx.vin.length"><i
-                    class="glyphicon glyphicon-chevron-down"></i>
+                ng-click="currentInNoExpanded=0; sizeInNoExpanded=tx.vin.length">
+                ▼
                 <span translate>Show more ({{tx.vin.length - 5}})</span></button>
         </div>
 
@@ -126,12 +128,13 @@
         <div class="showmore_collapse text-left" data-ng-show="tx.vin.length > 5 && !fromVinCollapsed"
             data-ng-class="{ 'hidden': !itemsExpanded}">
             <button type="button" class="btn btn-info btn-sm" ng-hide="sizeInExpanded != tx.vin.length"
-                ng-click="currentInExpanded=0; sizeInExpanded=5"><i class="glyphicon glyphicon-chevron-up"></i>
+                ng-click="currentInExpanded=0; sizeInExpanded=5">
+                ▲
                 <span translate>Show less</span></button>
             <button type="button" class="btn btn-info btn-sm"
                 ng-hide="currentInExpanded >= tx.vin.length/sizeInExpanded - 1"
-                ng-click="currentInExpanded=0; sizeInExpanded=tx.vin.length"><i
-                    class="glyphicon glyphicon-chevron-down"></i>
+                ng-click="currentInExpanded=0; sizeInExpanded=tx.vin.length">
+                ▼
                 <span translate>Show more ({{tx.vin.length - 5}})</span></button>
         </div>
     </div>

@@ -31,8 +31,12 @@
                         <span class="text-muted" title="Current Verus Address"
                             data-ng-show="address == $root.currentAddr"
                             data-ng-repeat="address in vout.uiWalletAddress.split(',')">{{vout.uiWalletAddress}}</span>
-                        <a href="address/{{address}}" data-ng-show="!vout.notAddr && address != $root.currentAddr"
-                            data-ng-repeat="address in vout.uiWalletAddress.split(',')">{{address}}</a>
+                         
+                            <!-- data-ng-repeat="address in vout.uiWalletAddress.split(',')">{{address}}</a> -->
+                        <span data-ng-repeat="address in vout.uiWalletAddress.split(',')">
+                            <a href="address/{{address}}" data-ng-show="address != $root.currentAddr && address != '-1'">{{address}}</a>
+                            <span class="text-muted util-nav-label" data-ng-show="address != $root.currentAddr && address == '-1'"> ❓︎ [ NO ADDRESS ] </span>
+                        </span>
                     </div>
                 </div>
                 <!-- pbaas >>> -->
@@ -154,12 +158,12 @@
             data-ng-class="{ 'hidden': itemsExpanded}">
             <button type="button" class="btn btn-info btn-sm" ng-hide="sizeOutNoExpanded != tx.vout.length"
                 ng-click="currentOutNoExpanded=0; sizeOutNoExpanded=5">
-                <i class="glyphicon glyphicon-chevron-up"></i>
+                ▲
                 <span translate>Show less</span></button>
             <button type="button" class="btn btn-info btn-sm"
                 ng-hide="currentOutNoExpanded >= tx.vout.length/sizeOutNoExpanded - 1"
                 ng-click="currentOutNoExpanded=0; sizeOutNoExpanded=tx.vout.length">
-                <i class="glyphicon glyphicon-chevron-down"></i>
+                ▼
                 <span translate>Show more ({{tx.vout.length - 5}})</span></button>
         </div>
     </div>
@@ -235,12 +239,14 @@
             data-ng-class="{ 'hidden': !itemsExpanded}">
             <button type="button" class="btn btn-info btn-sm" ng-hide="sizeOutExpanded != tx.vout.length"
                 ng-click="currentOutExpanded=0; sizeOutExpanded=5">
-                <i class="glyphicon glyphicon-chevron-up"></i>Show less
+                ▲
+                Show less
             </button>
             <button type="button" class="btn btn-info btn-sm"
                 ng-hide="currentOutExpanded >= tx.vout.length/sizeOutExpanded - 1"
                 ng-click="currentOutExpanded=0; sizeOutExpanded=tx.vout.length">
-                <i class="glyphicon glyphicon-chevron-down"></i> Show more ({{tx.vout.length - 5}})
+                ▼
+                Show more ({{tx.vout.length - 5}})
             </button>
         </div>
     </div>

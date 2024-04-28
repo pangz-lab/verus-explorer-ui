@@ -42,18 +42,26 @@ angular.module('insight')
   }).directive('copyToClipboard', function() {
     return {
         restrict: 'A',
-        template: '<div class="tooltip fade right in"><div class="tooltip-arrow"></div><div class="tooltip-inner">Copied!</div></div>',
+        // template: '<div class="tooltip fade right in"><div class="tooltip-arrow"></div><div class="tooltip-inner">Copied!</div></div>',
         link: function(scope, element, attrs) {
             // element.attr('uib-tooltip', 'Click to copy'); // Set tooltip text
             // element.attr('tooltip-trigger', 'mouseenter'); // Show tooltip on mouse enter
             // element.attr('tooltip-placement', 'top'); // Set tooltip placement
             // element.tooltip();
             element.on('click', function() {
-                this.tooltip('toggle');
+                // this.tooltip('toggle');
                 var textToCopy = attrs.copyToClipboard;
+                // var attachedElement = angular.element('<div class="tooltip fade right in"><div class="tooltip-arrow"></div><div class="tooltip-inner">Copied!</div></div>');
+                // // Append the attachedElement to the body
+                // this.re append(attachedElement);
+                
+                // // Compile the attachedElement to apply AngularJS bindings
+                // $compile(attachedElement)(scope);
             
                 navigator.clipboard.writeText(textToCopy)
-                    .then(function() {})
+                    .then(function() {
+                      alert(textToCopy + ' copied!');
+                    })
                     .catch(function(error) { console.error('Unable to copy text to clipboard: ', error);});
             });
         }

@@ -25,28 +25,6 @@ angular
         $scope.remainingTxCount = 0;
         $scope.pagination = {};
         const MAX_HASH_PER_LOAD = 100;
-        // const DATE_TYPE_UTC = 1; // 1 UTC;
-        // const DATE_TYPE_LOCAL = 0; // 0 local;
-        // $scope.allTxs 
-
-
-        // var wsChannel = VerusWssClient.getClient();
-        // function wsEventHandler(event) {
-        //     lastReceivedTime = new Date().getTime();
-        //     console.log('Message from server: >> THIS BLOCK SCOPE >>', event.data);
-        // }
-        // wsChannel.addEventListener('message', wsEventHandler);
-        // $scope.$on('$destroy', function () {
-        //     console.log("Destroying block controller resource");
-        //     $interval.cancel(lazyLoadingInterval);
-        //     lazyLoadingInterval = undefined;
-        //     wsChannel.removeEventListener('message', wsEventHandler);
-        // });
-
-        // // TODO, put in rootscope
-        // $scope.scrollToTop = function () {
-        //     ScrollService.scrollToTop();
-        // };
 
         $rootScope.scrollToTop = function () {
             ScrollService.scrollToTop();
@@ -55,24 +33,11 @@ angular
             ScrollService.scrollToBottom();
         };
 
-        // if ($routeParams.blockHeight) {
-        //   // Will receive the redirect from status page when the "Blocks" value is clicked
-        //   _handleRedirectFromStatusPage($routeParams.blockHeight);
-        // }
-
-        // var _handleRedirectFromStatusPage = function(blockHeight) {
-        //   VerusdRPC.getBlockDetailByHeight(blockHeight)
-        //   .then(function(data) {
-        //     $location.path('block/' + data.result.hash);
-        //   })
-        //   .catch(function(_) {
-        //     $rootScope.flashMessage = 'Bad Request';
-        //     $location.path('/');
-        //   });
-        // }
-
         //Datepicker
         var _setCalendarDate = function (date) { $scope.dt = date; };
+        $scope.setToday = function() {
+            $location.path('blocks/');
+        }
 
         var _createDatePaginationDisplay = function (date) {
             $scope.pagination = {};
@@ -157,7 +122,7 @@ angular
             $scope.loading = true;
 
             if ($routeParams.blockDate) {
-                $scope.detail = '🗓 On ' + $routeParams.blockDate;
+                $scope.detail = $routeParams.blockDate;
             }
 
             if ($routeParams.startTimestamp) {
@@ -261,6 +226,16 @@ angular
             });
             $scope.loading = false;
         };
+        
+        $scope.toGMT = function(date) {
+            const d = (new Date(date * 1000)).toUTCString();
+            return d.slice(0, d.length - 3);
+        }
+        
+        $scope.toLocal = function(d) {
+            // const d = (new Date(date * 1000)).toLocaleString();
+            return d.slice(0, d.length - 3);
+        }
 
         $scope.blocks = [];
         $scope.params = $routeParams;

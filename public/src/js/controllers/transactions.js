@@ -13,6 +13,7 @@ angular.module('insight.transactions')
         $scope.loading = true;
         $scope.loadedBy = null;
         $scope.addressTxCount = 0;
+        const unknownAddress = '-1';
 
         var txVoutTotalValue = 0;
         var txVinTotalValue = 0;
@@ -70,7 +71,8 @@ angular.module('insight.transactions')
                 }
 
 
-                tx.vout[i].uiWalletAddress = uiWalletAddress[0] == undefined ? ' [ NO ADDRESS ] ' : uiWalletAddress;
+                // tx.vout[i].uiWalletAddress = uiWalletAddress[0] == undefined ? ' [ NO ADDRESS ] ' : uiWalletAddress;
+                tx.vout[i].uiWalletAddress = uiWalletAddress[0] == undefined ? unknownAddress : uiWalletAddress;
                 tx.vout[i].isSpent = items[i].spentTxId;
                 tx.vout[i].multipleAddress = pubKeyAddressess.join(',');
                 tx.vout[i].identityTxTypeLabel = "...";
@@ -135,11 +137,11 @@ angular.module('insight.transactions')
         }
 
         var _getOtherTxCommitment = function (scriptPubKey) {
-            if (scriptPubKey.crosschainimport) return '📥 crosschainimport';
-            if (scriptPubKey.crosschainexport) return '📤 crosschainexport';
+            if (scriptPubKey.crosschainimport) return '📥 Crosschain Import';
+            if (scriptPubKey.crosschainexport) return '📤 Crosschain Export';
             if (scriptPubKey.identitycommitment) return scriptPubKey.identitycommitment;
-            if (scriptPubKey.reservetransfer) return '💱 reservetransfer';
-            if (scriptPubKey.pbaasNotarization) return '⛓ pbaasNotarization';
+            if (scriptPubKey.reservetransfer) return '💱 Reserve Transfer';
+            if (scriptPubKey.pbaasNotarization) return '⛓ PBaaS Notarization';
             return '';
         }
 

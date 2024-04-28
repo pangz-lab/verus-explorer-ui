@@ -82,6 +82,10 @@ angular.module('insight.verusexplorerapi')
       return sendRequest(createPayload('/api/address/'+address+'/balance', [], "GET"));
     };
 
+    function search(query) {
+      return sendRequest(createPayload('/api/search/?q='+query, [], "GET"));
+    };
+
     return {
       getGeneratedBlocks: function(heightOrTxArray) {
         return getGeneratedBlocks(heightOrTxArray);
@@ -115,6 +119,9 @@ angular.module('insight.verusexplorerapi')
       },
       getAddressBalance: function(address) {
         return getAddressBalance(address);
+      },
+      search: function(query) {
+        return search(query);
       },
     };
 });
