@@ -45,6 +45,7 @@ angular
             var current = _formatTimestamp(d);
             var prev = new Date(d);
             var next = new Date(d);
+
             prev.setDate(prev.getDate() - 1);
             next.setDate(next.getDate() + 1);
 
@@ -58,10 +59,9 @@ angular
         };
 
         var _formatTimestamp = function (date) {
-            const isUtc = false;
-            var yyyy = (isUtc ? date.getUTCFullYear() : date.getFullYear()).toString();
-            var mm = ((isUtc ? date.getUTCMonth() : date.getMonth()) + 1).toString(); // getMonth() is zero-based
-            var dd = (isUtc ? date.getUTCDate() : date.getDate()).toString();
+            var yyyy = date.getFullYear().toString();
+            var mm = (date.getMonth() + 1).toString(); // getMonth() is zero-based
+            var dd = date.getDate().toString();
 
             return yyyy + '-' + (mm[1] ? mm : '0' + mm[0]) + '-' + (dd[1] ? dd : '0' + dd[0]); //padding
         };
@@ -117,7 +117,20 @@ angular
                 end: parseInt(dateEnd.getTime().toString().slice(0, 10)),
             }
         };
-        
+
+        var _createPredicatbleDateFromString = function(dateString) {
+            const splitDate = dateString.split('-');
+            const year = parseInt(splitDate[0], 10);
+            const month = parseInt(splitDate[1], 10);
+            const day = parseInt(splitDate[2], 10);
+            const months = [
+                'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+                'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+            ];
+            const isoStr = day + ' ' + months[month - 1] + ' ' + year + ' 00:00:00';
+            return  new Date(isoStr);
+        }
+
         $scope.list = function () {
             $scope.loading = true;
 
@@ -136,7 +149,7 @@ angular
 
             const blockDate = $routeParams.blockDate == undefined ?
                 (new Date()).toString() :
-                (new Date($routeParams.blockDate)).toString();
+                _createPredicatbleDateFromString($routeParams.blockDate).toString();
 
             const range = _getDateRange(blockDate);
             _setCalendarDate(blockDate);
@@ -237,8 +250,25 @@ angular
             return d.slice(0, d.length - 3);
         }
 
-        $scope.blocks = [];
-        $scope.params = $routeParams;
+        $scope.getTimeDifferenceFromGMT = function() {
+            const date = new Date();
+            const offsetMinutes = date.getTimezoneOffset();
+            const offsetHours = Math.abs(offsetMinutes) / 60;
+            const sign = offsetMinutes < 0 ? '+' : '-';
+            // const formattedDifference = sign + ' ' + padNumber(Math.floor(offsetHours)) + ':' + padNumber(Math.abs(offsetMinutes % 60));
+            const formattedDifference = 'GMT' + sign + Math.floor(offsetHours);
+            return formattedDifference;
+        }
+        
+
+        // $scope.isLocalTimeBehindGMT = function() {
+        //     const localTime = new Date();
+        //     const gmtTime = new Date(localTime.getTime() + localTime.getTimezoneOffset() * 60000);
+        //     const b = localTime.getTime() < gmtTime.getTime();
+        //     return b;
+        // }
+
+ 
 
         // var lazyLoadingInterval = $interval(function () {
         //     console.log("Load more data every 2 seconds...");
@@ -250,6 +280,9 @@ angular
         //         $interval.cancel(lazyLoadingInterval);
         //         lazyLoadingInterval = undefined;
         //     }
-        // }, 10000);
+        // }, 10000); $scope.blocks = [];
+        $scope.params = $routeParams;
+        $scope.blocks = [];
+        $scope.params = $routeParams;
     }
 );
