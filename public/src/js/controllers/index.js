@@ -33,7 +33,7 @@ angular
                     $scope.txs = WsEventDataManager.updateTxHashScopeData(rawEventData.latestTxs.data, false);
                 }
 
-                $scope.cachedData.visible = false
+                $scope.cachedData.visible = false;
                 $scope.$apply();
             }, 100);
         });
@@ -64,7 +64,7 @@ angular
                     $scope.cachedData.missedBlocks = {
                         start: missedBlockStart,
                         end: status.blocks,
-                        diff: status.blocks - missedBlockStart
+                        diff: status.blocks - maxHeight
                     };
                 }
             }

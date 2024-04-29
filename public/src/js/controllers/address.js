@@ -108,7 +108,7 @@ angular
             })
             .catch(function (e) {
                 $scope.addressBalance.loading = false;
-                $rootScope.flashMessage = 'Failed to load balance summary. Reload to try again.';
+                $rootScope.flashMessage = 'Failed to load the balance summary. Reload to try again.';
                 // if (e.status === 400) {
                 //     $rootScope.flashMessage = 'Invalid Address: ' + $routeParams.addrStr;
                 // } else if (e.status === 503) {
