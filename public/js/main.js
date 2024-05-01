@@ -183,7 +183,7 @@ angular
             })
             .catch(function (e) {
                 $scope.addressBalance.loading = false;
-                $rootScope.flashMessage = 'Failed to load balance summary. Reload to try again.';
+                $rootScope.flashMessage = 'Failed to load the balance summary. Reload to try again.';
                 // if (e.status === 400) {
                 //     $rootScope.flashMessage = 'Invalid Address: ' + $routeParams.addrStr;
                 // } else if (e.status === 503) {
@@ -243,28 +243,6 @@ angular
         $scope.remainingTxCount = 0;
         $scope.pagination = {};
         const MAX_HASH_PER_LOAD = 100;
-        // const DATE_TYPE_UTC = 1; // 1 UTC;
-        // const DATE_TYPE_LOCAL = 0; // 0 local;
-        // $scope.allTxs 
-
-
-        // var wsChannel = VerusWssClient.getClient();
-        // function wsEventHandler(event) {
-        //     lastReceivedTime = new Date().getTime();
-        //     console.log('Message from server: >> THIS BLOCK SCOPE >>', event.data);
-        // }
-        // wsChannel.addEventListener('message', wsEventHandler);
-        // $scope.$on('$destroy', function () {
-        //     console.log("Destroying block controller resource");
-        //     $interval.cancel(lazyLoadingInterval);
-        //     lazyLoadingInterval = undefined;
-        //     wsChannel.removeEventListener('message', wsEventHandler);
-        // });
-
-        // // TODO, put in rootscope
-        // $scope.scrollToTop = function () {
-        //     ScrollService.scrollToTop();
-        // };
 
         $rootScope.scrollToTop = function () {
             ScrollService.scrollToTop();
@@ -273,24 +251,11 @@ angular
             ScrollService.scrollToBottom();
         };
 
-        // if ($routeParams.blockHeight) {
-        //   // Will receive the redirect from status page when the "Blocks" value is clicked
-        //   _handleRedirectFromStatusPage($routeParams.blockHeight);
-        // }
-
-        // var _handleRedirectFromStatusPage = function(blockHeight) {
-        //   VerusdRPC.getBlockDetailByHeight(blockHeight)
-        //   .then(function(data) {
-        //     $location.path('block/' + data.result.hash);
-        //   })
-        //   .catch(function(_) {
-        //     $rootScope.flashMessage = 'Bad Request';
-        //     $location.path('/');
-        //   });
-        // }
-
         //Datepicker
         var _setCalendarDate = function (date) { $scope.dt = date; };
+        $scope.setToday = function() {
+            $location.path('blocks/');
+        }
 
         var _createDatePaginationDisplay = function (date) {
             $scope.pagination = {};
@@ -298,6 +263,7 @@ angular
             var current = _formatTimestamp(d);
             var prev = new Date(d);
             var next = new Date(d);
+
             prev.setDate(prev.getDate() - 1);
             next.setDate(next.getDate() + 1);
 
@@ -311,10 +277,9 @@ angular
         };
 
         var _formatTimestamp = function (date) {
-            const isUtc = false;
-            var yyyy = (isUtc ? date.getUTCFullYear() : date.getFullYear()).toString();
-            var mm = ((isUtc ? date.getUTCMonth() : date.getMonth()) + 1).toString(); // getMonth() is zero-based
-            var dd = (isUtc ? date.getUTCDate() : date.getDate()).toString();
+            var yyyy = date.getFullYear().toString();
+            var mm = (date.getMonth() + 1).toString(); // getMonth() is zero-based
+            var dd = date.getDate().toString();
 
             return yyyy + '-' + (mm[1] ? mm : '0' + mm[0]) + '-' + (dd[1] ? dd : '0' + dd[0]); //padding
         };
@@ -370,12 +335,25 @@ angular
                 end: parseInt(dateEnd.getTime().toString().slice(0, 10)),
             }
         };
-        
+
+        var _createPredicatbleDateFromString = function(dateString) {
+            const splitDate = dateString.split('-');
+            const year = parseInt(splitDate[0], 10);
+            const month = parseInt(splitDate[1], 10);
+            const day = parseInt(splitDate[2], 10);
+            const months = [
+                'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+                'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+            ];
+            const isoStr = day + ' ' + months[month - 1] + ' ' + year + ' 00:00:00';
+            return  new Date(isoStr);
+        }
+
         $scope.list = function () {
             $scope.loading = true;
 
             if ($routeParams.blockDate) {
-                $scope.detail = '🗓 On ' + $routeParams.blockDate;
+                $scope.detail = $routeParams.blockDate;
             }
 
             if ($routeParams.startTimestamp) {
@@ -389,7 +367,7 @@ angular
 
             const blockDate = $routeParams.blockDate == undefined ?
                 (new Date()).toString() :
-                (new Date($routeParams.blockDate)).toString();
+                _createPredicatbleDateFromString($routeParams.blockDate).toString();
 
             const range = _getDateRange(blockDate);
             _setCalendarDate(blockDate);
@@ -479,9 +457,36 @@ angular
             });
             $scope.loading = false;
         };
+        
+        $scope.toGMT = function(date) {
+            const d = (new Date(date * 1000)).toUTCString();
+            return d.slice(0, d.length - 3);
+        }
+        
+        $scope.toLocal = function(d) {
+            // const d = (new Date(date * 1000)).toLocaleString();
+            return d.slice(0, d.length - 3);
+        }
 
-        $scope.blocks = [];
-        $scope.params = $routeParams;
+        $scope.getTimeDifferenceFromGMT = function() {
+            const date = new Date();
+            const offsetMinutes = date.getTimezoneOffset();
+            const offsetHours = Math.abs(offsetMinutes) / 60;
+            const sign = offsetMinutes < 0 ? '+' : '-';
+            // const formattedDifference = sign + ' ' + padNumber(Math.floor(offsetHours)) + ':' + padNumber(Math.abs(offsetMinutes % 60));
+            const formattedDifference = 'GMT' + sign + Math.floor(offsetHours);
+            return formattedDifference;
+        }
+        
+
+        // $scope.isLocalTimeBehindGMT = function() {
+        //     const localTime = new Date();
+        //     const gmtTime = new Date(localTime.getTime() + localTime.getTimezoneOffset() * 60000);
+        //     const b = localTime.getTime() < gmtTime.getTime();
+        //     return b;
+        // }
+
+ 
 
         // var lazyLoadingInterval = $interval(function () {
         //     console.log("Load more data every 2 seconds...");
@@ -493,7 +498,10 @@ angular
         //         $interval.cancel(lazyLoadingInterval);
         //         lazyLoadingInterval = undefined;
         //     }
-        // }, 10000);
+        // }, 10000); $scope.blocks = [];
+        $scope.params = $routeParams;
+        $scope.blocks = [];
+        $scope.params = $routeParams;
     }
 );
 
@@ -780,7 +788,7 @@ angular.module('insight.system')
 // Source: public/src/js/controllers/header.js
 angular.module('insight.system').controller('HeaderController',
   // function($scope, $rootScope, $modal, getSocket, Global, Block) {
-  function($scope, $rootScope, $modal, Global, Block) {
+  function($scope, $rootScope, $modal, Global, $location) {
     $scope.global = Global;
 
     $rootScope.currency = {
@@ -790,6 +798,7 @@ angular.module('insight.system').controller('HeaderController',
       netSymbol: netSymbol,
       symbol: netSymbol
     };
+    // $scope.currentPath = $location.path();
 
     $scope.menu = [{
       'title': 'Blocks',
@@ -829,6 +838,9 @@ angular.module('insight.system').controller('HeaderController',
     //     _getBlock(blockHash);
     //   });
     // });
+    $scope.isActive = function(route) {
+      return route === $location.path();
+    };
 
     $rootScope.isCollapsed = true;
   });
@@ -867,7 +879,7 @@ angular
                     $scope.txs = WsEventDataManager.updateTxHashScopeData(rawEventData.latestTxs.data, false);
                 }
 
-                $scope.cachedData.visible = false
+                $scope.cachedData.visible = false;
                 $scope.$apply();
             }, 100);
         });
@@ -898,7 +910,7 @@ angular
                     $scope.cachedData.missedBlocks = {
                         start: missedBlockStart,
                         end: status.blocks,
-                        diff: status.blocks - missedBlockStart
+                        diff: status.blocks - maxHeight
                     };
                 }
             }
@@ -1127,15 +1139,9 @@ angular
 .controller('SearchController',
     function (
         $scope,
-        // $routeParams,
         $location,
         $timeout,
         Global,
-        // Block,
-        // Transaction,
-        // Address,
-        // BlockByHeight,
-        // VerusdRPC,
         VerusExplorerApi
     ) {
         $scope.global = Global;
@@ -1143,7 +1149,6 @@ angular
 
         var _badQuery = function () {
             $scope.badQuery = true;
-
             $timeout(function () {
                 $scope.badQuery = false;
             }, 2000);
@@ -1154,68 +1159,110 @@ angular
             $scope.loading = false;
         };
 
+        const _createPath = function(q) {
+            const v = q.value;
+            switch(q.type) {
+                case 'block': return 'block/' + v;
+                case 'blockHash': return 'block/' + v;
+                case 'verusId': return 'address/' + v;
+                case 'address': return 'address/' + v;
+                case 'txHash': return 'tx/' + v;
+            }
+            return undefined;
+        }
+
         $scope.search = function () {
             var q = $scope.q;
             $scope.badQuery = false;
             $scope.loading = true;
+            console.log(q);
+            console.log($location.path());
 
-
-            const lastChar = q.charAt(q.length - 1);
-
-            if (lastChar === '@') {
-                VerusExplorerApi
-                .getIdentity(q)
-                .then(function (idInfo) {
-                    if (idInfo.data.identity) {
-                        //Request is a VerusID - get the address
-                        $location.path('address/' + idInfo.data.identity.identityaddress);
-                        _resetSearch();
-                        return;
-                    }
-
-                    $scope.loading = false;
-                    _resetSearch();
-                    _badQuery();
-                });
+            if($location.path().endsWith(q)) {
+                _resetSearch();
                 return;
             }
 
-            VerusExplorerApi
-            .getBlockInfo(q)
-            .then(function (blockInfo) {
-                if (blockInfo.data.hash) {
-                    // Either block height or block hash
-                    $location.path('block/' + blockInfo.data.hash);
-                    _resetSearch();
-                    return;
-                }
-
+            try {
                 VerusExplorerApi
-                .getAddressTxIds(q)
+                .search(q)
                 .then(function (r) {
-                    if (r.data[0]) {
-                        //Request is address
-                        $location.path('address/' + q);
+                    const path = _createPath(r.data);
+                    if(r.error || path == undefined) {
                         _resetSearch();
+                        _badQuery();
                         return;
                     }
 
-                    VerusExplorerApi
-                    .getTransactionInfo(q)
-                    .then(function (r) {
-                        if (r.data.height) {
-                            //Request is a transaction hash
-                            $location.path('tx/' + q);
-                            _resetSearch();
-                            return;
-                        }
-
-                        $scope.loading = false;
-                        _resetSearch();
-                        _badQuery();
-                    })
+                    $location.path(path);
+                    $scope.loading = false;
+                    _resetSearch();
                 })
-            });
+                
+            } catch (e) {
+                console.log(e);
+                $scope.loading = false;
+                _resetSearch();
+                _badQuery();
+                $location.path('/');
+            }
+            
+            // const lastChar = q.charAt(q.length - 1);
+
+            // if (lastChar === '@') {
+            //     VerusExplorerApi
+            //     .getIdentity(q)
+            //     .then(function (idInfo) {
+            //         if (idInfo.data.identity) {
+            //             //Request is a VerusID - get the address
+            //             $location.path('address/' + idInfo.data.identity.identityaddress);
+            //             _resetSearch();
+            //             return;
+            //         }
+
+            //         $scope.loading = false;
+            //         _resetSearch();
+            //         _badQuery();
+            //     });
+            //     return;
+            // }
+
+            // VerusExplorerApi
+            // .getBlockInfo(q)
+            // .then(function (blockInfo) {
+            //     if (blockInfo.data.hash) {
+            //         // Either block height or block hash
+            //         $location.path('block/' + blockInfo.data.hash);
+            //         _resetSearch();
+            //         return;
+            //     }
+
+            //     VerusExplorerApi
+            //     .getAddressTxIds(q)
+            //     .then(function (r) {
+            //         if (r.data[0]) {
+            //             //Request is address
+            //             $location.path('address/' + q);
+            //             _resetSearch();
+            //             return;
+            //         }
+
+            //         VerusExplorerApi
+            //         .getTransactionInfo(q)
+            //         .then(function (r) {
+            //             if (r.data.height) {
+            //                 //Request is a transaction hash
+            //                 $location.path('tx/' + q);
+            //                 _resetSearch();
+            //                 return;
+            //             }
+
+            //             $scope.loading = false;
+            //             _resetSearch();
+            //             _badQuery();
+            //         })
+            //     })
+            // });
             // 2558891ef5d54ce3e82503655a22c05a774e62be695bbe26454dae93de480cac - 64
             // iHbTMYB43xqqFVmEqJkqff6GrZDQoaiq6g - 34
 
@@ -1391,7 +1438,6 @@ angular.module('insight.transactions')
         $scope,
         $rootScope,
         $routeParams,
-        $location,
         Global,
         VerusExplorerApi
     ) {
@@ -1399,6 +1445,7 @@ angular.module('insight.transactions')
         $scope.loading = true;
         $scope.loadedBy = null;
         $scope.addressTxCount = 0;
+        const unknownAddress = '-1';
 
         var txVoutTotalValue = 0;
         var txVinTotalValue = 0;
@@ -1456,7 +1503,8 @@ angular.module('insight.transactions')
                 }
 
 
-                tx.vout[i].uiWalletAddress = uiWalletAddress[0] == undefined ? ' [ NO ADDRESS ] ' : uiWalletAddress;
+                // tx.vout[i].uiWalletAddress = uiWalletAddress[0] == undefined ? ' [ NO ADDRESS ] ' : uiWalletAddress;
+                tx.vout[i].uiWalletAddress = uiWalletAddress[0] == undefined ? unknownAddress : uiWalletAddress;
                 tx.vout[i].isSpent = items[i].spentTxId;
                 tx.vout[i].multipleAddress = pubKeyAddressess.join(',');
                 tx.vout[i].identityTxTypeLabel = "...";
@@ -1521,11 +1569,11 @@ angular.module('insight.transactions')
         }
 
         var _getOtherTxCommitment = function (scriptPubKey) {
-            if (scriptPubKey.crosschainimport) return '📥 crosschainimport';
-            if (scriptPubKey.crosschainexport) return '📤 crosschainexport';
+            if (scriptPubKey.crosschainimport) return '📥 Crosschain Import';
+            if (scriptPubKey.crosschainexport) return '📤 Crosschain Export';
             if (scriptPubKey.identitycommitment) return scriptPubKey.identitycommitment;
-            if (scriptPubKey.reservetransfer) return '💱 reservetransfer';
-            if (scriptPubKey.pbaasNotarization) return '⛓ pbaasNotarization';
+            if (scriptPubKey.reservetransfer) return '💱 Reserve Transfer';
+            if (scriptPubKey.pbaasNotarization) return '⛓ PBaaS Notarization';
             return '';
         }
 
@@ -1557,15 +1605,16 @@ angular.module('insight.transactions')
                     $scope.txs.push(rawTxData);
                 })
                 .catch(function (e) {
-                    if (e.status === 400) {
-                        $rootScope.flashMessage = 'Invalid Transaction ID: ' + $routeParams.txId;
-                    } else if (e.status === 503) {
-                        $rootScope.flashMessage = 'Backend Error. ' + e.data;
-                    } else {
-                        $rootScope.flashMessage = 'Transaction Not Found';
-                    }
+                    $rootScope.flashMessage = 'Failed to load transaction '+txid+'. Reload to try again.';
+                    // if (e.status === 400) {
+                    //     $rootScope.flashMessage = 'Invalid Transaction ID: ' + $routeParams.txId;
+                    // } else if (e.status === 503) {
+                    //     $rootScope.flashMessage = 'Backend Error. ' + e.data;
+                    // } else {
+                    //     $rootScope.flashMessage = 'Transaction Not Found';
+                    // }
 
-                    $location.path('/');
+                    // $location.path('/');
                 });
 
             });
@@ -2416,6 +2465,10 @@ angular.module('insight.verusexplorerapi')
       return sendRequest(createPayload('/api/address/'+address+'/balance', [], "GET"));
     };
 
+    function search(query) {
+      return sendRequest(createPayload('/api/search/?q='+query, [], "GET"));
+    };
+
     return {
       getGeneratedBlocks: function(heightOrTxArray) {
         return getGeneratedBlocks(heightOrTxArray);
@@ -2449,6 +2502,9 @@ angular.module('insight.verusexplorerapi')
       },
       getAddressBalance: function(address) {
         return getAddressBalance(address);
+      },
+      search: function(query) {
+        return search(query);
       },
     };
 });
@@ -2653,7 +2709,7 @@ angular
     }
 });
 // Source: public/src/js/directives.js
-var ZeroClipboard = window.ZeroClipboard;
+// var ZeroClipboard = window.ZeroClipboard;
 
 angular.module('insight')
   .directive('scroll', function ($window) {
@@ -2692,40 +2748,67 @@ angular.module('insight')
         });
       }
     };
-  })
-  .directive('clipCopy', function() {
-    ZeroClipboard.config({
-      moviePath: '/lib/zeroclipboard/ZeroClipboard.swf',
-      trustedDomains: ['*'],
-      allowScriptAccess: 'always',
-      forceHandCursor: true
-    });
-
+  }).directive('copyToClipboard', function() {
     return {
-      restric: 'A',
-      scope: { clipCopy: '=clipCopy' },
-      template: '<div class="tooltip fade right in"><div class="tooltip-arrow"></div><div class="tooltip-inner">Copied!</div></div>',
-      link: function(scope, elm) {
-        var clip = new ZeroClipboard(elm);
-
-        clip.on('load', function(client) {
-          var onMousedown = function(client) {
-            client.setText(scope.clipCopy);
-          };
-
-          client.on('mousedown', onMousedown);
-
-          scope.$on('$destroy', function() {
-            client.off('mousedown', onMousedown);
-          });
-        });
-
-        clip.on('noFlash wrongflash', function() {
-          return elm.remove();
-        });
-      }
+        restrict: 'A',
+        // template: '<div class="tooltip fade right in"><div class="tooltip-arrow"></div><div class="tooltip-inner">Copied!</div></div>',
+        link: function(scope, element, attrs) {
+            // element.attr('uib-tooltip', 'Click to copy'); // Set tooltip text
+            // element.attr('tooltip-trigger', 'mouseenter'); // Show tooltip on mouse enter
+            // element.attr('tooltip-placement', 'top'); // Set tooltip placement
+            // element.tooltip();
+            element.on('click', function() {
+                // this.tooltip('toggle');
+                var textToCopy = attrs.copyToClipboard;
+                // var attachedElement = angular.element('<div class="tooltip fade right in"><div class="tooltip-arrow"></div><div class="tooltip-inner">Copied!</div></div>');
+                // // Append the attachedElement to the body
+                // this.re append(attachedElement);
+                
+                // // Compile the attachedElement to apply AngularJS bindings
+                // $compile(attachedElement)(scope);
+            
+                navigator.clipboard.writeText(textToCopy)
+                    .then(function() {
+                      alert(textToCopy + ' copied!');
+                    })
+                    .catch(function(error) { console.error('Unable to copy text to clipboard: ', error);});
+            });
+        }
     };
-  })
+})
+  // .directive('clipCopy', function() {
+  //   ZeroClipboard.config({
+  //     moviePath: '/lib/zeroclipboard/ZeroClipboard.swf',
+  //     trustedDomains: ['*'],
+  //     allowScriptAccess: 'always',
+  //     forceHandCursor: true
+  //   });
+
+  //   return {
+  //     restric: 'A',
+  //     scope: { clipCopy: '=clipCopy' },
+  //     template: '<div class="tooltip fade right in"><div class="tooltip-arrow"></div><div class="tooltip-inner">Copied!</div></div>',
+  //     link: function(scope, elm) {
+  //       var clip = new ZeroClipboard(elm);
+
+  //       clip.on('load', function(client) {
+  //         var onMousedown = function(client) {
+  //           client.setText(scope.clipCopy);
+  //         };
+
+  //         client.on('mousedown', onMousedown);
+
+  //         scope.$on('$destroy', function() {
+  //           client.off('mousedown', onMousedown);
+  //         });
+  //       });
+
+  //       clip.on('noFlash wrongflash', function() {
+  //         return elm.remove();
+  //       });
+  //     }
+  //   };
+  // })
   .directive('focus', function ($timeout) {
     return {
       scope: {
