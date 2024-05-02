@@ -13,6 +13,8 @@ angular
         $scope.global = Global;
         $scope.loading = false;
 
+        const allowePattern = /^[a-zA-Z0-9@]+$/;
+
         var _badQuery = function () {
             $scope.badQuery = true;
             $timeout(function () {
@@ -37,16 +39,23 @@ angular
             return undefined;
         }
 
+        var _badSearch = function() {
+            $scope.loading = false;
+            _resetSearch();
+            _badQuery();
+        }
+
         $scope.search = function () {
             var q = $scope.q;
             $scope.badQuery = false;
             $scope.loading = true;
-            console.log(q);
-            console.log($location.path());
-
+            
             if($location.path().endsWith(q)) {
                 _resetSearch();
                 return;
+            }
+            if(q.length > 200 || !allowePattern.test(q)) {
+                _badSearch();
             }
 
             try {
@@ -55,9 +64,7 @@ angular
                 .then(function (r) {
                     const path = _createPath(r.data);
                     if(r.error || path == undefined) {
-                        $scope.loading = false;
-                        _resetSearch();
-                        _badQuery();
+                        _badSearch();
                         return;
                     }
 
@@ -66,12 +73,8 @@ angular
                     _resetSearch();
                 })
                 
-            } catch (e) {
-                console.log(e);
-                $scope.loading = false;
-                _resetSearch();
-                _badQuery();
-                $location.path('/');
+            } catch (e) {;
+                __badSearch();
             }
             
             // const lastChar = q.charAt(q.length - 1);
