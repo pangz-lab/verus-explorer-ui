@@ -55,6 +55,7 @@ angular
                 .then(function (r) {
                     const path = _createPath(r.data);
                     if(r.error || path == undefined) {
+                        $scope.loading = false;
                         _resetSearch();
                         _badQuery();
                         return;

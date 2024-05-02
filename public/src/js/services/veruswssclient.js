@@ -54,13 +54,10 @@ angular
         function messageEventListener (event) {
             lastReceivedTime = new Date().getTime();
             // console.log('Message from server:', event.data);
-            console.log(event.data);
-            console.log(typeof event.data);
-            const d = JSON.parse(event.data.toString());
-            // console.log('Parsed message from server:', d);
-            if(d.status != undefined) { $rootScope.$broadcast(wsMessageTopic, d); }
-            // $rootScope.$broadcast('wsmessage', JSON.parse(event.data));
-            // $rootScope.$emit('wsmessage', JSON.parse(event.data));
+            var data = event.data.toString();
+            console.log(data);
+            data = JSON.parse(data);
+            if(data.status != undefined) { $rootScope.$broadcast(wsMessageTopic, data); }
         };
         
         function openEventListener (event) {
