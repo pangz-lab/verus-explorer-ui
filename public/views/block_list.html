@@ -60,7 +60,15 @@
         </div>
     </div>
 
-
+    <div class="row" data-ng-show="alert.info.show">
+        <div class="col-md-1 text-center"></div>
+        <div class="col-md-10 text-center">
+            <div class="alert alert-info" role="alert">
+                <b>Heads up! </b> {{alert.info.message}}
+            </div>
+        </div>
+        <div class="col-md-1 text-center"></div>
+    </div>
     <div class = "row">
         <!-- <div class="col-xs-12 col-gray col-gray-fixed">
       <div class="block-id">
@@ -103,7 +111,6 @@
             <div class="page-header">
                 <div class="panel panel-primary col-gray">
                     <div class="panel-heading text-center">
-
                         <div class="row">
                             <div class="col-md-3 text-center"></div>
                             <div class="col-md-6 text-center">

@@ -985,6 +985,10 @@ a.v_highlight_more {
   border: transparent;
 }
 
+.picker-calendar + ul {
+  padding: 0px;;
+}
+
 .calendar-text-header {
   /* color: #fff; */
   padding-left: 2px;

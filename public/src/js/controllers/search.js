@@ -13,7 +13,7 @@ angular
         $scope.global = Global;
         $scope.loading = false;
 
-        const allowePattern = /^[a-zA-Z0-9@]+$/;
+        
 
         var _badQuery = function () {
             $scope.badQuery = true;
@@ -54,7 +54,7 @@ angular
                 _resetSearch();
                 return;
             }
-            if(q.length > 200 || !allowePattern.test(q)) {
+            if(q.length > 200 || !allowedSearchPattern.test(q)) {
                 _badSearch();
             }
 

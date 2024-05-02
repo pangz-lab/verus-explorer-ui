@@ -18,13 +18,20 @@ angular
         BlockService
         // $interval
     ) {
+        const MAX_HASH_PER_LOAD = 100;
+        const dateUrlPath = "blocks-date";
         $scope.global = Global;
         $scope.loading = false;
         $scope.currentDateTxList = [];
         $scope.lastStartIndex = 0;
         $scope.remainingTxCount = 0;
         $scope.pagination = {};
-        const MAX_HASH_PER_LOAD = 100;
+        $scope.alert = {
+            info: {
+                message: "",
+                show: false
+            }
+        }
 
         $rootScope.scrollToTop = function () {
             ScrollService.scrollToTop();
@@ -33,7 +40,15 @@ angular
             ScrollService.scrollToBottom();
         };
 
-        //Datepicker
+        var _setAlertMessage = function(show, message) {
+            $scope.alert = {
+                info: {
+                    message: message,
+                    show: show
+                }
+            }
+        }
+
         var _setCalendarDate = function (date) { $scope.dt = date; };
         $scope.setToday = function() {
             $location.path('blocks/');
@@ -66,9 +81,32 @@ angular
             return yyyy + '-' + (mm[1] ? mm : '0' + mm[0]) + '-' + (dd[1] ? dd : '0' + dd[0]); //padding
         };
 
+        var _validateDate = function(value) {
+            console.log("Date value");
+            console.log(value);
+            if(value > new Date()) {
+                _setAlertMessage(true, "Choose current date or previous date only!");
+                setTimeout(function() {
+                    _setAlertMessage(false, "");
+                }, 3000)
+                return false;
+            }
+
+            if(value < firstBlockStartDate) {
+                _setAlertMessage(true, "Choose date not later than " + firstBlockStartDate.toUTCString());
+                setTimeout(function() {
+                    _setAlertMessage(false, "");
+                }, 3000)
+                return false;
+            }
+            return true;
+        }
+
         $scope.$watch('dt', function (newValue, oldValue) {
+            const valid = _validateDate(newValue);
+            if(!valid) { return; }
             if (newValue !== oldValue) {
-                $location.path('/blocks-date/' + _formatTimestamp(new Date(newValue)));
+                $location.path('/'+dateUrlPath+'/' + _formatTimestamp(new Date(newValue)));
             }
         });
 
@@ -136,6 +174,7 @@ angular
 
             if ($routeParams.blockDate) {
                 $scope.detail = $routeParams.blockDate;
+                _validateDate(_createPredicatbleDateFromString($routeParams.blockDate));
             }
 
             if ($routeParams.startTimestamp) {
