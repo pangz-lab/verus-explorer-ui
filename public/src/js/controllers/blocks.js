@@ -156,7 +156,7 @@ angular
             }
         };
 
-        var _createPredicatbleDateFromString = function(dateString) {
+        var _createDateFromString = function(dateString) {
             const splitDate = dateString.split('-');
             const year = parseInt(splitDate[0], 10);
             const month = parseInt(splitDate[1], 10);
@@ -174,7 +174,7 @@ angular
 
             if ($routeParams.blockDate) {
                 $scope.detail = $routeParams.blockDate;
-                _validateDate(_createPredicatbleDateFromString($routeParams.blockDate));
+                _validateDate(_createDateFromString($routeParams.blockDate));
             }
 
             if ($routeParams.startTimestamp) {
@@ -188,7 +188,7 @@ angular
 
             const blockDate = $routeParams.blockDate == undefined ?
                 (new Date()).toString() :
-                _createPredicatbleDateFromString($routeParams.blockDate).toString();
+                _createDateFromString($routeParams.blockDate).toString();
 
             const range = _getDateRange(blockDate);
             _setCalendarDate(blockDate);

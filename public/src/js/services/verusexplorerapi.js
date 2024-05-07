@@ -71,7 +71,8 @@ angular.module('insight.verusexplorerapi')
     };
 
     function getIdentity(identityName, height) {
-      return sendRequest(createPayload('/api/identity/'+identityName+'/info?height='+height, [], 'GET'));
+      var h = (height == undefined)? '' : '?height='+height;
+      return sendRequest(createPayload('/api/identity/'+identityName+'/info' + h, [], 'GET'));
     };
     
     function getAddressTxIds(address) {

@@ -49,7 +49,8 @@ module.exports = function(grunt) {
           'public/lib/moment/min/moment.min.js',
           'public/lib/moment/lang/es.js',
           'public/lib/c3/c3.min.js',
-          'public/lib/d3/d3.min.js'
+          'public/lib/d3/d3.min.js',
+          'public/lib/chart.js/dist/Chart.min.js'
         ],
         dest: 'public/js/vendors.js'
       },
@@ -65,6 +66,7 @@ module.exports = function(grunt) {
           'public/lib/angular-ui-utils/ui-utils.min.js',
           'public/lib/ngprogress/build/ngProgress.min.js',
           'public/lib/angular-gettext/dist/angular-gettext.min.js',
+          'public/lib/angular-chart.js/dist/angular-chart.min.js',
           'public/lib/angular-moment/angular-moment.min.js'
         ],
         dest: 'public/js/angularjs-all.js'
@@ -84,6 +86,7 @@ module.exports = function(grunt) {
       },
       css: {
         src: [
+          'public/lib/chart.js/dist/Chart.min.css',
           'public/lib/bootstrap/dist/css/bootstrap.min.css',
           'public/lib/c3/c3.min.css',
           'public/src/css/**/*.css',

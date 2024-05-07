@@ -11,6 +11,7 @@ const allowedSearchPattern = /^[a-zA-Z0-9@]+$/;
 // const apiServer = testnet ? 'http://127.0.0.1:27486' : 'https://wip-api-insight.pangz.tech'; //2223
 const apiServer = testnet ? 'http://127.0.0.1:27486' : 'https://wip-ws-insight.pangz.tech'; //2220 ws and express
 const wsServer = testnet ? 'wss://wip-ws-insight.pangz.tech/verus/wss' : 'wss://wip-ws-insight.pangz.tech/verus/wss'; //2220 ws and express
+// const wsServer = testnet ? 'wss://wip-ws-insight.pangz.tech/verus/wss' : 'ws://localhost:2220/verus/wss'; //2220 ws and express
 
 // const apiServer = testnet ? 'http://127.0.0.1:27486' : 'http://localhost:2220'; //2220 ws and express
 
@@ -57,6 +58,7 @@ angular.module('insight',[
   'insight.veruswssclient',
   'insight.localstore',
   'insight.coinpaprika'
+  // 'chart.js'
 ]);
 
 angular.module('insight.system', []);
@@ -65,7 +67,7 @@ angular.module('insight.blocks', []);
 angular.module('insight.transactions', []);
 angular.module('insight.address', []);
 angular.module('insight.search', []);
-angular.module('insight.charts', []);
+angular.module('insight.charts', [])
 angular.module('insight.status', []);
 angular.module('insight.connection', []);
 angular.module('insight.currency', []);
@@ -76,3 +78,4 @@ angular.module('insight.wseventdatamanager', []);
 angular.module('insight.veruswssclient', []);
 angular.module('insight.localstore', []);
 angular.module('insight.coinpaprika', []);
+// angular.module('chart.js', []);
