@@ -83,6 +83,12 @@ angular.module('insight.verusexplorerapi')
       return sendRequest(createPayload('/api/address/'+address+'/balance', [], "GET"));
     };
 
+    function getChartData(range) {
+      const ranges = ["last10Minutes","last30Minutes","lastHour","last3Hours","last6Hours","last12Hours","last24Hours"];
+      if(!ranges.includes(range)) { return Promise.resolve(undefined); }
+      return sendRequest(createPayload('/api/chart/?range='+range, [], "GET"));
+    };
+
     function search(query) {
       return sendRequest(createPayload('/api/search/?q='+query, [], "GET"));
     };
@@ -120,6 +126,9 @@ angular.module('insight.verusexplorerapi')
       },
       getAddressBalance: function(address) {
         return getAddressBalance(address);
+      },
+      getChartData: function(range) {
+        return getChartData(range);
       },
       search: function(query) {
         return search(query);

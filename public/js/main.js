@@ -3,11 +3,14 @@ var testnet = false;
 var netSymbol = testnet ? 'VRSCTEST' : 'VRSC';
 const chainName = "Verus";
 const coinpaprikaEndpointKey = "vrsc-verus-coin";
+const firstBlockStartDate = new Date(2018, 4, 20);
+const allowedSearchPattern = /^[a-zA-Z0-9@]+$/;
 // const apiServer = testnet ? 'http://127.0.0.1:27486' : 'http://localhost:3001';
 // const apiServer = testnet ? 'http://127.0.0.1:27486' : 'https://api.verus.services';
 // const apiServer = testnet ? 'http://127.0.0.1:27486' : 'https://wip-api-insight.pangz.tech'; //2223
 const apiServer = testnet ? 'http://127.0.0.1:27486' : 'https://wip-ws-insight.pangz.tech'; //2220 ws and express
 const wsServer = testnet ? 'wss://wip-ws-insight.pangz.tech/verus/wss' : 'wss://wip-ws-insight.pangz.tech/verus/wss'; //2220 ws and express
+// const wsServer = testnet ? 'wss://wip-ws-insight.pangz.tech/verus/wss' : 'ws://localhost:2220/verus/wss'; //2220 ws and express
 
 // const apiServer = testnet ? 'http://127.0.0.1:27486' : 'http://localhost:2220'; //2220 ws and express
 
@@ -54,6 +57,7 @@ angular.module('insight',[
   'insight.veruswssclient',
   'insight.localstore',
   'insight.coinpaprika'
+  // 'chart.js'
 ]);
 
 angular.module('insight.system', []);
@@ -62,7 +66,7 @@ angular.module('insight.blocks', []);
 angular.module('insight.transactions', []);
 angular.module('insight.address', []);
 angular.module('insight.search', []);
-angular.module('insight.charts', []);
+angular.module('insight.charts', [])
 angular.module('insight.status', []);
 angular.module('insight.connection', []);
 angular.module('insight.currency', []);
@@ -73,6 +77,7 @@ angular.module('insight.wseventdatamanager', []);
 angular.module('insight.veruswssclient', []);
 angular.module('insight.localstore', []);
 angular.module('insight.coinpaprika', []);
+// angular.module('chart.js', []);
 
 // Source: public/src/js/controllers/address.js
 angular
@@ -236,13 +241,20 @@ angular
         BlockService
         // $interval
     ) {
+        const MAX_HASH_PER_LOAD = 100;
+        const dateUrlPath = "blocks-date";
         $scope.global = Global;
         $scope.loading = false;
         $scope.currentDateTxList = [];
         $scope.lastStartIndex = 0;
         $scope.remainingTxCount = 0;
         $scope.pagination = {};
-        const MAX_HASH_PER_LOAD = 100;
+        $scope.alert = {
+            info: {
+                message: "",
+                show: false
+            }
+        }
 
         $rootScope.scrollToTop = function () {
             ScrollService.scrollToTop();
@@ -251,7 +263,15 @@ angular
             ScrollService.scrollToBottom();
         };
 
-        //Datepicker
+        var _setAlertMessage = function(show, message) {
+            $scope.alert = {
+                info: {
+                    message: message,
+                    show: show
+                }
+            }
+        }
+
         var _setCalendarDate = function (date) { $scope.dt = date; };
         $scope.setToday = function() {
             $location.path('blocks/');
@@ -284,9 +304,32 @@ angular
             return yyyy + '-' + (mm[1] ? mm : '0' + mm[0]) + '-' + (dd[1] ? dd : '0' + dd[0]); //padding
         };
 
+        var _validateDate = function(value) {
+            console.log("Date value");
+            console.log(value);
+            if(value > new Date()) {
+                _setAlertMessage(true, "Choose current date or previous date only!");
+                setTimeout(function() {
+                    _setAlertMessage(false, "");
+                }, 3000)
+                return false;
+            }
+
+            if(value < firstBlockStartDate) {
+                _setAlertMessage(true, "Choose date not later than " + firstBlockStartDate.toUTCString());
+                setTimeout(function() {
+                    _setAlertMessage(false, "");
+                }, 3000)
+                return false;
+            }
+            return true;
+        }
+
         $scope.$watch('dt', function (newValue, oldValue) {
+            const valid = _validateDate(newValue);
+            if(!valid) { return; }
             if (newValue !== oldValue) {
-                $location.path('/blocks-date/' + _formatTimestamp(new Date(newValue)));
+                $location.path('/'+dateUrlPath+'/' + _formatTimestamp(new Date(newValue)));
             }
         });
 
@@ -336,7 +379,7 @@ angular
             }
         };
 
-        var _createPredicatbleDateFromString = function(dateString) {
+        var _createDateFromString = function(dateString) {
             const splitDate = dateString.split('-');
             const year = parseInt(splitDate[0], 10);
             const month = parseInt(splitDate[1], 10);
@@ -354,6 +397,7 @@ angular
 
             if ($routeParams.blockDate) {
                 $scope.detail = $routeParams.blockDate;
+                _validateDate(_createDateFromString($routeParams.blockDate));
             }
 
             if ($routeParams.startTimestamp) {
@@ -367,7 +411,7 @@ angular
 
             const blockDate = $routeParams.blockDate == undefined ?
                 (new Date()).toString() :
-                _createPredicatbleDateFromString($routeParams.blockDate).toString();
+                _createDateFromString($routeParams.blockDate).toString();
 
             const range = _getDateRange(blockDate);
             _setCalendarDate(blockDate);
@@ -506,48 +550,212 @@ angular
 );
 
 // Source: public/src/js/controllers/charts.js
-angular.module('insight.charts').controller('ChartsController',
-  function($scope, $rootScope, $routeParams, $location, Chart, Charts) {
-  $scope.loading = false;
+angular
+    .module('insight.charts', ["chart.js"])
+    .controller('ChartsController',
+    function (
+        $scope,
+        VerusExplorerApi
+    ) {
+            // function($scope, $rootScope, $routeParams, $location, Chart, Charts) {
+            // ChartJsProvider.setOptions({ colors : [ '#803690', '#00ADF9', '#DCDCDC', '#46BFBD', '#FDB45C', '#949FB1', '#4D5360'] });
+            $scope.loading = false;
 
-  $scope.list = function() {
-    Charts.get({
-    }, function(res) {
-      $scope.charts = res.charts;
-    });
 
-    if ($routeParams.chartType) {
-      $scope.chart();
-    }
-  };
 
-  $scope.chart = function() {
-    $scope.loading = true;
+            // $scope.labels = ["Download Sales", "In-Store Sales", "Mail-Order Sales"];
+            // $scope.data = [300, 500, 100];
 
-    Chart.get({
-      chartType: $routeParams.chartType
-    }, function(chart) {
-      $scope.loading = false;
-      $scope.chartType = $routeParams.chartType;
-      $scope.chartName = chart.name;
-      $scope.chart = c3.generate(chart);
-    }, function(e) {
-      if (e.status === 400) {
-        $rootScope.flashMessage = 'Invalid chart: ' + $routeParams.chartType;
-      }
-      else if (e.status === 503) {
-        $rootScope.flashMessage = 'Backend Error. ' + e.data;
-      }
-      else {
-        $rootScope.flashMessage = 'Chart Not Found';
-      }
-      $location.path('/');
-    });
-  };
+            // $scope.labels = ['2006', '2007', '2008', '2009', '2010', '2011', '2012'];
+            // $scope.series = ['Series A', 'Series B'];
 
-  $scope.params = $routeParams;
+            // $scope.data = [
+            //   [65, 59, 80, 81, 56, 55, 40],
+            //   [28, 48, 40, 19, 86, 27, 90]
+            // ];
 
-});
+            // $scope.labels =["Eating", "Drinking", "Sleeping", "Designing", "Coding", "Cycling", "Running"];
+            // $scope.data = [
+            //   [65, 59, 90, 81, 56, 55, 40],
+            //   [28, 48, 40, 19, 96, 27, 100]
+            // ];
+
+            // $scope.series = ['Series A', 'Series B'];
+            // $scope.data = [
+            //   [{
+            //     x: 40,
+            //     y: 10,
+            //     r: 20
+            //   }],
+            //   [{
+            //     x: 10,
+            //     y: 40,
+            //     r: 50
+            //   }]
+            // ];
+
+
+            // $scope.title = "Transaction Over Time";
+            // $scope.labels = [
+            //     "7:00",
+            //     "7:10",
+            //     "7:20",
+            //     "7:30",
+            //     "7:40",
+            //     "7:50",
+            //     "8:00",
+            // ];
+            // // $scope.series = ['Series A', 'Series B'];
+            // $scope.series = ['Transactions'];
+            // $scope.data = [
+            //     [65, 59, 80, 81, 56, 55, 40],
+            //     // [28, 48, 40, 19, 86, 27, 90]
+            // ];
+            // $scope.onClick = function (points, evt) {
+            //     console.log(points, evt);
+            // };
+            // // $scope.datasetOverride = [{ yAxisID: 'y-axis-1' }, { yAxisID: 'y-axis-2' }];
+            // $scope.datasetOverride = [{ yAxisID: 'y-axis-1' }];
+            // $scope.options = {
+            //     type: 'line',
+            //     scales: {
+            //         yAxes: [
+            //             {
+            //                 id: 'y-axis-1',
+            //                 type: 'linear',
+            //                 display: true,
+            //                 position: 'left'
+            //             },
+            //             // {
+            //             //     id: 'y-axis-2',
+            //             //     type: 'linear',
+            //             //     display: true,
+            //             //     position: 'right'
+            //             // }
+            //         ]
+            //     }
+            // };
+
+            // TX over time
+            // Block size distribution
+            // Transaction Fees Over Time
+            // Mining pool distribution over time
+
+            $scope.init = function () {
+                VerusExplorerApi
+                .getChartData("last3Hours")
+                .then(function(queryResult) {
+                    const data = queryResult.data;
+                    if (data[0]) {
+                        createTxCountOverTimeData(data);
+                    }
+                });
+            }
+
+            const _getDateIndex = function(date, dataIntervalInMinutes) {
+                var minutes = "00";
+                const rawMinuteValue = date.getMinutes();
+                if(rawMinuteValue == 0 || rawMinuteValue < dataIntervalInMinutes) {
+                    minutes = "00";
+                }
+        
+                if(rawMinuteValue > dataIntervalInMinutes && rawMinuteValue % dataIntervalInMinutes > 0) {
+                    minutes = (rawMinuteValue - (rawMinuteValue % dataIntervalInMinutes)).toString().padStart(2, '0');
+                }
+
+                const month = (date.getMonth() + 1).toString().padStart(2, '0');
+                const day = date.getDate().toString().padStart(2, '0');;
+                const hour = date.getHours().toString().padStart(2, '0');
+                return {
+                    label: month + '/' + day + ' ' + hour + ':' + minutes,
+                    key: month + '-' + day + '_' + hour + ':' + minutes,
+                };
+            }
+
+
+            const createTxCountOverTimeData = function (data) {
+                $scope.title = "Transaction Over Time";
+                $scope.series = ["Blocks", "Transactions"];
+                const dataIntervalInMinutes = 10;
+                var aggregate = {};
+                var dateIndex = "";
+
+                for(var i = 0; i < data.length; i++) {
+                    const d = new Date(data[i].time * 1000);
+                    const id = _getDateIndex(d, dataIntervalInMinutes);
+                    dateIndex = id.key;
+                    if(aggregate[dateIndex] == undefined) {
+                        aggregate[dateIndex] = {
+                            displayText: id.label,
+                            blockCount: 0,
+                            txCount: 0,
+                        }
+                    }
+                    aggregate[dateIndex].blockCount = aggregate[dateIndex].blockCount + 1;
+                    aggregate[dateIndex].txCount = aggregate[dateIndex].txCount + data[i].txs.length;
+                }
+
+                $scope.labels = [];
+                $scope.data = [];
+                var blockCount = [];
+                var txCount = [];
+                for (var key in aggregate) {
+                    $scope.labels.unshift(aggregate[key].displayText);
+                    blockCount.unshift(aggregate[key].blockCount);
+                    txCount.unshift(aggregate[key].txCount);
+                }
+
+                $scope.data = [
+                    blockCount,
+                    txCount,
+                ];
+            }
+
+
+            // $scope.list = function() {
+            //   Charts.get({
+            //   }, function(res) {
+            //     $scope.charts = res.charts;
+            //   });
+
+            //   if ($routeParams.chartType) {
+            //     $scope.chart();
+            //   }
+            // };
+
+            // $scope.chart = function() {
+            //   $scope.loading = true;
+
+            //   Chart.get({
+            //     chartType: $routeParams.chartType
+            //   }, function(chart) {
+            //     $scope.loading = false;
+            //     $scope.chartType = $routeParams.chartType;
+            //     $scope.chartName = chart.name;
+            //     $scope.chart = c3.generate(chart);
+            //   }, function(e) {
+            //     if (e.status === 400) {
+            //       $rootScope.flashMessage = 'Invalid chart: ' + $routeParams.chartType;
+            //     }
+            //     else if (e.status === 503) {
+            //       $rootScope.flashMessage = 'Backend Error. ' + e.data;
+            //     }
+            //     else {
+            //       $rootScope.flashMessage = 'Chart Not Found';
+            //     }
+            //     $location.path('/');
+            //   });
+            // };
+
+            // $scope.params = $routeParams;
+
+        });
+
+// .config(['ChartJsProvider', function (ChartJsProvider) {
+//   ChartJsProvider.setOptions({
+//     colors : [ '#803690', '#00ADF9', '#DCDCDC', '#46BFBD', '#FDB45C', '#949FB1', '#4D5360']
+//   });
+// }]);
 
 // Source: public/src/js/controllers/connection.js
 // 'use strict';
@@ -786,64 +994,66 @@ angular.module('insight.system')
     });
 
 // Source: public/src/js/controllers/header.js
-angular.module('insight.system').controller('HeaderController',
-  // function($scope, $rootScope, $modal, getSocket, Global, Block) {
-  function($scope, $rootScope, $modal, Global, $location) {
-    $scope.global = Global;
+angular
+.module('insight.system')
+.controller('HeaderController',
+    // function($scope, $rootScope, $modal, getSocket, Global, Block) {
+    function ($scope, $rootScope, $modal, Global, $location) {
+        $scope.global = Global;
 
-    $rootScope.currency = {
-      factor: 1,
-      bitstamp: 0,
-      testnet: testnet,
-      netSymbol: netSymbol,
-      symbol: netSymbol
-    };
-    // $scope.currentPath = $location.path();
+        $rootScope.currency = {
+            factor: 1,
+            bitstamp: 0,
+            testnet: testnet,
+            netSymbol: netSymbol,
+            symbol: netSymbol
+        };
+        // $scope.currentPath = $location.path();
 
-    $scope.menu = [{
-      'title': 'Blocks',
-      'link': 'blocks'
-    }, {
-      'title': 'Charts',
-      'link': 'charts'
-    }, {
-      'title': 'Status',
-      'link': 'status'
-    }, {
-      'title': 'Help',
-      'link': 'help'
-    }]; 
+        $scope.menu = [{
+            'title': 'Blocks',
+            'link': 'blocks'
+        }, {
+            'title': 'Charts',
+            'link': 'charts'
+        }, {
+            'title': 'Status',
+            'link': 'status'
+        }, {
+            'title': 'Help',
+            'link': 'help'
+        }];
 
-    $scope.openScannerModal = function() {
-      var modalInstance = $modal.open({
-        templateUrl: 'scannerModal.html',
-        controller: 'ScannerController'
-      });
-    };
+        $scope.openScannerModal = function () {
+            var modalInstance = $modal.open({
+                templateUrl: 'scannerModal.html',
+                controller: 'ScannerController'
+            });
+        };
 
-    // var _getBlock = function(hash) {
-    //   Block.get({
-    //     blockHash: hash
-    //   }, function(res) {
-    //     $scope.totalBlocks = res.height;
-    //   });
-    // };
+        // var _getBlock = function(hash) {
+        //   Block.get({
+        //     blockHash: hash
+        //   }, function(res) {
+        //     $scope.totalBlocks = res.height;
+        //   });
+        // };
 
-    // var socket = getSocket($scope);
-    // socket.on('connect', function() {
-    //   socket.emit('subscribe', 'inv');
+        // var socket = getSocket($scope);
+        // socket.on('connect', function() {
+        //   socket.emit('subscribe', 'inv');
 
-    //   socket.on('block', function(block) {
-    //     var blockHash = block.toString();
-    //     _getBlock(blockHash);
-    //   });
-    // });
-    $scope.isActive = function(route) {
-      return route === $location.path();
-    };
+        //   socket.on('block', function(block) {
+        //     var blockHash = block.toString();
+        //     _getBlock(blockHash);
+        //   });
+        // });
+        $scope.isActive = function (route) {
+            return route === $location.path();
+        };
 
-    $rootScope.isCollapsed = true;
-  });
+        $rootScope.isCollapsed = true;
+    });
 
 // Source: public/src/js/controllers/index.js
 angular
@@ -1147,6 +1357,8 @@ angular
         $scope.global = Global;
         $scope.loading = false;
 
+        
+
         var _badQuery = function () {
             $scope.badQuery = true;
             $timeout(function () {
@@ -1171,16 +1383,23 @@ angular
             return undefined;
         }
 
+        var _badSearch = function() {
+            $scope.loading = false;
+            _resetSearch();
+            _badQuery();
+        }
+
         $scope.search = function () {
             var q = $scope.q;
             $scope.badQuery = false;
             $scope.loading = true;
-            console.log(q);
-            console.log($location.path());
-
+            
             if($location.path().endsWith(q)) {
                 _resetSearch();
                 return;
+            }
+            if(q.length > 200 || !allowedSearchPattern.test(q)) {
+                _badSearch();
             }
 
             try {
@@ -1189,8 +1408,7 @@ angular
                 .then(function (r) {
                     const path = _createPath(r.data);
                     if(r.error || path == undefined) {
-                        _resetSearch();
-                        _badQuery();
+                        _badSearch();
                         return;
                     }
 
@@ -1199,12 +1417,8 @@ angular
                     _resetSearch();
                 })
                 
-            } catch (e) {
-                console.log(e);
-                $scope.loading = false;
-                _resetSearch();
-                _badQuery();
-                $location.path('/');
+            } catch (e) {;
+                __badSearch();
             }
             
             // const lastChar = q.charAt(q.length - 1);
@@ -2454,7 +2668,8 @@ angular.module('insight.verusexplorerapi')
     };
 
     function getIdentity(identityName, height) {
-      return sendRequest(createPayload('/api/identity/info', [identityName, height]));
+      var h = (height == undefined)? '' : '?height='+height;
+      return sendRequest(createPayload('/api/identity/'+identityName+'/info' + h, [], 'GET'));
     };
     
     function getAddressTxIds(address) {
@@ -2463,6 +2678,12 @@ angular.module('insight.verusexplorerapi')
     
     function getAddressBalance(address) {
       return sendRequest(createPayload('/api/address/'+address+'/balance', [], "GET"));
+    };
+
+    function getChartData(range) {
+      const ranges = ["last10Minutes","last30Minutes","lastHour","last3Hours","last6Hours","last12Hours","last24Hours"];
+      if(!ranges.includes(range)) { return Promise.resolve(undefined); }
+      return sendRequest(createPayload('/api/chart/?range='+range, [], "GET"));
     };
 
     function search(query) {
@@ -2502,6 +2723,9 @@ angular.module('insight.verusexplorerapi')
       },
       getAddressBalance: function(address) {
         return getAddressBalance(address);
+      },
+      getChartData: function(range) {
+        return getChartData(range);
       },
       search: function(query) {
         return search(query);
@@ -2565,13 +2789,10 @@ angular
         function messageEventListener (event) {
             lastReceivedTime = new Date().getTime();
             // console.log('Message from server:', event.data);
-            console.log(event.data);
-            console.log(typeof event.data);
-            const d = JSON.parse(event.data.toString());
-            // console.log('Parsed message from server:', d);
-            if(d.status != undefined) { $rootScope.$broadcast(wsMessageTopic, d); }
-            // $rootScope.$broadcast('wsmessage', JSON.parse(event.data));
-            // $rootScope.$emit('wsmessage', JSON.parse(event.data));
+            var data = event.data.toString();
+            console.log(data);
+            data = JSON.parse(data);
+            if(data.status != undefined) { $rootScope.$broadcast(wsMessageTopic, data); }
         };
         
         function openEventListener (event) {

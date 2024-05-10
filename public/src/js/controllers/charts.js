@@ -1,8 +1,12 @@
 'use strict';
 
-angular.module('insight.charts', ["chart.js"])
+angular
+    .module('insight.charts', ["chart.js"])
     .controller('ChartsController',
-        function ($scope) {
+    function (
+        $scope,
+        VerusExplorerApi
+    ) {
             // function($scope, $rootScope, $routeParams, $location, Chart, Charts) {
             // ChartJsProvider.setOptions({ colors : [ '#803690', '#00ADF9', '#DCDCDC', '#46BFBD', '#FDB45C', '#949FB1', '#4D5360'] });
             $scope.loading = false;
@@ -88,27 +92,72 @@ angular.module('insight.charts', ["chart.js"])
             // Mining pool distribution over time
 
             $scope.init = function () {
-                createTxCountOverTimeData();
+                VerusExplorerApi
+                .getChartData("last3Hours")
+                .then(function(queryResult) {
+                    const data = queryResult.data;
+                    if (data[0]) {
+                        createTxCountOverTimeData(data);
+                    }
+                });
+            }
+
+            const _getDateIndex = function(date, dataIntervalInMinutes) {
+                var minutes = "00";
+                const rawMinuteValue = date.getMinutes();
+                if(rawMinuteValue == 0 || rawMinuteValue < dataIntervalInMinutes) {
+                    minutes = "00";
+                }
+        
+                if(rawMinuteValue > dataIntervalInMinutes && rawMinuteValue % dataIntervalInMinutes > 0) {
+                    minutes = (rawMinuteValue - (rawMinuteValue % dataIntervalInMinutes)).toString().padStart(2, '0');
+                }
+
+                const month = (date.getMonth() + 1).toString().padStart(2, '0');
+                const day = date.getDate().toString().padStart(2, '0');;
+                const hour = date.getHours().toString().padStart(2, '0');
+                return {
+                    label: month + '/' + day + ' ' + hour + ':' + minutes,
+                    key: month + '-' + day + '_' + hour + ':' + minutes,
+                };
             }
 
 
-            const createTxCountOverTimeData = function () {
-                // $scope.labels = ['2006', '2007', '2008', '2009', '2010', '2011', '2012'];
+            const createTxCountOverTimeData = function (data) {
                 $scope.title = "Transaction Over Time";
-                $scope.labels = [
-                    "7:00",
-                    "7:10",
-                    "7:20",
-                    "7:30",
-                    "7:40",
-                    "7:50",
-                    "8:00",
-                ];
-                $scope.series = ['Transactions'];
-    
+                $scope.series = ["Blocks", "Transactions"];
+                const dataIntervalInMinutes = 10;
+                var aggregate = {};
+                var dateIndex = "";
+
+                for(var i = 0; i < data.length; i++) {
+                    const d = new Date(data[i].time * 1000);
+                    const id = _getDateIndex(d, dataIntervalInMinutes);
+                    dateIndex = id.key;
+                    if(aggregate[dateIndex] == undefined) {
+                        aggregate[dateIndex] = {
+                            displayText: id.label,
+                            blockCount: 0,
+                            txCount: 0,
+                        }
+                    }
+                    aggregate[dateIndex].blockCount = aggregate[dateIndex].blockCount + 1;
+                    aggregate[dateIndex].txCount = aggregate[dateIndex].txCount + data[i].txs.length;
+                }
+
+                $scope.labels = [];
+                $scope.data = [];
+                var blockCount = [];
+                var txCount = [];
+                for (var key in aggregate) {
+                    $scope.labels.unshift(aggregate[key].displayText);
+                    blockCount.unshift(aggregate[key].blockCount);
+                    txCount.unshift(aggregate[key].txCount);
+                }
+
                 $scope.data = [
-                  [65, 59, 80, 81, 56, 55, 40],
-                  [28, 48, 40, 19, 86, 27, 90]
+                    blockCount,
+                    txCount,
                 ];
             }
 
