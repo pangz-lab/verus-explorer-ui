@@ -1,6 +1,6 @@
 <div data-ng-include src="'views/includes/connection.html'"></div>
 <!-- <section data-ng-controller="ChartsController" data-ng-init="init()"> -->
-<section data-ng-controller="ChartsController" data-ng-init="init()">
+<section data-ng-controller="ChartsController" data-ng-init="fetchChartData()">
     <div class="row">
         <div class="col-xs-12 col-gray col-gray-fixed">
             <div class="block-id">
@@ -40,8 +40,7 @@
                 <div id="chart">
                     <h1>{{title}}</h1>
                     <!-- <canvas id="doughnut" class="chart chart-doughnut" chart-data="data" chart-labels="labels"></canvas> -->
-                    <canvas id="bar" class="chart chart-bar" chart-data="data" chart-labels="labels"
-                        chart-series="series"></canvas>
+                    <canvas id="bar" class="chart chart-bar" chart-data="data" chart-labels="labels" chart-series="series"></canvas>
 
                     <!-- <canvas id="radar" class="chart chart-radar" chart-data="data" chart-options="options" chart-labels="labels"></canvas>  -->
                     <!-- <canvas id="base" class="chart-bubble" chart-data="data" chart-series="series" ></canvas>  -->

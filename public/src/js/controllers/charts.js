@@ -94,52 +94,80 @@ angular
             // Block size distribution
             // Transaction Fees Over Time
             // Mining pool distribution over time
+            const chartTxCountOverTimeCacheSuffix = "tx-over-time";
+            const defaultRangeSelected = 3;
             const cacheKeys = localStore.charts.keys;
-            const defaultRangeSelected = 'last3Hours';
-            const defaultCacheIds = cacheKeys.last3Hours;
-            $scope.rangeSelection = [
+            const rangeSelectionOptions = [
                 { label: '10min', key: 'last10Minutes', intervalInMinutes: 10, cache: cacheKeys.last10Minutes },
                 { label: '30min', key: 'last30Minutes', intervalInMinutes: 10, cache: cacheKeys.last30Minutes },
                 { label: '1hr', key: 'lastHour', intervalInMinutes: 10, cache: cacheKeys.lastHour },
                 { label: '3hr', key: 'last3Hours', intervalInMinutes: 10, cache: cacheKeys.last3Hours },
                 { label: '6hr', key: 'last6Hours', intervalInMinutes: 20, cache: cacheKeys.last6Hours },
                 { label: '12hr', key: 'last12Hours', intervalInMinutes: 30, cache: cacheKeys.last12Hours },
-                { label: '24hr', key: 'last24Hours', intervalInMinutes: 30, cache: cacheKeys.last24Hours },
-                { label: '3d', key: 'last3Days', intervalInMinutes: 60 * 24, cache: cacheKeys.last3Days },
+                { label: '24hr', key: 'last24Hours', intervalInMinutes: 60, cache: cacheKeys.last24Hours },
+                { label: '3d', key: 'last3Days', intervalInMinutes: 60 * 6, cache: cacheKeys.last3Days },
                 { label: '1wk', key: 'last7Days', intervalInMinutes: 60 * 24, cache: cacheKeys.last7Days },
                 { label: '2wk', key: 'last15Days', intervalInMinutes: 60 * 24 * 5, cache: cacheKeys.last15Days },
                 { label: '30d', key: 'last30Days', intervalInMinutes: 60 * 24 * 10, cache: cacheKeys.last30Days },
             ]
+            $scope.rangeSelection = rangeSelectionOptions;
             $scope.rangeSelected = defaultRangeSelected;
             $scope.fetchChartData = function(range) {
+                if(range == undefined) {
+                    range = rangeSelectionOptions[defaultRangeSelected];
+                }
+
+                const c = _getCacheIds(chartTxCountOverTimeCacheSuffix, range.cache);
+                const cachedData = LocalStore.get(c.key);
+                if(cachedData != undefined) {
+                    _createTxCountOverTimeData(null, range, cachedData);
+                    return;
+                }
+
                 VerusExplorerApi
                 .getChartData(range.key)
                 .then(function(queryResult) {
                     const data = queryResult.data;
-                    if (data[0]) {
-                        createTxCountOverTimeData(data, range.intervalInMinutes, range.cache);
-                    }
+                    if (data[0]) { _createTxCountOverTimeData(data, range); }
                 });
             }
 
-            $scope.init = function () {
-                VerusExplorerApi
-                .getChartData(defaultRangeSelected)
-                .then(function(queryResult) {
-                    const data = queryResult.data;
-                    if (data[0]) {
-                        createTxCountOverTimeData(data, 10, defaultCacheIds);
-                    }
-                });
+            const _getCacheIds = function(cacheSuffix, cacheIds) {
+                return {
+                    key: cacheIds.key + ':' + cacheSuffix,
+                    ttl: cacheIds.ttl
+                }
             }
 
             const _getDateIndex = function(date, dataIntervalInMinutes) {
                 var minutes = "00";
                 const rawMinuteValue = date.getMinutes();
+                const month = (date.getMonth() + 1).toString().padStart(2, '0');
+                const day = date.getDate().toString().padStart(2, '0');
+                const hour = date.getHours().toString().padStart(2, '0');
+
+                // More than a day
+                if(dataIntervalInMinutes >= 60 * 6) {
+                    return {
+                        label: month + '/' + day,
+                        key: month + '-' + day,
+                    };
+                }
+                
+                // More than an hour
+                if(dataIntervalInMinutes >= 60) {
+                    return {
+                        label: month + '/' + day + ' ' + hour + ':00',
+                        key: month + '-' + day + '_' + hour + ':00',
+                    };
+                }
+                
+                // Less than an hour
                 if(rawMinuteValue < dataIntervalInMinutes) {
                     minutes = "00";
                 }
         
+                // Less than a minute
                 if(rawMinuteValue > dataIntervalInMinutes) {
                     if((rawMinuteValue % dataIntervalInMinutes) > 0) {                        
                         minutes = (rawMinuteValue - (rawMinuteValue % dataIntervalInMinutes)).toString().padStart(2, '0');
@@ -147,42 +175,30 @@ angular
                         minutes = rawMinuteValue.toString().padStart(2, '0');
                     }
                 }
-
-                const month = (date.getMonth() + 1).toString().padStart(2, '0');
-                const day = date.getDate().toString().padStart(2, '0');
-                const hour = date.getHours().toString().padStart(2, '0');
                 return {
                     label: month + '/' + day + ' ' + hour + ':' + minutes,
                     key: month + '-' + day + '_' + hour + ':' + minutes,
                 };
             }
 
-            const createTxCountOverTimeData = function (data, intervalInMinutes, cacheIds) {
+            const _createTxCountOverTimeData = function (data, range, cachedData) {
                 $scope.title = "Transaction Over Time";
                 $scope.series = ["Blocks", "Transactions"];
                 $scope.labels = [];
                 $scope.data = [];
 
-                const cacheSuffix = "tx-over-time";
-                const cacheKey = cacheIds.key + ':' + cacheSuffix;
-                const cacheTtl = cacheIds.key;
-                const cachedData = LocalStore.get(cacheKey);
-
-                if( cachedData != undefined) {
-                    console.log("Getting chart data from cache .....")
+                if(cachedData != undefined) {
                     $scope.labels = cachedData.labels;
                     $scope.data = cachedData.data;
-                    // $scope.$apply();
                     return;
                 }
-                
-                const dataIntervalInMinutes = intervalInMinutes;
+
                 var aggregate = {};
                 var dateIndex = "";
 
                 for(var i = 0; i < data.length; i++) {
                     const d = new Date(data[i].time * 1000);
-                    const id = _getDateIndex(d, dataIntervalInMinutes);
+                    const id = _getDateIndex(d, range.intervalInMinutes);
                     dateIndex = id.key;
                     if(aggregate[dateIndex] == undefined) {
                         aggregate[dateIndex] = {
@@ -207,7 +223,9 @@ angular
                     blockCount,
                     txCount,
                 ];
-                _saveToCache({labels: $scope.labels, data: $scope.data}, cacheKey, cacheTtl);
+
+                const c = _getCacheIds(chartTxCountOverTimeCacheSuffix, range.cache)
+                _saveToCache({labels: $scope.labels, data: $scope.data}, c.key, c.ttl);
             }
 
 
