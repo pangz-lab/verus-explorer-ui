@@ -22,6 +22,21 @@ const localStore = {
   latestBlocks: { key: netSymbol + ':vexp_blocks_received', ttl: 86400 },
   latestBlockTxs: { key: netSymbol + ':vexp_txs_received', ttl: 86400 },
   nodeState: { key: netSymbol + ':vexp_chain_node_state', ttl: 86400 },
+  charts: {
+    keys: {
+      last10Minutes: { key: netSymbol + ':vexp_chart_last10Minutes', ttl: 60 }, //1 min
+      last30Minutes: { key: netSymbol + ':vexp_chart_last30Minutes', ttl: 120 }, //2 min
+      lastHour: { key: netSymbol + ':vexp_chart_lastHour', ttl: 600 }, //10 min
+      last3Hours: { key: netSymbol + ':vexp_chart_last3Hours', ttl: 600 }, //10 min
+      last6Hours: { key: netSymbol + ':vexp_chart_last6Hours', ttl: 1800 }, //30 min
+      last12Hours: { key: netSymbol + ':vexp_chart_last12Hours', ttl: 1800 },//30 min
+      last24Hours: { key: netSymbol + ':vexp_chart_last24Hours', ttl: 43200 },//12 hr
+      last3Days: { key: netSymbol + ':vexp_chart_last3Days', ttl: 43200 },//12 hr
+      last7Days: { key: netSymbol + ':vexp_chart_last7Days', ttl: 86400 },//24 hr
+      last15Days: { key: netSymbol + ':vexp_chart_last15Days', ttl: 86400 },//24 hr
+      last30Days: { key: netSymbol + ':vexp_chart_last30Days', ttl: 86400 },//24 hr
+    }
+  },
   // api: {
   //   blockchainHeight: { key: netSymbol + ':vexp_chain_height', ttl: 5 }
   // },
@@ -555,11 +570,15 @@ angular
     .controller('ChartsController',
     function (
         $scope,
-        VerusExplorerApi
+        VerusExplorerApi,
+        LocalStore
     ) {
             // function($scope, $rootScope, $routeParams, $location, Chart, Charts) {
             // ChartJsProvider.setOptions({ colors : [ '#803690', '#00ADF9', '#DCDCDC', '#46BFBD', '#FDB45C', '#949FB1', '#4D5360'] });
             $scope.loading = false;
+            const _saveToCache = function(data, key, ttl) {
+                LocalStore.set(key, data, ttl);
+            }
 
 
 
@@ -640,14 +659,41 @@ angular
             // Block size distribution
             // Transaction Fees Over Time
             // Mining pool distribution over time
-
-            $scope.init = function () {
+            const cacheKeys = localStore.charts.keys;
+            const defaultRangeSelected = 'last3Hours';
+            const defaultCacheIds = cacheKeys.last3Hours;
+            $scope.rangeSelection = [
+                { label: '10min', key: 'last10Minutes', intervalInMinutes: 10, cache: cacheKeys.last10Minutes },
+                { label: '30min', key: 'last30Minutes', intervalInMinutes: 10, cache: cacheKeys.last30Minutes },
+                { label: '1hr', key: 'lastHour', intervalInMinutes: 10, cache: cacheKeys.lastHour },
+                { label: '3hr', key: 'last3Hours', intervalInMinutes: 10, cache: cacheKeys.last3Hours },
+                { label: '6hr', key: 'last6Hours', intervalInMinutes: 20, cache: cacheKeys.last6Hours },
+                { label: '12hr', key: 'last12Hours', intervalInMinutes: 30, cache: cacheKeys.last12Hours },
+                { label: '24hr', key: 'last24Hours', intervalInMinutes: 30, cache: cacheKeys.last24Hours },
+                { label: '3d', key: 'last3Days', intervalInMinutes: 60 * 24, cache: cacheKeys.last3Days },
+                { label: '1wk', key: 'last7Days', intervalInMinutes: 60 * 24, cache: cacheKeys.last7Days },
+                { label: '2wk', key: 'last15Days', intervalInMinutes: 60 * 24 * 5, cache: cacheKeys.last15Days },
+                { label: '30d', key: 'last30Days', intervalInMinutes: 60 * 24 * 10, cache: cacheKeys.last30Days },
+            ]
+            $scope.rangeSelected = defaultRangeSelected;
+            $scope.fetchChartData = function(range) {
                 VerusExplorerApi
-                .getChartData("last3Hours")
+                .getChartData(range.key)
                 .then(function(queryResult) {
                     const data = queryResult.data;
                     if (data[0]) {
-                        createTxCountOverTimeData(data);
+                        createTxCountOverTimeData(data, range.intervalInMinutes, range.cache);
+                    }
+                });
+            }
+
+            $scope.init = function () {
+                VerusExplorerApi
+                .getChartData(defaultRangeSelected)
+                .then(function(queryResult) {
+                    const data = queryResult.data;
+                    if (data[0]) {
+                        createTxCountOverTimeData(data, 10, defaultCacheIds);
                     }
                 });
             }
@@ -676,10 +722,26 @@ angular
                 };
             }
 
-            const createTxCountOverTimeData = function (data) {
+            const createTxCountOverTimeData = function (data, intervalInMinutes, cacheIds) {
                 $scope.title = "Transaction Over Time";
                 $scope.series = ["Blocks", "Transactions"];
-                const dataIntervalInMinutes = 10;
+                $scope.labels = [];
+                $scope.data = [];
+
+                const cacheSuffix = "tx-over-time";
+                const cacheKey = cacheIds.key + ':' + cacheSuffix;
+                const cacheTtl = cacheIds.key;
+                const cachedData = LocalStore.get(cacheKey);
+
+                if( cachedData != undefined) {
+                    console.log("Getting chart data from cache .....")
+                    $scope.labels = cachedData.labels;
+                    $scope.data = cachedData.data;
+                    // $scope.$apply();
+                    return;
+                }
+                
+                const dataIntervalInMinutes = intervalInMinutes;
                 var aggregate = {};
                 var dateIndex = "";
 
@@ -698,8 +760,6 @@ angular
                     aggregate[dateIndex].txCount = aggregate[dateIndex].txCount + data[i].txs.length;
                 }
 
-                $scope.labels = [];
-                $scope.data = [];
                 var blockCount = [];
                 var txCount = [];
                 for (var key in aggregate) {
@@ -712,6 +772,7 @@ angular
                     blockCount,
                     txCount,
                 ];
+                _saveToCache({labels: $scope.labels, data: $scope.data}, cacheKey, cacheTtl);
             }
 
 
@@ -2684,7 +2745,19 @@ angular.module('insight.verusexplorerapi')
     };
 
     function getChartData(range) {
-      const ranges = ["last10Minutes","last30Minutes","lastHour","last3Hours","last6Hours","last12Hours","last24Hours"];
+      const ranges = [
+        "last10Minutes",
+        "last30Minutes",
+        "lastHour",
+        "last3Hours",
+        "last6Hours",
+        "last12Hours",
+        "last24Hours",
+        "last3Days",
+        "last7Days",
+        "last15Days",
+        "last30Days",
+      ];
       if(!ranges.includes(range)) { return Promise.resolve(undefined); }
       return sendRequest(createPayload('/api/chart/?range='+range, [], "GET"));
     };

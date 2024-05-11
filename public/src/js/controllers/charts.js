@@ -5,11 +5,15 @@ angular
     .controller('ChartsController',
     function (
         $scope,
-        VerusExplorerApi
+        VerusExplorerApi,
+        LocalStore
     ) {
             // function($scope, $rootScope, $routeParams, $location, Chart, Charts) {
             // ChartJsProvider.setOptions({ colors : [ '#803690', '#00ADF9', '#DCDCDC', '#46BFBD', '#FDB45C', '#949FB1', '#4D5360'] });
             $scope.loading = false;
+            const _saveToCache = function(data, key, ttl) {
+                LocalStore.set(key, data, ttl);
+            }
 
 
 
@@ -90,14 +94,41 @@ angular
             // Block size distribution
             // Transaction Fees Over Time
             // Mining pool distribution over time
-
-            $scope.init = function () {
+            const cacheKeys = localStore.charts.keys;
+            const defaultRangeSelected = 'last3Hours';
+            const defaultCacheIds = cacheKeys.last3Hours;
+            $scope.rangeSelection = [
+                { label: '10min', key: 'last10Minutes', intervalInMinutes: 10, cache: cacheKeys.last10Minutes },
+                { label: '30min', key: 'last30Minutes', intervalInMinutes: 10, cache: cacheKeys.last30Minutes },
+                { label: '1hr', key: 'lastHour', intervalInMinutes: 10, cache: cacheKeys.lastHour },
+                { label: '3hr', key: 'last3Hours', intervalInMinutes: 10, cache: cacheKeys.last3Hours },
+                { label: '6hr', key: 'last6Hours', intervalInMinutes: 20, cache: cacheKeys.last6Hours },
+                { label: '12hr', key: 'last12Hours', intervalInMinutes: 30, cache: cacheKeys.last12Hours },
+                { label: '24hr', key: 'last24Hours', intervalInMinutes: 30, cache: cacheKeys.last24Hours },
+                { label: '3d', key: 'last3Days', intervalInMinutes: 60 * 24, cache: cacheKeys.last3Days },
+                { label: '1wk', key: 'last7Days', intervalInMinutes: 60 * 24, cache: cacheKeys.last7Days },
+                { label: '2wk', key: 'last15Days', intervalInMinutes: 60 * 24 * 5, cache: cacheKeys.last15Days },
+                { label: '30d', key: 'last30Days', intervalInMinutes: 60 * 24 * 10, cache: cacheKeys.last30Days },
+            ]
+            $scope.rangeSelected = defaultRangeSelected;
+            $scope.fetchChartData = function(range) {
                 VerusExplorerApi
-                .getChartData("last3Hours")
+                .getChartData(range.key)
                 .then(function(queryResult) {
                     const data = queryResult.data;
                     if (data[0]) {
-                        createTxCountOverTimeData(data);
+                        createTxCountOverTimeData(data, range.intervalInMinutes, range.cache);
+                    }
+                });
+            }
+
+            $scope.init = function () {
+                VerusExplorerApi
+                .getChartData(defaultRangeSelected)
+                .then(function(queryResult) {
+                    const data = queryResult.data;
+                    if (data[0]) {
+                        createTxCountOverTimeData(data, 10, defaultCacheIds);
                     }
                 });
             }
@@ -126,10 +157,26 @@ angular
                 };
             }
 
-            const createTxCountOverTimeData = function (data) {
+            const createTxCountOverTimeData = function (data, intervalInMinutes, cacheIds) {
                 $scope.title = "Transaction Over Time";
                 $scope.series = ["Blocks", "Transactions"];
-                const dataIntervalInMinutes = 10;
+                $scope.labels = [];
+                $scope.data = [];
+
+                const cacheSuffix = "tx-over-time";
+                const cacheKey = cacheIds.key + ':' + cacheSuffix;
+                const cacheTtl = cacheIds.key;
+                const cachedData = LocalStore.get(cacheKey);
+
+                if( cachedData != undefined) {
+                    console.log("Getting chart data from cache .....")
+                    $scope.labels = cachedData.labels;
+                    $scope.data = cachedData.data;
+                    // $scope.$apply();
+                    return;
+                }
+                
+                const dataIntervalInMinutes = intervalInMinutes;
                 var aggregate = {};
                 var dateIndex = "";
 
@@ -148,8 +195,6 @@ angular
                     aggregate[dateIndex].txCount = aggregate[dateIndex].txCount + data[i].txs.length;
                 }
 
-                $scope.labels = [];
-                $scope.data = [];
                 var blockCount = [];
                 var txCount = [];
                 for (var key in aggregate) {
@@ -162,6 +207,7 @@ angular
                     blockCount,
                     txCount,
                 ];
+                _saveToCache({labels: $scope.labels, data: $scope.data}, cacheKey, cacheTtl);
             }
 
 

@@ -23,6 +23,21 @@ const localStore = {
   latestBlocks: { key: netSymbol + ':vexp_blocks_received', ttl: 86400 },
   latestBlockTxs: { key: netSymbol + ':vexp_txs_received', ttl: 86400 },
   nodeState: { key: netSymbol + ':vexp_chain_node_state', ttl: 86400 },
+  charts: {
+    keys: {
+      last10Minutes: { key: netSymbol + ':vexp_chart_last10Minutes', ttl: 60 }, //1 min
+      last30Minutes: { key: netSymbol + ':vexp_chart_last30Minutes', ttl: 120 }, //2 min
+      lastHour: { key: netSymbol + ':vexp_chart_lastHour', ttl: 600 }, //10 min
+      last3Hours: { key: netSymbol + ':vexp_chart_last3Hours', ttl: 600 }, //10 min
+      last6Hours: { key: netSymbol + ':vexp_chart_last6Hours', ttl: 1800 }, //30 min
+      last12Hours: { key: netSymbol + ':vexp_chart_last12Hours', ttl: 1800 },//30 min
+      last24Hours: { key: netSymbol + ':vexp_chart_last24Hours', ttl: 43200 },//12 hr
+      last3Days: { key: netSymbol + ':vexp_chart_last3Days', ttl: 43200 },//12 hr
+      last7Days: { key: netSymbol + ':vexp_chart_last7Days', ttl: 86400 },//24 hr
+      last15Days: { key: netSymbol + ':vexp_chart_last15Days', ttl: 86400 },//24 hr
+      last30Days: { key: netSymbol + ':vexp_chart_last30Days', ttl: 86400 },//24 hr
+    }
+  },
   // api: {
   //   blockchainHeight: { key: netSymbol + ':vexp_chain_height', ttl: 5 }
   // },
