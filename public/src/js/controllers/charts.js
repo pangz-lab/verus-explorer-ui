@@ -105,7 +105,7 @@ angular
                 { label: '6hr', key: 'last6Hours', intervalInMinutes: 20, cache: cacheKeys.last6Hours },
                 { label: '12hr', key: 'last12Hours', intervalInMinutes: 30, cache: cacheKeys.last12Hours },
                 { label: '24hr', key: 'last24Hours', intervalInMinutes: 60, cache: cacheKeys.last24Hours },
-                { label: '3d', key: 'last3Days', intervalInMinutes: 60 * 6, cache: cacheKeys.last3Days },
+                { label: '3d', key: 'last3Days', intervalInMinutes: 60 * 3, cache: cacheKeys.last3Days },
                 { label: '1wk', key: 'last7Days', intervalInMinutes: 60 * 24, cache: cacheKeys.last7Days },
                 { label: '2wk', key: 'last15Days', intervalInMinutes: 60 * 24 * 5, cache: cacheKeys.last15Days },
                 { label: '30d', key: 'last30Days', intervalInMinutes: 60 * 24 * 10, cache: cacheKeys.last30Days },

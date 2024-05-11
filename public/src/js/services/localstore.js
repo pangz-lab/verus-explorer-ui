@@ -8,7 +8,8 @@ angular
         this.set = function(key, value, ttlInSeconds) {
             var ttl = new Date();
             ttl.setSeconds(ttl.getSeconds() + ttlInSeconds);
-            localStorage.setItem(key, JSON.stringify({ data: value, createdAt: new Date(), ttl: ttl}));
+            const data = { data: value, createdAt: (new Date()).toString(), ttl: ttl.toString()};
+            localStorage.setItem(key, JSON.stringify(data));
         }
         
         this.get = function(key) {
@@ -17,13 +18,13 @@ angular
                 return cache.data;
             }
 
+            localStorage.removeItem(key);
             return undefined;
         }
 
         this.isExpired = function(cache) {
             const ttl = cache.ttl;
-
             return cache != undefined &&
-            Math.floor((new Date() - new Date(cache.createdAt)) / 1000) < ttl;
+            (new Date()).getTime() > (new Date(ttl)).getTime();
         }
 });
