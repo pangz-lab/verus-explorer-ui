@@ -655,23 +655,26 @@ angular
             const _getDateIndex = function(date, dataIntervalInMinutes) {
                 var minutes = "00";
                 const rawMinuteValue = date.getMinutes();
-                if(rawMinuteValue == 0 || rawMinuteValue < dataIntervalInMinutes) {
+                if(rawMinuteValue < dataIntervalInMinutes) {
                     minutes = "00";
                 }
         
-                if(rawMinuteValue > dataIntervalInMinutes && rawMinuteValue % dataIntervalInMinutes > 0) {
-                    minutes = (rawMinuteValue - (rawMinuteValue % dataIntervalInMinutes)).toString().padStart(2, '0');
+                if(rawMinuteValue > dataIntervalInMinutes) {
+                    if((rawMinuteValue % dataIntervalInMinutes) > 0) {                        
+                        minutes = (rawMinuteValue - (rawMinuteValue % dataIntervalInMinutes)).toString().padStart(2, '0');
+                    } else {
+                        minutes = rawMinuteValue.toString().padStart(2, '0');
+                    }
                 }
 
                 const month = (date.getMonth() + 1).toString().padStart(2, '0');
-                const day = date.getDate().toString().padStart(2, '0');;
+                const day = date.getDate().toString().padStart(2, '0');
                 const hour = date.getHours().toString().padStart(2, '0');
                 return {
                     label: month + '/' + day + ' ' + hour + ':' + minutes,
                     key: month + '-' + day + '_' + hour + ':' + minutes,
                 };
             }
-
 
             const createTxCountOverTimeData = function (data) {
                 $scope.title = "Transaction Over Time";
