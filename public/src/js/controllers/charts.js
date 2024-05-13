@@ -94,7 +94,7 @@ angular
             // Block size distribution
             // Transaction Fees Over Time
             // Mining pool distribution over time
-            const chartTxCountOverTimeCacheSuffix = "tx-over-time";
+            const chartTypeName = chart.types.txOverTime.apiName;
             const defaultRangeSelected = 3;
             const cacheKeys = localStore.charts.keys;
             const rangeSelectionOptions = [
@@ -109,26 +109,28 @@ angular
                 { label: '1wk', key: 'last7Days', intervalInMinutes: 60 * 24, cache: cacheKeys.last7Days },
                 { label: '2wk', key: 'last15Days', intervalInMinutes: 60 * 24 * 5, cache: cacheKeys.last15Days },
                 { label: '30d', key: 'last30Days', intervalInMinutes: 60 * 24 * 10, cache: cacheKeys.last30Days },
+                { label: '90d', key: 'last90Days', intervalInMinutes: 60 * 24 * 30, cache: cacheKeys.last90Days },
             ]
             $scope.rangeSelection = rangeSelectionOptions;
             $scope.rangeSelected = defaultRangeSelected;
+
             $scope.fetchChartData = function(range) {
                 if(range == undefined) {
                     range = rangeSelectionOptions[defaultRangeSelected];
                 }
 
-                const c = _getCacheIds(chartTxCountOverTimeCacheSuffix, range.cache);
-                const cachedData = LocalStore.get(c.key);
+                const cacheId = _getCacheIds(chartTypeName, range.cache);
+                const cachedData = LocalStore.get(cacheId.key);
                 if(cachedData != undefined) {
                     _createTxCountOverTimeData(null, range, cachedData);
                     return;
                 }
 
                 VerusExplorerApi
-                .getChartData(range.key)
+                .getChartData(chartTypeName, range.key)
                 .then(function(queryResult) {
                     const data = queryResult.data;
-                    if (data[0]) { _createTxCountOverTimeData(data, range); }
+                    if (!queryResult.error && data.labels[0] != undefined) { _createTxCountOverTimeData(data, range); }
                 });
             }
 
@@ -139,53 +141,19 @@ angular
                 }
             }
 
-            const _getDateIndex = function(date, dataIntervalInMinutes) {
-                var minutes = "00";
-                const rawMinuteValue = date.getMinutes();
-                const month = (date.getMonth() + 1).toString().padStart(2, '0');
-                const day = date.getDate().toString().padStart(2, '0');
-                const hour = date.getHours().toString().padStart(2, '0');
-
-                // More than a day
-                if(dataIntervalInMinutes >= 60 * 6) {
-                    return {
-                        label: month + '/' + day,
-                        key: month + '-' + day,
-                    };
-                }
-                
-                // More than an hour
-                if(dataIntervalInMinutes >= 60) {
-                    return {
-                        label: month + '/' + day + ' ' + hour + ':00',
-                        key: month + '-' + day + '_' + hour + ':00',
-                    };
-                }
-                
-                // Less than an hour
-                if(rawMinuteValue < dataIntervalInMinutes) {
-                    minutes = "00";
-                }
-        
-                // Less than a minute
-                if(rawMinuteValue > dataIntervalInMinutes) {
-                    if((rawMinuteValue % dataIntervalInMinutes) > 0) {                        
-                        minutes = (rawMinuteValue - (rawMinuteValue % dataIntervalInMinutes)).toString().padStart(2, '0');
-                    } else {
-                        minutes = rawMinuteValue.toString().padStart(2, '0');
-                    }
-                }
-                return {
-                    label: month + '/' + day + ' ' + hour + ':' + minutes,
-                    key: month + '-' + day + '_' + hour + ':' + minutes,
-                };
-            }
-
             const _createTxCountOverTimeData = function (data, range, cachedData) {
                 $scope.title = "Transaction Over Time";
                 $scope.series = ["Blocks", "Transactions"];
                 $scope.labels = [];
                 $scope.data = [];
+                $scope.options = {
+                    legend: {
+                        display: true,
+                        labels: {
+                            color: 'red'
+                        }
+                    }
+                };
 
                 if(cachedData != undefined) {
                     $scope.labels = cachedData.labels;
@@ -193,83 +161,18 @@ angular
                     return;
                 }
 
-                var aggregate = {};
-                var dateIndex = "";
+                $scope.labels = data.labels
+                $scope.data = data.data;
 
-                for(var i = 0; i < data.length; i++) {
-                    const d = new Date(data[i].time * 1000);
-                    const id = _getDateIndex(d, range.intervalInMinutes);
-                    dateIndex = id.key;
-                    if(aggregate[dateIndex] == undefined) {
-                        aggregate[dateIndex] = {
-                            displayText: id.label,
-                            blockCount: 0,
-                            txCount: 0,
-                        }
-                    }
-                    aggregate[dateIndex].blockCount = aggregate[dateIndex].blockCount + 1;
-                    aggregate[dateIndex].txCount = aggregate[dateIndex].txCount + data[i].txs.length;
-                }
-
-                var blockCount = [];
-                var txCount = [];
-                for (var key in aggregate) {
-                    $scope.labels.unshift(aggregate[key].displayText);
-                    blockCount.unshift(aggregate[key].blockCount);
-                    txCount.unshift(aggregate[key].txCount);
-                }
-
-                $scope.data = [
-                    blockCount,
-                    txCount,
-                ];
-
-                const c = _getCacheIds(chartTxCountOverTimeCacheSuffix, range.cache)
+                const c = _getCacheIds(chartTypeName, range.cache)
                 _saveToCache({labels: $scope.labels, data: $scope.data}, c.key, c.ttl);
             }
-
-
-            // $scope.list = function() {
-            //   Charts.get({
-            //   }, function(res) {
-            //     $scope.charts = res.charts;
-            //   });
-
-            //   if ($routeParams.chartType) {
-            //     $scope.chart();
-            //   }
-            // };
-
-            // $scope.chart = function() {
-            //   $scope.loading = true;
-
-            //   Chart.get({
-            //     chartType: $routeParams.chartType
-            //   }, function(chart) {
-            //     $scope.loading = false;
-            //     $scope.chartType = $routeParams.chartType;
-            //     $scope.chartName = chart.name;
-            //     $scope.chart = c3.generate(chart);
-            //   }, function(e) {
-            //     if (e.status === 400) {
-            //       $rootScope.flashMessage = 'Invalid chart: ' + $routeParams.chartType;
-            //     }
-            //     else if (e.status === 503) {
-            //       $rootScope.flashMessage = 'Backend Error. ' + e.data;
-            //     }
-            //     else {
-            //       $rootScope.flashMessage = 'Chart Not Found';
-            //     }
-            //     $location.path('/');
-            //   });
-            // };
-
             // $scope.params = $routeParams;
 
-        });
+        })
 
-// .config(['ChartJsProvider', function (ChartJsProvider) {
-//   ChartJsProvider.setOptions({
-//     colors : [ '#803690', '#00ADF9', '#DCDCDC', '#46BFBD', '#FDB45C', '#949FB1', '#4D5360']
-//   });
-// }]);
+.config(['ChartJsProvider', function (ChartJsProvider) {
+  ChartJsProvider.setOptions({
+    colors : [ '#803690', '#00ADF9', '#DCDCDC', '#46BFBD', '#FDB45C', '#949FB1', '#4D5360']
+  });
+}]);

@@ -83,7 +83,7 @@ angular.module('insight.verusexplorerapi')
       return sendRequest(createPayload('/api/address/'+address+'/balance', [], "GET"));
     };
 
-    function getChartData(range) {
+    function getChartData(type, range) {
       const ranges = [
         "last10Minutes",
         "last30Minutes",
@@ -96,9 +96,10 @@ angular.module('insight.verusexplorerapi')
         "last7Days",
         "last15Days",
         "last30Days",
+        "last90Days",
       ];
       if(!ranges.includes(range)) { return Promise.resolve(undefined); }
-      return sendRequest(createPayload('/api/chart/?range='+range, [], "GET"));
+      return sendRequest(createPayload('/api/chart/'+type+'/?range='+range, [], "GET"));
     };
 
     function search(query) {
@@ -139,8 +140,8 @@ angular.module('insight.verusexplorerapi')
       getAddressBalance: function(address) {
         return getAddressBalance(address);
       },
-      getChartData: function(range) {
-        return getChartData(range);
+      getChartData: function(type, range) {
+        return getChartData(type, range);
       },
       search: function(query) {
         return search(query);

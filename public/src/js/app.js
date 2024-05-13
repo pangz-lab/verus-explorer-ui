@@ -36,11 +36,17 @@ const localStore = {
       last7Days: { key: netSymbol + ':vexp_chart_last7Days', ttl: 86400 },//24 hr
       last15Days: { key: netSymbol + ':vexp_chart_last15Days', ttl: 86400 },//24 hr
       last30Days: { key: netSymbol + ':vexp_chart_last30Days', ttl: 86400 },//24 hr
+      last90Days: { key: netSymbol + ':vexp_chart_last90Days', ttl: 86400 },//24 hr
     }
   },
   // api: {
   //   blockchainHeight: { key: netSymbol + ':vexp_chain_height', ttl: 5 }
   // },
+}
+const chart = {
+  types: {
+    txOverTime: { apiName: 'txovertime' }
+  }
 }
 
 var defaultLanguage = localStorage.getItem('insight-language') || 'en';
