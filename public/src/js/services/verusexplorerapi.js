@@ -84,20 +84,7 @@ angular.module('insight.verusexplorerapi')
     };
 
     function getChartData(type, range) {
-      const ranges = [
-        "last10Minutes",
-        "last30Minutes",
-        "lastHour",
-        "last3Hours",
-        "last6Hours",
-        "last12Hours",
-        "last24Hours",
-        "last3Days",
-        "last7Days",
-        "last15Days",
-        "last30Days",
-        "last90Days",
-      ];
+      const ranges = Object.keys(localStore.charts.keys);
       if(!ranges.includes(range)) { return Promise.resolve(undefined); }
       return sendRequest(createPayload('/api/chart/'+type+'/?range='+range, [], "GET"));
     };

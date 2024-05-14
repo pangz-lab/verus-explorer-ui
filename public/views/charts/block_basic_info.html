@@ -1,0 +1,33 @@
+<h2>Block Info</h2>
+<div class="btn-group">
+    <label class="btn btn-info animate-repeat" ng-model="rangeSelected" ng-repeat="range in rangeSelection" uib-btn-radio="'{{range.key}}'" ng-click="fetchChartData(range)">
+        {{range.label}}
+    </label>
+</div>
+
+<!-- <div class="btn-group">
+    <label class="btn btn-info" ng-model="radioModel" uib-btn-radio="'Left'">Left</label>
+    <label class="btn btn-info" ng-model="radioModel" uib-btn-radio="'Middle'">Middle</label>
+    <label class="btn btn-info" ng-model="radioModel" uib-btn-radio="'Right'">Right</label>
+</div> -->
+<div id="chart">
+    <h3>{{titleBlockType}}</h3>
+    <canvas id="pie" class="chart chart-pie" chart-data="dataBlockTypePie" chart-labels="labelsBlockTypePie" chart-options="options"></canvas>
+    <canvas id="bar" class="chart-horizontal-bar" chart-data="dataBlockType" chart-labels="labelsBlockType" chart-series="seriesBlockType" chart-options="optionsBlockType"></canvas>
+    <h3>{{titleSize}}</h3>
+    <canvas id="bar" class="chart-bubble" chart-data="dataSizeBubble" chart-colors="colors"></canvas>
+    <canvas id="bar" class="chart chart-bar" chart-data="dataSize" chart-labels="labelsSize" chart-series="seriesSize" chart-colors="colors" chart-options="optionsBarBase" chart-click="onClick"></canvas>
+    <h3>{{titleDiff}}</h3>
+    <canvas id="bar" class="chart chart-bar" chart-data="dataDiff" chart-labels="labelsDiff" chart-series="seriesDiff" chart-colors="colors" chart-options="optionsBarBase"></canvas>
+    <h3>{{titleTxCount}}</h3>
+    <canvas id="bar" class="chart chart-bar" chart-data="dataTxCount" chart-labels="labelsTxCount" chart-colors="colors" chart-options="optionsBarBase"></canvas>
+    <h3>{{titleTxFee}}</h3>
+    <canvas id="bar" class="chart chart-bar" chart-data="dataTxFee" chart-labels="labelsTxFee" chart-colors="colors" chart-series="seriesTxFee" chart-options="optionsBarBase"></canvas>
+    
+    <!-- <canvas id="doughnut" class="chart chart-doughnut" chart-data="data" chart-labels="labels"></canvas> -->
+    <!-- <canvas id="radar" class="chart chart-radar" chart-data="data" chart-options="options" chart-labels="labels"></canvas>  -->
+    <!-- <canvas id="base" class="chart-bubble" chart-data="data" chart-series="series" ></canvas>  -->
+    <!-- <canvas id="line" class="chart chart-line" chart-data="data" chart-labels="labels" chart-series="series" chart-options="options" chart-dataset-override="datasetOverride" chart-click="onClick"></canvas>
+    <canvas id="line" class="chart chart-line" chart-data="data" chart-labels="labels" chart-series="series" chart-options="options" chart-dataset-override="datasetOverride" chart-click="onClick"></canvas>
+    <canvas id="line" class="chart chart-line" chart-data="data" chart-labels="labels" chart-series="series" chart-options="options" chart-dataset-override="datasetOverride" chart-click="onClick"></canvas> -->
+</div>

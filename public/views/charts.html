@@ -1,7 +1,8 @@
 <div data-ng-include src="'views/includes/connection.html'"></div>
 <!-- <section data-ng-controller="ChartsController" data-ng-init="init()"> -->
-<section data-ng-controller="ChartsController" data-ng-init="fetchChartData()">
-    <div class="row">
+<!-- <section data-ng-controller="ChartsController" data-ng-init="fetchChartData()"> -->
+<section>
+    <!-- <div class="row">
         <div class="col-xs-12 col-gray col-gray-fixed">
             <div class="block-id">
                 <div class="icon-block text-center">
@@ -12,41 +13,51 @@
             <div class="m20v text-center">
                 <span class="fader" data-ng-repeat='(type, c) in charts'>
                     <a class="btn btn-primary" style="margin-bottom: 3px" href="charts/{{type}}">{{c.name}}<a>
-                </span>
+                    </span>
+                </div>
             </div>
         </div>
-        <div class="col-xs-12 col-md-9 col-md-offset-3">
+    </div> -->
+    <div class="row">
+        <div class="col-xs-12 col-md-12">
             <div class="page-header">
+                <h1 translate>Data Visualization</h1>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <!-- <div class="col-md-1"></div> -->
+        <div class="col-xs-12 col-md-12">
+            <tabset>
+                <tab heading="Transaction Info">
+                    <div data-ng-controller="TransactionOverTimeChartController" data-ng-init="fetchChartData()">
+                        <div class="page-header"></div>
+                        <div data-ng-show="loading">
+                            <span translate>Loading chart...</span> <span class="loader-gif"></span>
+                        </div>
+                        <div data-ng-include src="'views/charts/transaction_over_time.html'"></div>
+                    </div>
+                </tab>
+                <tab heading="Block Info">
+                    <div data-ng-controller="BlockBasicInfoChartController" data-ng-init="fetchChartData()">
+                        <div class="page-header"></div>
+                        <div data-ng-show="loading">
+                            <span translate>Loading chart...</span> <span class="loader-gif"></span>
+                        </div>
+                        <div data-ng-include src="'views/charts/block_basic_info.html'"></div>
+                    </div>
+                </tab>
+                <tab heading="Hashrate"></tab>
+                <tab heading="Mining Pools"></tab>
+            </tabset>
+              
+            <!-- <div class="page-header">
                 <h1>
                     <span>{{chartName}}</span>
                 </h1>
-            </div>
-            <div data-ng-show="loading">
-                <span translate>Loading chart...</span> <span class="loader-gif"></span>
-            </div>
-            <div data-ng-show="!loading">
-
-                <div class="btn-group">
-                    <label class="btn btn-info animate-repeat" ng-model="rangeSelected" ng-repeat="range in rangeSelection" uib-btn-radio="'{{range.key}}'" ng-click="fetchChartData(range)">
-                        {{range.label}}
-                    </label>
-                </div>
-
-                <!-- <div class="btn-group">
-                    <label class="btn btn-info" ng-model="radioModel" uib-btn-radio="'Left'">Left</label>
-                    <label class="btn btn-info" ng-model="radioModel" uib-btn-radio="'Middle'">Middle</label>
-                    <label class="btn btn-info" ng-model="radioModel" uib-btn-radio="'Right'">Right</label>
-                </div> -->
-                <div id="chart">
-                    <h1>{{title}}</h1>
-                    <!-- <canvas id="doughnut" class="chart chart-doughnut" chart-data="data" chart-labels="labels"></canvas> -->
-                    <canvas id="bar" class="chart chart-bar" chart-data="data" chart-labels="labels" chart-options="options" chart-series="series"></canvas>
-
-                    <!-- <canvas id="radar" class="chart chart-radar" chart-data="data" chart-options="options" chart-labels="labels"></canvas>  -->
-                    <!-- <canvas id="base" class="chart-bubble" chart-data="data" chart-series="series" ></canvas>  -->
-                    <canvas id="line" class="chart chart-line" chart-data="data" chart-labels="labels" chart-series="series" chart-options="options" chart-dataset-override="datasetOverride" chart-click="onClick"></canvas>
-                </div>
-            </div>
+            </div> -->
+            
         </div>
+        <!-- <div class="col-md-1"></div> -->
     </div>
 </section>

@@ -37,6 +37,11 @@ const localStore = {
       last15Days: { key: netSymbol + ':vexp_chart_last15Days', ttl: 86400 },//24 hr
       last30Days: { key: netSymbol + ':vexp_chart_last30Days', ttl: 86400 },//24 hr
       last90Days: { key: netSymbol + ':vexp_chart_last90Days', ttl: 86400 },//24 hr
+      
+      last10: { key: netSymbol + ':vexp_chart_last10', ttl: 120 },//2 min
+      last50: { key: netSymbol + ':vexp_chart_last50', ttl: 120 },//2 min
+      last100: { key: netSymbol + ':vexp_chart_last100', ttl: 600 },//10 hr
+      last500: { key: netSymbol + ':vexp_chart_last500', ttl: 600 },//10 hr
     }
   },
   // api: {
@@ -45,7 +50,8 @@ const localStore = {
 }
 const chart = {
   types: {
-    txOverTime: { apiName: 'txovertime' }
+    txOverTime: { apiName: 'txovertime' },
+    blockBasicInfo: { apiName: 'blkbasicinfo' }
   }
 }
 

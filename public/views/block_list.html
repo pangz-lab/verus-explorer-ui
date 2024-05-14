@@ -17,17 +17,7 @@
               <div class="row">
                 <div class="col-md-6">
                     <h3 class="text-left">
-                            <!-- <span
-                                class="btn btn-info btn-sm" 
-                                datepicker-popup show-button-bar="false"
-                                data-ng-click="openCalendar($event)"
-                                data-ng-model="dt"
-                                is-open="opened"
-                                data-ng-required="true"
-                                style="padding: 0%; margin: 0%;font-size: 18px; background-color: #fff; border: #fff;">
-                                <b>🗓</b>
-                            </span> -->
-                            <span class="btn btn-primary btn-sm today-btn" data-ng-click="setToday()"> Today </span>
+                        <span class="btn btn-primary btn-sm today-btn" data-ng-click="setToday()"> Today </span>
                         <span translate>Blocks</span>
                         <small><span translate>by date.</span> {{detail}} {{before}}</small>
                     </h3>
@@ -60,6 +50,14 @@
         </div>
     </div>
 
+    <div class="row">
+        <div class="col-xs-12 col-md-12">
+            <div class="page-header">
+                <h1 translate>Block Generation</h1>
+            </div>
+        </div>
+    </div>
+
     <div class="row" data-ng-show="alert.info.show">
         <div class="col-md-1 text-center"></div>
         <div class="col-md-10 text-center">
@@ -69,45 +67,10 @@
         </div>
         <div class="col-md-1 text-center"></div>
     </div>
+    
     <div class = "row">
-        <!-- <div class="col-xs-12 col-gray col-gray-fixed">
-      <div class="block-id">
-        <div class="icon-block text-center">
-          <span class="glyphicon glyphicon-list"></span>
-          <h3><span translate>Blocks</span> <br> 
-            <span translate>mined on:</span></h3>
-        </div>
-      </div>
-      <p class="lead text-center m20v">
-      {{pagination.current}} LOCAL
-      <a href="#"
-        class="btn btn-primary btn-xs" 
-        datepicker-popup show-button-bar="false"
-        data-ng-click="openCalendar($event)"
-        data-ng-model="dt"
-        is-open="opened"
-        data-ng-required="true">
-        <span class="glyphicon glyphicon-calendar"></span>
-      </a>
-      </p>
-      <div class="m20v text-center text-muted" data-ng-if="!pagination.current">
-        <span translate>Loading Selected Date...</span>
-      </div>
-      <div data-ng-if="pagination.current">
-        <p class="text-center m20v"  data-ng-show="pagination.isToday" translate>Today</p>
-        <p class="text-center m20v"  data-ng-show="!pagination.isToday">{{humanSince(pagination.currentTs)}}
-        
-          <span data-ng-show="loading" class="loader-gif"></span>
-        </p>
-        <div class="m50v text-center">
-          <a class="btn btn-primary" href="blocks-date/{{pagination.prev}}"><small>⬅️ {{pagination.prev}}</small></a>
-          <a class="btn btn-primary" href="blocks-date/{{pagination.next}}" data-ng-show="!pagination.isToday"><small>{{pagination.next}} ➡️</small></a>
-        </div>
-      </div>
-    </div> -->
-    <!-- <div class="col-xs-12 col-md-9 col-md-offset-3"> -->
-        <div class="col-md-1"></div>
-        <div class="col-xs-12 col-md-10">
+        <!-- <div class="col-md-1"></div> -->
+        <div class="col-xs-12 col-md-12">
             <div class="page-header">
                 <div class="panel panel-primary col-gray">
                     <div class="panel-heading text-center">
@@ -154,155 +117,15 @@
                                 </a>
                             </div>
                         </div>
-
-                        <!-- <a href="#"
-                class="btn btn-primary btn-xs" 
-                datepicker-popup show-button-bar="false"
-                data-ng-click="openCalendar($event)"
-                data-ng-model="dt"
-                is-open="opened"
-                data-ng-required="true">
-                <span class="glyphicon glyphicon-calendar"></span>
-              </a> -->
-
-
-                        <!-- 
-                            <span><span translate>Total  :</span> {{currentDateTxList.length | number}}</span>
-                        <span class="pull-right">
-                            <span>
-                                {{pagination.current}} GMT
-                                <a href="#" class="btn btn-primary btn-xs" datepicker-popup show-button-bar="false"
-                                    data-ng-click="openCalendar($event)" data-ng-model="dt" is-open="opened"
-                                    data-ng-required="true">
-                                    <span class="glyphicon glyphicon-calendar"></span>
-                                </a>
-                            </span>
-                        </span> -->
                     </div>
                   </div>
                 </div>
-
-
-
-                <!-- <h1>
-                    <span translate>Blocks</span>
-                    <small><span translate>by date.</span> {{detail}} {{before}}</small>
-                </h1> -->
-                <!-- <div class="well">
-                    <span><span translate>Total  :</span> {{currentDateTxList.length | number}}</span> 
-                    <span class="pull-right">
-                        <span>
-                            {{pagination.current}} GMT
-                            <a href="#" class="btn btn-primary btn-xs" datepicker-popup show-button-bar="false"
-                                data-ng-click="openCalendar($event)" data-ng-model="dt" is-open="opened"
-                                data-ng-required="true">
-                                <span class="glyphicon glyphicon-calendar"></span>
-                            </a>
-                        </span>
-                    </span>
-                </div>
-                <nav aria-label="Page navigation example">
-          <ul class="pagination justify-content-end">
-            <li class="page-item disabled">
-              <a class="page-link" href="#" tabindex="-1">Previous</a>
-            </li>
-            <li class="page-item"><a class="page-link" href="#">1</a></li>
-            <li class="page-item"><a class="page-link" href="#">2</a></li>
-            <li class="page-item"><a class="page-link" href="#">3</a></li>
-            <li class="page-item">
-              <a class="page-link" href="#">Next</a>
-            </li>
-          </ul>
-        </nav> -->
-            
-            
-
-            <!-- <table>
-                <thead>
-                    <tr>
-                        <th colspan="4"> -->
-                        <!-- </th>
-                    </tr>
-                </thead>
-            </table> -->
-
-
-
-            <!-- <div class = "row">
-        <div class = "col-12">
-          {{pagination.current}} LOCAL
-          <a href="#"
-            class="btn btn-primary btn-xs" 
-            datepicker-popup show-button-bar="false"
-            data-ng-click="openCalendar($event)"
-            data-ng-model="dt"
-            is-open="opened"
-            data-ng-required="true">
-            <span class="glyphicon glyphicon-calendar"></span>
-          </a>
-          <div class="text-center text-muted" data-ng-if="!pagination.current">
-            <span translate>Loading Selected Date...</span>
-          </div>
-          <div data-ng-if="pagination.current">
-            <p class="text-center"  data-ng-show="pagination.isToday" translate>Today</p>
-            <p class="text-center"  data-ng-show="!pagination.isToday">{{humanSince(pagination.currentTs)}}
-              <span data-ng-show="loading" class="loader-gif"></span>
-            </p>
-            <div class="m50v text-center">
-              <a class="btn btn-primary" href="blocks-date/{{pagination.prev}}"><small>⬅️ {{pagination.prev}}</small></a>
-              <a class="btn btn-primary" href="blocks-date/{{pagination.next}}" data-ng-show="!pagination.isToday"><small>{{pagination.next}} ➡️</small></a>
-            </div>
-          </div>
-        </div>
-      </div> -->
-
         <h4>
             <small translate>Total </small>
             <!-- <span style="color: #fff;">{{currentDateTxList.length | number}}</span> -->
             <span>{{currentDateTxList.length | number}}</span>
         </h4>
             <table class="table table-hover table-striped">
-                <!-- <thead> -->
-                    <!-- <tr>
-            <th colspan="4">
-              <a href="#"
-                class="btn btn-primary btn-xs" 
-                datepicker-popup show-button-bar="false"
-                data-ng-click="openCalendar($event)"
-                data-ng-model="dt"
-                is-open="opened"
-                data-ng-required="true">
-                <span class="glyphicon glyphicon-calendar"></span>
-              </a>
-              {{pagination.current}} LOCAL
-              <span class="text-center text-muted" data-ng-if="!pagination.current">
-                <span translate>Loading Selected Date...</span>
-              </span>
-            </th>
-          </tr> -->
-                    <!-- <tr>
-                        <th colspan="4">
-
-                            <div data-ng-if="pagination.current">
-                                <p class="text-center" data-ng-show="pagination.isToday" translate>Today</p>
-                                <p class="text-center" data-ng-show="!pagination.isToday">
-                                    {{humanSince(pagination.currentTs)}}
-                                </p>
-                            </div>
-                            <div data-ng-if="pagination.current">
-                                <div class="m5v text-center">
-                                    <a class="btn btn-primary" href="blocks-date/{{pagination.prev}}">
-                                        ◀️ <span>{{pagination.prev}}</span>
-                                    </a>
-                                    <a class="btn btn-primary" href="blocks-date/{{pagination.next}}"
-                                        data-ng-show="!pagination.isToday">
-                                        <span>{{pagination.next}}</span> ▶️
-                                    </a>
-                                </div>
-                            </div>
-                        </th>
-                    </tr>
-                </thead> -->
                 <thead>
                     <tr>
                         <th translate>Height</th>
@@ -325,8 +148,8 @@
                         <td><a href="block/{{b.hash}}" class="ellipsis">{{b.hash}}</a></td>
                         <td class="text-right">{{b.txCount}}</td>
                         <!--//<td class="text-right">{{b.size}}</td>//-->
-                        <td><small>{{toLocal(b.time * 1000 | date:'medium')}}</small></td>
-                        <td><small>{{toGMT(b.time)}}</small></td>
+                        <td>{{toLocal(b.time * 1000 | date:'medium')}}</td>
+                        <td>{{toGMT(b.time)}}</td>
                     </tr>
                 </tbody>
             </table>
@@ -352,7 +175,7 @@
         <a class="btn btn-primary" href="blocks-date/{{pagination.current}}/{{pagination.moreTs}}">Older blocks from this date</a>
       </div> -->
         </div>
-        <div class="col-md-1"></div>
+        <!-- <div class="col-md-1"></div> -->
     </div>
     <h2 class="text-center text-muted" data-ng-show="!blocks.length && !loading" translate>No blocks yet.</h2>
 </section>

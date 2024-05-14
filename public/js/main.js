@@ -36,6 +36,11 @@ const localStore = {
       last15Days: { key: netSymbol + ':vexp_chart_last15Days', ttl: 86400 },//24 hr
       last30Days: { key: netSymbol + ':vexp_chart_last30Days', ttl: 86400 },//24 hr
       last90Days: { key: netSymbol + ':vexp_chart_last90Days', ttl: 86400 },//24 hr
+      
+      last10: { key: netSymbol + ':vexp_chart_last10', ttl: 120 },//2 min
+      last50: { key: netSymbol + ':vexp_chart_last50', ttl: 120 },//2 min
+      last100: { key: netSymbol + ':vexp_chart_last100', ttl: 600 },//10 hr
+      last500: { key: netSymbol + ':vexp_chart_last500', ttl: 600 },//10 hr
     }
   },
   // api: {
@@ -44,7 +49,8 @@ const localStore = {
 }
 const chart = {
   types: {
-    txOverTime: { apiName: 'txovertime' }
+    txOverTime: { apiName: 'txovertime' },
+    blockBasicInfo: { apiName: 'blkbasicinfo' }
   }
 }
 
@@ -573,181 +579,188 @@ angular
 // Source: public/src/js/controllers/charts.js
 angular
     .module('insight.charts', ["chart.js"])
-    .controller('ChartsController',
-    function (
-        $scope,
-        VerusExplorerApi,
-        LocalStore
-    ) {
-            // function($scope, $rootScope, $routeParams, $location, Chart, Charts) {
-            // ChartJsProvider.setOptions({ colors : [ '#803690', '#00ADF9', '#DCDCDC', '#46BFBD', '#FDB45C', '#949FB1', '#4D5360'] });
-            $scope.loading = false;
-            const _saveToCache = function(data, key, ttl) {
-                LocalStore.set(key, data, ttl);
-            }
+    .controller('ChartsController', function() {})
+    .controller('TransactionOverTimeChartController', TransactionOverTime)
+    .controller('BlockBasicInfoChartController', BlockBasicInfo);
+    // .config(['ChartJsProvider', function (ChartJsProvider) {
+    //       ChartJsProvider.setOptions({
+    //         colors : [ '#803690', '#00ADF9', '#DCDCDC', '#46BFBD', '#FDB45C', '#949FB1', '#4D5360']
+    //       });
+    //     }]);
+    // function (
+    //     $scope,
+    //     VerusExplorerApi,
+    //     LocalStore
+    // ) {
+    //         // function($scope, $rootScope, $routeParams, $location, Chart, Charts) {
+    //         // ChartJsProvider.setOptions({ colors : [ '#803690', '#00ADF9', '#DCDCDC', '#46BFBD', '#FDB45C', '#949FB1', '#4D5360'] });
+    //         $scope.loading = false;
+    //         const _saveToCache = function(data, key, ttl) {
+    //             LocalStore.set(key, data, ttl);
+    //         }
 
 
 
-            // $scope.labels = ["Download Sales", "In-Store Sales", "Mail-Order Sales"];
-            // $scope.data = [300, 500, 100];
+    //         // $scope.labels = ["Download Sales", "In-Store Sales", "Mail-Order Sales"];
+    //         // $scope.data = [300, 500, 100];
 
-            // $scope.labels = ['2006', '2007', '2008', '2009', '2010', '2011', '2012'];
-            // $scope.series = ['Series A', 'Series B'];
+    //         // $scope.labels = ['2006', '2007', '2008', '2009', '2010', '2011', '2012'];
+    //         // $scope.series = ['Series A', 'Series B'];
 
-            // $scope.data = [
-            //   [65, 59, 80, 81, 56, 55, 40],
-            //   [28, 48, 40, 19, 86, 27, 90]
-            // ];
+    //         // $scope.data = [
+    //         //   [65, 59, 80, 81, 56, 55, 40],
+    //         //   [28, 48, 40, 19, 86, 27, 90]
+    //         // ];
 
-            // $scope.labels =["Eating", "Drinking", "Sleeping", "Designing", "Coding", "Cycling", "Running"];
-            // $scope.data = [
-            //   [65, 59, 90, 81, 56, 55, 40],
-            //   [28, 48, 40, 19, 96, 27, 100]
-            // ];
+    //         // $scope.labels =["Eating", "Drinking", "Sleeping", "Designing", "Coding", "Cycling", "Running"];
+    //         // $scope.data = [
+    //         //   [65, 59, 90, 81, 56, 55, 40],
+    //         //   [28, 48, 40, 19, 96, 27, 100]
+    //         // ];
 
-            // $scope.series = ['Series A', 'Series B'];
-            // $scope.data = [
-            //   [{
-            //     x: 40,
-            //     y: 10,
-            //     r: 20
-            //   }],
-            //   [{
-            //     x: 10,
-            //     y: 40,
-            //     r: 50
-            //   }]
-            // ];
+    //         // $scope.series = ['Series A', 'Series B'];
+    //         // $scope.data = [
+    //         //   [{
+    //         //     x: 40,
+    //         //     y: 10,
+    //         //     r: 20
+    //         //   }],
+    //         //   [{
+    //         //     x: 10,
+    //         //     y: 40,
+    //         //     r: 50
+    //         //   }]
+    //         // ];
 
 
-            // $scope.title = "Transaction Over Time";
-            // $scope.labels = [
-            //     "7:00",
-            //     "7:10",
-            //     "7:20",
-            //     "7:30",
-            //     "7:40",
-            //     "7:50",
-            //     "8:00",
-            // ];
-            // // $scope.series = ['Series A', 'Series B'];
-            // $scope.series = ['Transactions'];
-            // $scope.data = [
-            //     [65, 59, 80, 81, 56, 55, 40],
-            //     // [28, 48, 40, 19, 86, 27, 90]
-            // ];
-            // $scope.onClick = function (points, evt) {
-            //     console.log(points, evt);
-            // };
-            // // $scope.datasetOverride = [{ yAxisID: 'y-axis-1' }, { yAxisID: 'y-axis-2' }];
-            // $scope.datasetOverride = [{ yAxisID: 'y-axis-1' }];
-            // $scope.options = {
-            //     type: 'line',
-            //     scales: {
-            //         yAxes: [
-            //             {
-            //                 id: 'y-axis-1',
-            //                 type: 'linear',
-            //                 display: true,
-            //                 position: 'left'
-            //             },
-            //             // {
-            //             //     id: 'y-axis-2',
-            //             //     type: 'linear',
-            //             //     display: true,
-            //             //     position: 'right'
-            //             // }
-            //         ]
-            //     }
-            // };
+    //         // $scope.title = "Transaction Over Time";
+    //         // $scope.labels = [
+    //         //     "7:00",
+    //         //     "7:10",
+    //         //     "7:20",
+    //         //     "7:30",
+    //         //     "7:40",
+    //         //     "7:50",
+    //         //     "8:00",
+    //         // ];
+    //         // // $scope.series = ['Series A', 'Series B'];
+    //         // $scope.series = ['Transactions'];
+    //         // $scope.data = [
+    //         //     [65, 59, 80, 81, 56, 55, 40],
+    //         //     // [28, 48, 40, 19, 86, 27, 90]
+    //         // ];
+    //         // $scope.onClick = function (points, evt) {
+    //         //     console.log(points, evt);
+    //         // };
+    //         // // $scope.datasetOverride = [{ yAxisID: 'y-axis-1' }, { yAxisID: 'y-axis-2' }];
+    //         // $scope.datasetOverride = [{ yAxisID: 'y-axis-1' }];
+    //         // $scope.options = {
+    //         //     type: 'line',
+    //         //     scales: {
+    //         //         yAxes: [
+    //         //             {
+    //         //                 id: 'y-axis-1',
+    //         //                 type: 'linear',
+    //         //                 display: true,
+    //         //                 position: 'left'
+    //         //             },
+    //         //             // {
+    //         //             //     id: 'y-axis-2',
+    //         //             //     type: 'linear',
+    //         //             //     display: true,
+    //         //             //     position: 'right'
+    //         //             // }
+    //         //         ]
+    //         //     }
+    //         // };
 
-            // TX over time
-            // Block size distribution
-            // Transaction Fees Over Time
-            // Mining pool distribution over time
-            const chartTypeName = chart.types.txOverTime.apiName;
-            const defaultRangeSelected = 3;
-            const cacheKeys = localStore.charts.keys;
-            const rangeSelectionOptions = [
-                { label: '10min', key: 'last10Minutes', intervalInMinutes: 10, cache: cacheKeys.last10Minutes },
-                { label: '30min', key: 'last30Minutes', intervalInMinutes: 10, cache: cacheKeys.last30Minutes },
-                { label: '1hr', key: 'lastHour', intervalInMinutes: 10, cache: cacheKeys.lastHour },
-                { label: '3hr', key: 'last3Hours', intervalInMinutes: 10, cache: cacheKeys.last3Hours },
-                { label: '6hr', key: 'last6Hours', intervalInMinutes: 20, cache: cacheKeys.last6Hours },
-                { label: '12hr', key: 'last12Hours', intervalInMinutes: 30, cache: cacheKeys.last12Hours },
-                { label: '24hr', key: 'last24Hours', intervalInMinutes: 60, cache: cacheKeys.last24Hours },
-                { label: '3d', key: 'last3Days', intervalInMinutes: 60 * 3, cache: cacheKeys.last3Days },
-                { label: '1wk', key: 'last7Days', intervalInMinutes: 60 * 24, cache: cacheKeys.last7Days },
-                { label: '2wk', key: 'last15Days', intervalInMinutes: 60 * 24 * 5, cache: cacheKeys.last15Days },
-                { label: '30d', key: 'last30Days', intervalInMinutes: 60 * 24 * 10, cache: cacheKeys.last30Days },
-                { label: '90d', key: 'last90Days', intervalInMinutes: 60 * 24 * 30, cache: cacheKeys.last90Days },
-            ]
-            $scope.rangeSelection = rangeSelectionOptions;
-            $scope.rangeSelected = defaultRangeSelected;
+    //         // TX over time
+    //         // Block size distribution
+    //         // Transaction Fees Over Time
+    //         // Mining pool distribution over time
+    //         const chartTypeName = chart.types.txOverTime.apiName;
+    //         const defaultRangeSelected = 3;
+    //         const cacheKeys = localStore.charts.keys;
+    //         const rangeSelectionOptions = [
+    //             { label: '10min', key: 'last10Minutes', intervalInMinutes: 10, cache: cacheKeys.last10Minutes },
+    //             { label: '30min', key: 'last30Minutes', intervalInMinutes: 10, cache: cacheKeys.last30Minutes },
+    //             { label: '1hr', key: 'lastHour', intervalInMinutes: 10, cache: cacheKeys.lastHour },
+    //             { label: '3hr', key: 'last3Hours', intervalInMinutes: 10, cache: cacheKeys.last3Hours },
+    //             { label: '6hr', key: 'last6Hours', intervalInMinutes: 20, cache: cacheKeys.last6Hours },
+    //             { label: '12hr', key: 'last12Hours', intervalInMinutes: 30, cache: cacheKeys.last12Hours },
+    //             { label: '24hr', key: 'last24Hours', intervalInMinutes: 60, cache: cacheKeys.last24Hours },
+    //             { label: '3d', key: 'last3Days', intervalInMinutes: 60 * 3, cache: cacheKeys.last3Days },
+    //             { label: '1wk', key: 'last7Days', intervalInMinutes: 60 * 24, cache: cacheKeys.last7Days },
+    //             { label: '2wk', key: 'last15Days', intervalInMinutes: 60 * 24 * 5, cache: cacheKeys.last15Days },
+    //             { label: '30d', key: 'last30Days', intervalInMinutes: 60 * 24 * 10, cache: cacheKeys.last30Days },
+    //             { label: '90d', key: 'last90Days', intervalInMinutes: 60 * 24 * 30, cache: cacheKeys.last90Days },
+    //         ]
+    //         $scope.rangeSelection = rangeSelectionOptions;
+    //         $scope.rangeSelected = defaultRangeSelected;
 
-            $scope.fetchChartData = function(range) {
-                if(range == undefined) {
-                    range = rangeSelectionOptions[defaultRangeSelected];
-                }
+    //         $scope.fetchChartData = function(range) {
+    //             if(range == undefined) {
+    //                 range = rangeSelectionOptions[defaultRangeSelected];
+    //             }
 
-                const cacheId = _getCacheIds(chartTypeName, range.cache);
-                const cachedData = LocalStore.get(cacheId.key);
-                if(cachedData != undefined) {
-                    _createTxCountOverTimeData(null, range, cachedData);
-                    return;
-                }
+    //             const cacheId = _getCacheIds(chartTypeName, range.cache);
+    //             const cachedData = LocalStore.get(cacheId.key);
+    //             if(cachedData != undefined) {
+    //                 _createTxCountOverTimeData(null, range, cachedData);
+    //                 return;
+    //             }
 
-                VerusExplorerApi
-                .getChartData(chartTypeName, range.key)
-                .then(function(queryResult) {
-                    const data = queryResult.data;
-                    if (!queryResult.error && data.labels[0] != undefined) { _createTxCountOverTimeData(data, range); }
-                });
-            }
+    //             VerusExplorerApi
+    //             .getChartData(chartTypeName, range.key)
+    //             .then(function(queryResult) {
+    //                 const data = queryResult.data;
+    //                 if (!queryResult.error && data.labels[0] != undefined) { _createTxCountOverTimeData(data, range); }
+    //             });
+    //         }
 
-            const _getCacheIds = function(cacheSuffix, cacheIds) {
-                return {
-                    key: cacheIds.key + ':' + cacheSuffix,
-                    ttl: cacheIds.ttl
-                }
-            }
+    //         const _getCacheIds = function(cacheSuffix, cacheIds) {
+    //             return {
+    //                 key: cacheIds.key + ':' + cacheSuffix,
+    //                 ttl: cacheIds.ttl
+    //             }
+    //         }
 
-            const _createTxCountOverTimeData = function (data, range, cachedData) {
-                $scope.title = "Transaction Over Time";
-                $scope.series = ["Blocks", "Transactions"];
-                $scope.labels = [];
-                $scope.data = [];
-                $scope.options = {
-                    legend: {
-                        display: true,
-                        labels: {
-                            color: 'red'
-                        }
-                    }
-                };
+    //         const _createTxCountOverTimeData = function (data, range, cachedData) {
+    //             $scope.title = "Transaction Over Time";
+    //             $scope.series = ["Blocks", "Transactions"];
+    //             $scope.labels = [];
+    //             $scope.data = [];
+    //             $scope.options = {
+    //                 legend: {
+    //                     display: true,
+    //                     labels: {
+    //                         color: 'red'
+    //                     }
+    //                 }
+    //             };
 
-                if(cachedData != undefined) {
-                    $scope.labels = cachedData.labels;
-                    $scope.data = cachedData.data;
-                    return;
-                }
+    //             if(cachedData != undefined) {
+    //                 $scope.labels = cachedData.labels;
+    //                 $scope.data = cachedData.data;
+    //                 return;
+    //             }
 
-                $scope.labels = data.labels
-                $scope.data = data.data;
+    //             $scope.labels = data.labels
+    //             $scope.data = data.data;
 
-                const c = _getCacheIds(chartTypeName, range.cache)
-                _saveToCache({labels: $scope.labels, data: $scope.data}, c.key, c.ttl);
-            }
-            // $scope.params = $routeParams;
+    //             const c = _getCacheIds(chartTypeName, range.cache)
+    //             _saveToCache({labels: $scope.labels, data: $scope.data}, c.key, c.ttl);
+    //         }
+    //         // $scope.params = $routeParams;
 
-        })
+    //     }
+    // );
 
-.config(['ChartJsProvider', function (ChartJsProvider) {
-  ChartJsProvider.setOptions({
-    colors : [ '#803690', '#00ADF9', '#DCDCDC', '#46BFBD', '#FDB45C', '#949FB1', '#4D5360']
-  });
-}]);
-
+// .config(['ChartJsProvider', function (ChartJsProvider) {
+//   ChartJsProvider.setOptions({
+//     colors : [ '#803690', '#00ADF9', '#DCDCDC', '#46BFBD', '#FDB45C', '#949FB1', '#4D5360']
+//   });
+// }]);
 // Source: public/src/js/controllers/connection.js
 // 'use strict';
 
@@ -2054,6 +2067,340 @@ angular.module('insight.transactions').controller('SendRawTransactionController'
     }
 );
 
+// Source: public/src/js/controllers/charts/block_basic_info.js
+function BlockBasicInfo($scope, VerusExplorerApi, LocalStore) {
+        // function($scope, $rootScope, $routeParams, $location, Chart, Charts) {
+        // ChartJsProvider.setOptions({ colors : [ '#803690', '#00ADF9', '#DCDCDC', '#46BFBD', '#FDB45C', '#949FB1', '#4D5360'] });
+        $scope.loading = false;
+        const _saveToCache = function(data, key, ttl) {
+            LocalStore.set(key, data, ttl);
+        }
+        // TX over time
+        // Block size distribution
+        // Transaction Fees Over Time
+        // Mining pool distribution over time
+        const chartTypeName = chart.types.blockBasicInfo.apiName;
+        const defaultRangeSelected = 2;
+        const cacheKeys = localStore.charts.keys;
+        const rangeSelectionOptions = [
+            { label: 'Last 10', key: 'last10', cache: cacheKeys.last10 },
+            { label: 'Last 50', key: 'last50', cache: cacheKeys.last50 },
+            { label: 'Last 100', key: 'last100', cache: cacheKeys.last100 },
+            { label: 'Last 500', key: 'last500', cache: cacheKeys.last500 },
+        ]
+        $scope.rangeSelection = rangeSelectionOptions;
+        $scope.rangeSelected = defaultRangeSelected;
+
+        $scope.fetchChartData = function(range) {
+            if(range == undefined) {
+                range = rangeSelectionOptions[defaultRangeSelected];
+            }
+
+            const cacheId = _getCacheIds(chartTypeName, range.cache);
+            const cachedData = LocalStore.get(cacheId.key);
+            if(cachedData != undefined) {
+                _createChartData(undefined, range, cachedData);
+                return;
+            }
+
+            VerusExplorerApi
+            .getChartData(chartTypeName, range.key)
+            .then(function(queryResult) {
+                const data = queryResult.data;
+                if (!queryResult.error && data.labels[0] != undefined) {
+                    _createChartData(data, range);
+                }
+            });
+        }
+
+        const _getCacheIds = function(cacheSuffix, cacheIds) {
+            return {
+                key: cacheIds.key + ':' + cacheSuffix,
+                ttl: cacheIds.ttl
+            }
+        }
+
+        const _createChartData = function (data, range, cachedData) {
+            $scope.colors = [ '#803690', '#00ADF9', '#DCDCDC', '#46BFBD', '#FDB45C', '#949FB1', '#4D5360'];
+            $scope.onClick = function (points, evt) {
+                console.log(points[0], evt);
+            };
+
+            $scope.options = {
+                legend: {
+                    display: true,
+                    labels: {
+                        color: 'red'
+                    }
+                }
+            };
+            
+            $scope.optionsBarBase = {
+                animation: {
+                    duration: 0
+                  },
+                  elements: {
+                    line: {
+                      borderWidth: 0.5
+                    },
+                    point: {
+                      radius: 0
+                    }
+                  },
+                legend: {
+                    display: false,
+                    labels: {
+                        color: 'red'
+                    }
+                },
+                scales: {
+                    xAxes: [{
+                      display: true
+                    }],
+                    yAxes: [{
+                      display: true
+                    }],
+                    gridLines: {
+                      display: false,
+                    //   borderDash: [ 20, 20 ],
+                    }
+                },
+                tooltips: {
+                  enabled: true
+                }
+            };
+
+            $scope.optionsBlockType = {
+                animation: {
+                  duration: 0
+                },
+                elements: {
+                  line: {
+                    borderWidth: 0.5
+                  },
+                  point: {
+                    radius: 0
+                  }
+                },
+                legend: {
+                  display: false
+                },
+                scales: {
+                  xAxes: [{
+                    display: false
+                  }],
+                  yAxes: [{
+                    display: true
+                  }],
+                  gridLines: {
+                    display: false
+                  }
+                },
+                tooltips: {
+                  enabled: true
+                }
+              };
+
+            const dataIndex = {
+                size: 0,
+                diff: 1,
+                txFee: 2,
+                txCount: 3,
+                blockType: 4,
+            }
+
+            //Block Type
+            $scope.titleBlockType = "Type";
+            $scope.seriesBlockType = [ "PoW", "PoS" ];
+            $scope.labelsBlockType = [];
+            $scope.dataBlockType = [];
+
+            $scope.labelsBlockTypePie = [];
+            $scope.dataBlockTypePie = [];
+
+            //Size
+            $scope.titleSize = "Size (bytes)";
+            $scope.seriesSize = [ "Size in bytes" ];
+            $scope.labelsSize = [];
+            $scope.dataSize = [];
+            
+            $scope.dataSizeBubble = []
+            
+            //Difficulty
+            $scope.titleDiff = "Difficulty (1B)";
+            $scope.seriesDiff = [ "Difficulty" ];
+            $scope.labelsDiff = [];
+            $scope.dataDiff = [];
+            
+            //TX Fee
+            $scope.titleTxFee = "Transaction Fee";
+            $scope.seriesTxFee = [ "Tx Fee" ];
+            $scope.labelsTxFee = [];
+            $scope.dataTxFee = [];
+            
+            //TX Count
+            $scope.titleTxCount = "Transaction Count";
+            $scope.labelsTxCount = [];
+            $scope.dataTxCount = [];
+            
+
+            if(cachedData != undefined) {
+                data = cachedData;
+            } else {
+                const c = _getCacheIds(chartTypeName, range.cache)
+                _saveToCache(data, c.key, c.ttl);
+            }
+            
+            $scope.labelsBlockTypePie = [ 'Proof of Work', 'Proof of Stake' ];
+            $scope.dataBlockTypePie = _getBlockTypePieData(data.data[dataIndex.blockType]);
+
+            $scope.labelsBlockType = data.labels;
+            $scope.dataBlockType = _getBlockTypeBarData(data.data[dataIndex.blockType]);
+
+            $scope.labelsSize = data.labels;
+            $scope.dataSize = data.data[dataIndex.size];
+
+            $scope.dataSizeBubble = _getSizeBubbleData(data.data[dataIndex.size]);
+            
+            
+            $scope.labelsDiff = data.labels;
+            $scope.dataDiff = data.data[dataIndex.diff];
+            
+            $scope.labelsTxFee = data.labels;
+            $scope.dataTxFee = data.data[dataIndex.txFee];
+            
+            $scope.labelsTxCount = data.labels;
+            $scope.dataTxCount = data.data[dataIndex.txCount];
+        }
+
+        const _getBlockTypePieData = function(data) {
+            var result = {
+                pow: 0,
+                pos: 0,
+            }
+            for(var i = 0; i < data.length; i++) {
+                const key = data[i] == 1 ? 'pow' : 'pos';
+                result[key] = result[key] + 1;
+            }
+            return [ result.pow, result.pos ];
+        }
+        
+        const _getBlockTypeBarData = function(data) {
+            var pow = [];
+            var pos = [];
+            for(var i = 0; i < data.length; i++) {
+                pow.unshift(data[i] == 1 ? 1 : 0);
+                pos.unshift(data[i] == 1 ? 0 : 1)
+            }
+            return [
+                pow,
+                pos,
+            ];
+        }
+        
+        const _getSizeBubbleData = function(data) {
+            var result = [];
+            const size = data.length;
+            for(var i = 0; i < size; i++) {
+                result.unshift([{
+                    x: Math.floor(Math.random() * size),
+                    y: Math.floor(Math.random() * size),
+                    r: data[i] / 500
+                }]);
+            }
+            return result;
+        }
+        // $scope.params = $routeParams;
+
+}
+// Source: public/src/js/controllers/charts/transaction_over_time.js
+function TransactionOverTime($scope, VerusExplorerApi, LocalStore) {
+        // function($scope, $rootScope, $routeParams, $location, Chart, Charts) {
+        // ChartJsProvider.setOptions({ colors : [ '#803690', '#00ADF9', '#DCDCDC', '#46BFBD', '#FDB45C', '#949FB1', '#4D5360'] });
+        $scope.loading = false;
+        const _saveToCache = function(data, key, ttl) {
+            LocalStore.set(key, data, ttl);
+        }
+        // TX over time
+        // Block size distribution
+        // Transaction Fees Over Time
+        // Mining pool distribution over time
+        const chartTypeName = chart.types.txOverTime.apiName;
+        const defaultRangeSelected = 3;
+        const cacheKeys = localStore.charts.keys;
+        const rangeSelectionOptions = [
+            { label: '10min', key: 'last10Minutes', cache: cacheKeys.last10Minutes },
+            { label: '30min', key: 'last30Minutes', cache: cacheKeys.last30Minutes },
+            { label: '1hr', key: 'lastHour', cache: cacheKeys.lastHour },
+            { label: '3hr', key: 'last3Hours', cache: cacheKeys.last3Hours },
+            { label: '6hr', key: 'last6Hours', cache: cacheKeys.last6Hours },
+            { label: '12hr', key: 'last12Hours', cache: cacheKeys.last12Hours },
+            { label: '24hr', key: 'last24Hours', cache: cacheKeys.last24Hours },
+            { label: '3d', key: 'last3Days', cache: cacheKeys.last3Days },
+            { label: '1wk', key: 'last7Days', cache: cacheKeys.last7Days },
+            { label: '2wk', key: 'last15Days', cache: cacheKeys.last15Days },
+            { label: '30d', key: 'last30Days', cache: cacheKeys.last30Days },
+            { label: '90d', key: 'last90Days', cache: cacheKeys.last90Days },
+        ]
+        $scope.rangeSelection = rangeSelectionOptions;
+        $scope.rangeSelected = defaultRangeSelected;
+
+        $scope.fetchChartData = function(range) {
+            if(range == undefined) {
+                range = rangeSelectionOptions[defaultRangeSelected];
+            }
+
+            const cacheId = _getCacheIds(chartTypeName, range.cache);
+            const cachedData = LocalStore.get(cacheId.key);
+            if(cachedData != undefined) {
+                _createChartData(null, range, cachedData);
+                return;
+            }
+
+            VerusExplorerApi
+            .getChartData(chartTypeName, range.key)
+            .then(function(queryResult) {
+                const data = queryResult.data;
+                if (!queryResult.error && data.labels[0] != undefined) { _createChartData(data, range); }
+            });
+        }
+
+        const _getCacheIds = function(cacheSuffix, cacheIds) {
+            return {
+                key: cacheIds.key + ':' + cacheSuffix,
+                ttl: cacheIds.ttl
+            }
+        }
+
+        const _createChartData = function (data, range, cachedData) {
+            $scope.title = "Transaction Over Time";
+            $scope.series = ["Blocks", "Transactions"];
+            $scope.labels = [];
+            $scope.data = [];
+            $scope.options = {
+                legend: {
+                    display: true,
+                    labels: {
+                        color: 'red'
+                    }
+                }
+            };
+
+            if(cachedData != undefined) {
+                $scope.labels = cachedData.labels;
+                $scope.data = cachedData.data;
+                return;
+            }
+
+            $scope.labels = data.labels
+            $scope.data = data.data;
+
+            const c = _getCacheIds(chartTypeName, range.cache)
+            _saveToCache({labels: $scope.labels, data: $scope.data}, c.key, c.ttl);
+        }
+        // $scope.params = $routeParams;
+
+}
 // Source: public/src/js/services/address.js
 // 'use strict';
 
@@ -2673,20 +3020,7 @@ angular.module('insight.verusexplorerapi')
     };
 
     function getChartData(type, range) {
-      const ranges = [
-        "last10Minutes",
-        "last30Minutes",
-        "lastHour",
-        "last3Hours",
-        "last6Hours",
-        "last12Hours",
-        "last24Hours",
-        "last3Days",
-        "last7Days",
-        "last15Days",
-        "last30Days",
-        "last90Days",
-      ];
+      const ranges = Object.keys(localStore.charts.keys);
       if(!ranges.includes(range)) { return Promise.resolve(undefined); }
       return sendRequest(createPayload('/api/chart/'+type+'/?range='+range, [], "GET"));
     };
