@@ -54,6 +54,7 @@ function BlockBasicInfo($scope, VerusExplorerApi, LocalStore) {
 
         const _createChartData = function (data, range, cachedData) {
             $scope.colors = [ '#803690', '#00ADF9', '#DCDCDC', '#46BFBD', '#FDB45C', '#949FB1', '#4D5360'];
+            $scope.colorsConsensus = [ '#FDB45C', '#FDB45C'];
             $scope.onClick = function (points, evt) {
                 console.log(points[0], evt);
                 console.log(evt);
@@ -121,28 +122,8 @@ function BlockBasicInfo($scope, VerusExplorerApi, LocalStore) {
                   enabled: true
                 }
             };
-
-            // $scope.optionsSizeBubble = {
-            //     animation: {
-            //       duration: 0
-            //     },
-            //     legend: {
-            //       display: false
-            //     },
-            //     scales: {
-            //       xAxes: [{
-            //         display: false
-            //       }],
-            //       yAxes: [{
-            //         display: false
-            //       }],
-            //     },
-            //     tooltips: {
-            //       enabled: true
-            //     }
-            // };
             
-            $scope.optionsBlockType = {
+            $scope.optionsConsensus = {
                 animation: {
                   duration: 0
                 },
@@ -162,7 +143,12 @@ function BlockBasicInfo($scope, VerusExplorerApi, LocalStore) {
                     display: true
                   }],
                   yAxes: [{
-                    display: false
+                    display: false,
+                    ticks: {
+                      max: 1,
+                      min: -1,
+                      stepSize: 0.5
+                    }
                   }],
                   gridLines: {
                     display: false
@@ -183,13 +169,13 @@ function BlockBasicInfo($scope, VerusExplorerApi, LocalStore) {
             }
 
             //Block Type
-            $scope.titleBlockType = "Consensus";
-            $scope.seriesBlockType = [ "PoW", "PoS" ];
-            $scope.labelsBlockType = [];
-            $scope.dataBlockType = [];
+            $scope.titleConsensus = "Consensus";
+            $scope.seriesConsensus = [ "PoW", "PoS" ];
+            $scope.labelsConsensus = [];
+            $scope.dataConsensus = [];
 
-            $scope.labelsBlockTypePie = [];
-            $scope.dataBlockTypePie = [];
+            $scope.labelsConsensusPie = [];
+            $scope.dataConsensusPie = [];
 
             //Size
             $scope.titleSize = "Size (kB)";
@@ -197,7 +183,7 @@ function BlockBasicInfo($scope, VerusExplorerApi, LocalStore) {
             $scope.labelsSize = [];
             $scope.dataSize = [];
             
-            $scope.dataSizeBubble = []
+            // $scope.dataSizeBubble = []
             
             //Difficulty
             $scope.titleDiff = "Difficulty (10B)";
@@ -229,16 +215,16 @@ function BlockBasicInfo($scope, VerusExplorerApi, LocalStore) {
                 _saveToCache(data, c.key, c.ttl);
             }
             
-            $scope.labelsBlockTypePie = [ 'Proof of Work', 'Proof of Stake' ];
-            $scope.dataBlockTypePie = _getBlockTypePieData(data.data[dataIndex.blockType]);
+            $scope.labelsConsensusPie = [ 'Proof of Work', 'Proof of Stake' ];
+            $scope.dataConsensusPie = _getConsensusPieData(data.data[dataIndex.blockType]);
 
-            $scope.labelsBlockType = data.labels;
-            $scope.dataBlockType = _getBlockTypeBarData(data.data[dataIndex.blockType]);
+            $scope.labelsConsensus = data.labels;
+            $scope.dataConsensus = _getConsensusBarData(data.data[dataIndex.blockType]);
 
             $scope.labelsSize = data.labels;
             $scope.dataSize = data.data[dataIndex.size];
 
-            $scope.dataSizeBubble = _getSizeBubbleData(data.data[dataIndex.size]);
+            // $scope.dataSizeBubble = _getSizeBubbleData(data.data[dataIndex.size]);
             
             
             $scope.labelsDiff = data.labels;
@@ -254,7 +240,7 @@ function BlockBasicInfo($scope, VerusExplorerApi, LocalStore) {
             $scope.dataTxFee = data.data[dataIndex.totalTxFee];
         }
         
-        const _getBlockTypePieData = function(data) {
+        const _getConsensusPieData = function(data) {
             var result = {
                 pow: 0,
                 pos: 0,
@@ -266,33 +252,37 @@ function BlockBasicInfo($scope, VerusExplorerApi, LocalStore) {
             return [ result.pow, result.pos ];
         }
         
-        const _getBlockTypeBarData = function(data) {
-            var pow = [];
-            var pos = [];
+        //TODO merge with piechart
+        const _getConsensusBarData = function(data) {
+            // var pow = [];
+            // var pos = [];
+            var e = [];
             for(var i = 0; i < data.length; i++) {
-                pow.unshift(data[i] == 1 ? 1 : 0);
-                pos.unshift(data[i] == 1 ? 0 : 1)
+                // pow[i] = data[i] === 1 ? 1 : 0;
+                // pos[i] = data[i] === -1 ? -1 : 0;
+                e[i] = 0;
             }
             return [
-                pow,
-                pos,
+                data,
+                e,
             ];
+            // return data;
         }
         
         // const _getSizeBubbleData = function(data) {
-        const _getSizeBubbleData = function(data) {
-            var result = [];
-            const size = data.length;
-            for(var i = 0; i < size; i++) {
-                result.unshift([{
-                    x: Math.floor(Math.random() * size),
-                    // x: labels[i],
-                    y: Math.floor(Math.random() * size),
-                    r: data[i] / 600
-                }]);
-            }
-            return result;
-        }
+        // const _getSizeBubbleData = function(data) {
+        //     var result = [];
+        //     const size = data.length;
+        //     for(var i = 0; i < size; i++) {
+        //         result.unshift([{
+        //             x: Math.floor(Math.random() * size),
+        //             // x: labels[i],
+        //             y: Math.floor(Math.random() * size),
+        //             r: data[i] / 600
+        //         }]);
+        //     }
+        //     return result;
+        // }
         // $scope.params = $routeParams;
 
 }

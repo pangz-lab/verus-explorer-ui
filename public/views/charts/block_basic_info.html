@@ -11,10 +11,11 @@
     <label class="btn btn-info" ng-model="radioModel" uib-btn-radio="'Right'">Right</label>
 </div> -->
 <div id="chart">
-    <h3>{{titleBlockType}}</h3>
-    <canvas id="pie" class="chart chart-pie" chart-data="dataBlockTypePie" chart-labels="labelsBlockTypePie" chart-options="options"></canvas>
-    <!-- <canvas id="bar" class="chart-horizontal-bar" chart-data="dataBlockType" chart-labels="labelsBlockType" chart-series="seriesBlockType" chart-options="optionsBlockType"></canvas> -->
-    <canvas id="bar" class="chart-bar" chart-data="dataBlockType" chart-labels="labelsBlockType" chart-series="seriesBlockType" chart-options="optionsBlockType" height="50"></canvas>
+    <h3>{{titleConsensus}}</h3>
+    <canvas id="pie" class="chart chart-pie" chart-data="dataConsensusPie" chart-labels="labelsConsensusPie" chart-options="options"></canvas>
+    <!-- <canvas id="bar" class="chart-horizontal-bar" chart-data="dataConsensus" chart-labels="labelsConsensus" chart-series="seriesConsensus" chart-options="optionsConsensus"></canvas> -->
+    <h4><center>Distribution</center></h4>
+    <canvas id="bar" class="chart-bar" chart-data="dataConsensus" chart-colors="colorsConsensus" chart-labels="labelsConsensus" chart-series="seriesConsensus" chart-options="optionsConsensus" height="50"></canvas>
     
     <h3>{{titleMinedValue}}</h3>
     <canvas id="line" class="chart chart-bar" chart-data="dataMinedValue" chart-colors="colors" chart-labels="labelsMinedValue" chart-series="seriesMinedValue"></canvas>
