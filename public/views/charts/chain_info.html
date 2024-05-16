@@ -1,4 +1,4 @@
-<h2>Transaction Info</h2>
+<h2>Chain Information</h2>
 <div class="btn-group">
     <label class="btn btn-info animate-repeat" ng-model="rangeSelected" ng-repeat="range in rangeSelection" uib-btn-radio="'{{range.key}}'" ng-click="fetchChartData(range)">
         {{range.label}}
@@ -17,5 +17,9 @@
 
     <!-- <canvas id="radar" class="chart chart-radar" chart-data="data" chart-options="options" chart-labels="labels"></canvas>  -->
     <!-- <canvas id="base" class="chart-bubble" chart-data="data" chart-series="series" ></canvas>  -->
-    <canvas id="line" class="chart chart-line" chart-data="data" chart-labels="labels" chart-series="series" chart-options="options" chart-dataset-override="datasetOverride" chart-click="onClick"></canvas>
+    <!-- <canvas id="line" class="chart chart-line" chart-data="data" chart-labels="labels" chart-series="series" chart-options="options" chart-dataset-override="datasetOverride" chart-click="onClick"></canvas> -->
+    <h3>{{titleDiff}}</h3>
+    <canvas id="line" class="chart chart-bar" chart-data="dataDiff" chart-colors="colors" chart-labels="labelsDiff" chart-series="seriesDiff"></canvas>
+    <h3>{{titleMinedValue}}</h3>
+    <canvas id="line" class="chart chart-bar" chart-data="dataMinedValue" chart-colors="colors" chart-labels="labelsMinedValue" chart-series="seriesMinedValue"></canvas>
 </div>

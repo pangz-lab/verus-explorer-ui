@@ -9,7 +9,7 @@ function TransactionOverTime($scope, VerusExplorerApi, LocalStore) {
         // Block size distribution
         // Transaction Fees Over Time
         // Mining pool distribution over time
-        const chartTypeName = chart.types.txOverTime.apiName;
+        const chartTypeName = chart.types.chainBasicInfoOverTime.apiName;
         const defaultRangeSelected = 3;
         const cacheKeys = localStore.charts.keys;
         const rangeSelectionOptions = [
@@ -57,10 +57,26 @@ function TransactionOverTime($scope, VerusExplorerApi, LocalStore) {
         }
 
         const _createChartData = function (data, range, cachedData) {
-            $scope.title = "Transaction Over Time";
+            const dataIndex = {
+                blockCount: 0,
+                txCount: 1,
+                difficulty: 2,
+                minedValue: 3,
+            }
+            $scope.colors = [ '#803690', '#00ADF9', '#DCDCDC', '#46BFBD', '#FDB45C', '#949FB1', '#4D5360'];
+            $scope.title = "Block Transactions";
             $scope.series = ["Blocks", "Transactions"];
             $scope.labels = [];
             $scope.data = [];
+            
+            $scope.titleDiff = "Difficulty (10B)";
+            $scope.labelsDiff = [];
+            $scope.dataDiff = [];
+            
+            $scope.titleMinedValue = "Rewards";
+            $scope.labelsMinedValue = [];
+            $scope.dataMinedValue = [];
+
             $scope.options = {
                 legend: {
                     display: true,
@@ -71,16 +87,23 @@ function TransactionOverTime($scope, VerusExplorerApi, LocalStore) {
             };
 
             if(cachedData != undefined) {
-                $scope.labels = cachedData.labels;
-                $scope.data = cachedData.data;
-                return;
+                data = cachedData;
+            } else {
+                const c = _getCacheIds(chartTypeName, range.cache)
+                _saveToCache(data, c.key, c.ttl);
             }
 
-            $scope.labels = data.labels
-            $scope.data = data.data;
+            $scope.labels = data.labels;
+            $scope.data = [
+                data.data[dataIndex.blockCount],
+                data.data[dataIndex.txCount],
+            ];
 
-            const c = _getCacheIds(chartTypeName, range.cache)
-            _saveToCache({labels: $scope.labels, data: $scope.data}, c.key, c.ttl);
+            $scope.labelsDiff = data.labels;
+            $scope.dataDiff = data.data[dataIndex.difficulty];
+            
+            $scope.labelsMinedValue = data.labels;
+            $scope.dataMinedValue = data.data[dataIndex.minedValue];
         }
         // $scope.params = $routeParams;
 

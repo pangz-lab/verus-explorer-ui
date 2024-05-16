@@ -39,8 +39,10 @@ const localStore = {
       
       last10: { key: netSymbol + ':vexp_chart_last10', ttl: 120 },//2 min
       last50: { key: netSymbol + ':vexp_chart_last50', ttl: 120 },//2 min
-      last100: { key: netSymbol + ':vexp_chart_last100', ttl: 600 },//10 hr
-      last500: { key: netSymbol + ':vexp_chart_last500', ttl: 600 },//10 hr
+      last100: { key: netSymbol + ':vexp_chart_last100', ttl: 600 },//10 min
+      last500: { key: netSymbol + ':vexp_chart_last500', ttl: 1800 },//30 min
+      last1000: { key: netSymbol + ':vexp_chart_last1000', ttl: 3600 },//1 hr
+      last1500: { key: netSymbol + ':vexp_chart_last1500', ttl: 7200 },//2 hr
     }
   },
   // api: {
@@ -49,7 +51,7 @@ const localStore = {
 }
 const chart = {
   types: {
-    txOverTime: { apiName: 'txovertime' },
+    chainBasicInfoOverTime: { apiName: 'chainbasicinfoovertime' },
     blockBasicInfo: { apiName: 'blkbasicinfo' }
   }
 }
@@ -678,7 +680,7 @@ angular
     //         // Block size distribution
     //         // Transaction Fees Over Time
     //         // Mining pool distribution over time
-    //         const chartTypeName = chart.types.txOverTime.apiName;
+    //         const chartTypeName = chart.types.chainBasicInfoOverTime.apiName;
     //         const defaultRangeSelected = 3;
     //         const cacheKeys = localStore.charts.keys;
     //         const rangeSelectionOptions = [
@@ -2087,6 +2089,8 @@ function BlockBasicInfo($scope, VerusExplorerApi, LocalStore) {
             { label: 'Last 50', key: 'last50', cache: cacheKeys.last50 },
             { label: 'Last 100', key: 'last100', cache: cacheKeys.last100 },
             { label: 'Last 500', key: 'last500', cache: cacheKeys.last500 },
+            { label: 'Last 1k', key: 'last1000', cache: cacheKeys.last1000 },
+            { label: 'Last 1.5k', key: 'last1500', cache: cacheKeys.last1500 },
         ]
         $scope.rangeSelection = rangeSelectionOptions;
         $scope.rangeSelected = defaultRangeSelected;
@@ -2124,6 +2128,7 @@ function BlockBasicInfo($scope, VerusExplorerApi, LocalStore) {
             $scope.colors = [ '#803690', '#00ADF9', '#DCDCDC', '#46BFBD', '#FDB45C', '#949FB1', '#4D5360'];
             $scope.onClick = function (points, evt) {
                 console.log(points[0], evt);
+                console.log(evt);
             };
 
             $scope.options = {
@@ -2135,13 +2140,32 @@ function BlockBasicInfo($scope, VerusExplorerApi, LocalStore) {
                 }
             };
             
+            $scope.optionsTxFee = {
+              scales: {
+                xAxes: [{
+                  display: true
+                }],
+                yAxes: [{
+                  display: true,
+                  ticks: {
+                    min: 0.00001,
+                    stepSize: 0.1
+                  }
+                }],
+                gridLines: {
+                  display: false,
+                //   borderDash: [ 20, 20 ],
+                }
+            },
+
+            }
             $scope.optionsBarBase = {
                 animation: {
-                    duration: 0
+                    duration: 4
                   },
                   elements: {
                     line: {
-                      borderWidth: 0.5
+                      borderWidth: 1
                     },
                     point: {
                       radius: 0
@@ -2158,7 +2182,7 @@ function BlockBasicInfo($scope, VerusExplorerApi, LocalStore) {
                       display: true
                     }],
                     yAxes: [{
-                      display: true
+                      display: true,
                     }],
                     gridLines: {
                       display: false,
@@ -2170,6 +2194,26 @@ function BlockBasicInfo($scope, VerusExplorerApi, LocalStore) {
                 }
             };
 
+            // $scope.optionsSizeBubble = {
+            //     animation: {
+            //       duration: 0
+            //     },
+            //     legend: {
+            //       display: false
+            //     },
+            //     scales: {
+            //       xAxes: [{
+            //         display: false
+            //       }],
+            //       yAxes: [{
+            //         display: false
+            //       }],
+            //     },
+            //     tooltips: {
+            //       enabled: true
+            //     }
+            // };
+            
             $scope.optionsBlockType = {
                 animation: {
                   duration: 0
@@ -2187,10 +2231,10 @@ function BlockBasicInfo($scope, VerusExplorerApi, LocalStore) {
                 },
                 scales: {
                   xAxes: [{
-                    display: false
+                    display: true
                   }],
                   yAxes: [{
-                    display: true
+                    display: false
                   }],
                   gridLines: {
                     display: false
@@ -2199,18 +2243,19 @@ function BlockBasicInfo($scope, VerusExplorerApi, LocalStore) {
                 tooltips: {
                   enabled: true
                 }
-              };
+            };
 
             const dataIndex = {
                 size: 0,
                 diff: 1,
-                txFee: 2,
+                totalTxFee: 2,
                 txCount: 3,
                 blockType: 4,
+                minedValue: 5,
             }
 
             //Block Type
-            $scope.titleBlockType = "Type";
+            $scope.titleBlockType = "Consensus";
             $scope.seriesBlockType = [ "PoW", "PoS" ];
             $scope.labelsBlockType = [];
             $scope.dataBlockType = [];
@@ -2219,7 +2264,7 @@ function BlockBasicInfo($scope, VerusExplorerApi, LocalStore) {
             $scope.dataBlockTypePie = [];
 
             //Size
-            $scope.titleSize = "Size (bytes)";
+            $scope.titleSize = "Size (kB)";
             $scope.seriesSize = [ "Size in bytes" ];
             $scope.labelsSize = [];
             $scope.dataSize = [];
@@ -2227,21 +2272,26 @@ function BlockBasicInfo($scope, VerusExplorerApi, LocalStore) {
             $scope.dataSizeBubble = []
             
             //Difficulty
-            $scope.titleDiff = "Difficulty (1B)";
+            $scope.titleDiff = "Difficulty (10B)";
             $scope.seriesDiff = [ "Difficulty" ];
             $scope.labelsDiff = [];
             $scope.dataDiff = [];
-            
-            //TX Fee
-            $scope.titleTxFee = "Transaction Fee";
-            $scope.seriesTxFee = [ "Tx Fee" ];
-            $scope.labelsTxFee = [];
-            $scope.dataTxFee = [];
             
             //TX Count
             $scope.titleTxCount = "Transaction Count";
             $scope.labelsTxCount = [];
             $scope.dataTxCount = [];
+
+            //Mined Value
+            $scope.titleMinedValue = "Rewards";
+            $scope.labelsMinedValue = [];
+            $scope.dataMinedValue = [];
+
+            //TX Fee
+            $scope.titleTxFee = "Transaction Fee";
+            $scope.seriesTxFee = [ "Tx Fee" ];
+            $scope.labelsTxFee = [];
+            $scope.dataTxFee = [];
             
 
             if(cachedData != undefined) {
@@ -2266,13 +2316,16 @@ function BlockBasicInfo($scope, VerusExplorerApi, LocalStore) {
             $scope.labelsDiff = data.labels;
             $scope.dataDiff = data.data[dataIndex.diff];
             
-            $scope.labelsTxFee = data.labels;
-            $scope.dataTxFee = data.data[dataIndex.txFee];
-            
             $scope.labelsTxCount = data.labels;
             $scope.dataTxCount = data.data[dataIndex.txCount];
-        }
 
+            $scope.labelsMinedValue = data.labels;
+            $scope.dataMinedValue = data.data[dataIndex.minedValue];
+
+            $scope.labelsTxFee = data.labels;
+            $scope.dataTxFee = data.data[dataIndex.totalTxFee];
+        }
+        
         const _getBlockTypePieData = function(data) {
             var result = {
                 pow: 0,
@@ -2298,14 +2351,16 @@ function BlockBasicInfo($scope, VerusExplorerApi, LocalStore) {
             ];
         }
         
+        // const _getSizeBubbleData = function(data) {
         const _getSizeBubbleData = function(data) {
             var result = [];
             const size = data.length;
             for(var i = 0; i < size; i++) {
                 result.unshift([{
                     x: Math.floor(Math.random() * size),
+                    // x: labels[i],
                     y: Math.floor(Math.random() * size),
-                    r: data[i] / 500
+                    r: data[i] / 600
                 }]);
             }
             return result;
@@ -2313,7 +2368,7 @@ function BlockBasicInfo($scope, VerusExplorerApi, LocalStore) {
         // $scope.params = $routeParams;
 
 }
-// Source: public/src/js/controllers/charts/transaction_over_time.js
+// Source: public/src/js/controllers/charts/chain_info.js
 function TransactionOverTime($scope, VerusExplorerApi, LocalStore) {
         // function($scope, $rootScope, $routeParams, $location, Chart, Charts) {
         // ChartJsProvider.setOptions({ colors : [ '#803690', '#00ADF9', '#DCDCDC', '#46BFBD', '#FDB45C', '#949FB1', '#4D5360'] });
@@ -2325,7 +2380,7 @@ function TransactionOverTime($scope, VerusExplorerApi, LocalStore) {
         // Block size distribution
         // Transaction Fees Over Time
         // Mining pool distribution over time
-        const chartTypeName = chart.types.txOverTime.apiName;
+        const chartTypeName = chart.types.chainBasicInfoOverTime.apiName;
         const defaultRangeSelected = 3;
         const cacheKeys = localStore.charts.keys;
         const rangeSelectionOptions = [
@@ -2373,10 +2428,26 @@ function TransactionOverTime($scope, VerusExplorerApi, LocalStore) {
         }
 
         const _createChartData = function (data, range, cachedData) {
-            $scope.title = "Transaction Over Time";
+            const dataIndex = {
+                blockCount: 0,
+                txCount: 1,
+                difficulty: 2,
+                minedValue: 3,
+            }
+            $scope.colors = [ '#803690', '#00ADF9', '#DCDCDC', '#46BFBD', '#FDB45C', '#949FB1', '#4D5360'];
+            $scope.title = "Block Transactions";
             $scope.series = ["Blocks", "Transactions"];
             $scope.labels = [];
             $scope.data = [];
+            
+            $scope.titleDiff = "Difficulty (10B)";
+            $scope.labelsDiff = [];
+            $scope.dataDiff = [];
+            
+            $scope.titleMinedValue = "Rewards";
+            $scope.labelsMinedValue = [];
+            $scope.dataMinedValue = [];
+
             $scope.options = {
                 legend: {
                     display: true,
@@ -2387,16 +2458,23 @@ function TransactionOverTime($scope, VerusExplorerApi, LocalStore) {
             };
 
             if(cachedData != undefined) {
-                $scope.labels = cachedData.labels;
-                $scope.data = cachedData.data;
-                return;
+                data = cachedData;
+            } else {
+                const c = _getCacheIds(chartTypeName, range.cache)
+                _saveToCache(data, c.key, c.ttl);
             }
 
-            $scope.labels = data.labels
-            $scope.data = data.data;
+            $scope.labels = data.labels;
+            $scope.data = [
+                data.data[dataIndex.blockCount],
+                data.data[dataIndex.txCount],
+            ];
 
-            const c = _getCacheIds(chartTypeName, range.cache)
-            _saveToCache({labels: $scope.labels, data: $scope.data}, c.key, c.ttl);
+            $scope.labelsDiff = data.labels;
+            $scope.dataDiff = data.data[dataIndex.difficulty];
+            
+            $scope.labelsMinedValue = data.labels;
+            $scope.dataMinedValue = data.data[dataIndex.minedValue];
         }
         // $scope.params = $routeParams;
 

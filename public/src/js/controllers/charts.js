@@ -101,7 +101,7 @@ angular
     //         // Block size distribution
     //         // Transaction Fees Over Time
     //         // Mining pool distribution over time
-    //         const chartTypeName = chart.types.txOverTime.apiName;
+    //         const chartTypeName = chart.types.chainBasicInfoOverTime.apiName;
     //         const defaultRangeSelected = 3;
     //         const cacheKeys = localStore.charts.keys;
     //         const rangeSelectionOptions = [
