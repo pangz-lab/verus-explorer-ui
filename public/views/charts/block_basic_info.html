@@ -1,8 +1,16 @@
-<h2>Block Information</h2>
-<div class="btn-group">
-    <label class="btn btn-info animate-repeat" ng-model="rangeSelected" ng-repeat="range in rangeSelection" uib-btn-radio="'{{range.key}}'" ng-click="fetchChartData(range)">
+<h2>Blocks Status
+    <small> ( Last {{selectedLabel}} ) </small>
+    
+    <span class="badge" data-ng-if="loading" data-ng-click="cancelLoading()">
+        <span class="glyphicon glyphicon-remove"></span> {{generationMessage}}
+    </span>
+    <span class="loader-gif" aria-hidden="true" data-ng-if="loading"></span>
+</h2>
+
+<div class="btn-group" role="group">
+    <button type="button" class="btn btn-info animate-repeat"  data-ng-disabled="loading" data-ng-class="(rangeSelected == $index)? 'active':''" ng-repeat="range in rangeSelection" uib-btn-radio="'{{range.key}}'" ng-click="fetchChartData(range, $index)">
         {{range.label}}
-    </label>
+    </button>
 </div>
 
 <!-- <div class="btn-group">
@@ -16,13 +24,35 @@
     <!-- <canvas id="bar" class="chart-horizontal-bar" chart-data="dataConsensus" chart-labels="labelsConsensus" chart-series="seriesConsensus" chart-options="optionsConsensus"></canvas> -->
     <h4><center>Distribution</center></h4>
     <canvas id="bar" class="chart-bar" chart-data="dataConsensus" chart-colors="colorsConsensus" chart-labels="labelsConsensus" chart-series="seriesConsensus" chart-options="optionsConsensus" height="50"></canvas>
-    
+
+    <!-- <div style="text-align: center;">
+        <table style="margin: 0 auto; height: 450px; border-width:0px" border="0">
+            <tr>
+                <td style="height: 100%;">
+                    <button id="leftButton" clas="btn-info" style="height: 100%; width: 100%;">Left</button>
+                </td>
+                <td>
+                    <canvas width="1000px;" height="450px" style="border: 1px solid black;" class="chart chart-bar" chart-data="dataMinedValue" chart-colors="colors" chart-labels="labelsMinedValue" chart-series="seriesMinedValue"></canvas>
+                </td>
+                <td style="height: 100%;">
+                    <button id="rightButton" style="height: 100%; width: 100%;">Right</button>
+                </td>
+            </tr>
+        </table>
+    </div> -->
+
+
+
+
     <h3>{{titleMinedValue}}</h3>
     <canvas id="line" class="chart chart-bar" chart-data="dataMinedValue" chart-colors="colors" chart-labels="labelsMinedValue" chart-series="seriesMinedValue"></canvas>
 
     <h3>{{titleSize}}</h3>
-    <!-- <canvas id="bar" class="chart-bubble" chart-data="dataSizeBubble" chart-colors="colors"></canvas> -->
     <canvas id="bar" class="chart chart-bar" chart-data="dataSize" chart-labels="labelsSize" chart-series="seriesSize" chart-colors="colors" chart-options="optionsBarBase" chart-click="onClick"></canvas>
+    
+    <h3>{{titleBlockTime}}</h3>
+    <canvas id="bar" class="chart chart-bar" chart-data="dataBlockTime" chart-labels="labelsBlockTime" chart-series="seriesBlockTime" chart-colors="colors" chart-options="optionsBarBase"></canvas>
+
     <h3>{{titleDiff}}</h3>
     <canvas id="bar" class="chart chart-bar" chart-data="dataDiff" chart-labels="labelsDiff" chart-series="seriesDiff" chart-colors="colors" chart-options="optionsBarBase"></canvas>
     <h3>{{titleTxCount}}</h3>

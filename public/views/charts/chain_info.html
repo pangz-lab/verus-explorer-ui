@@ -1,8 +1,16 @@
-<h2>Chain Information</h2>
-<div class="btn-group">
-    <label class="btn btn-info animate-repeat" ng-model="rangeSelected" ng-repeat="range in rangeSelection" uib-btn-radio="'{{range.key}}'" ng-click="fetchChartData(range)">
+<h2>Chain Status
+    <small> ( {{selectedLabel}} ) </small>
+    
+    <span class="badge" data-ng-if="loading" data-ng-click="cancelLoading()">
+        <span class="glyphicon glyphicon-remove"></span> {{generationMessage}}
+    </span>
+    <span class="loader-gif" aria-hidden="true" data-ng-if="loading"></span>
+</h2>
+
+<div class="btn-group" role="group">
+    <button type="button" class="btn btn-info animate-repeat"  data-ng-disabled="loading" data-ng-class="(rangeSelected == $index)? 'active':''" ng-repeat="range in rangeSelection" uib-btn-radio="'{{range.key}}'" ng-click="fetchChartData(range, $index)">
         {{range.label}}
-    </label>
+    </button>
 </div>
 
 <!-- <div class="btn-group">

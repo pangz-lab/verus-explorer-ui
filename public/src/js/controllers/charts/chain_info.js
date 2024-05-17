@@ -10,7 +10,7 @@ function TransactionOverTime($scope, VerusExplorerApi, LocalStore) {
         // Transaction Fees Over Time
         // Mining pool distribution over time
         const chartTypeName = chart.types.chainBasicInfoOverTime.apiName;
-        const defaultRangeSelected = 3;
+        const defaultRangeSelected = 2;
         const cacheKeys = localStore.charts.keys;
         const rangeSelectionOptions = [
             { label: '10min', key: 'last10Minutes', cache: cacheKeys.last10Minutes },
@@ -28,11 +28,45 @@ function TransactionOverTime($scope, VerusExplorerApi, LocalStore) {
         ]
         $scope.rangeSelection = rangeSelectionOptions;
         $scope.rangeSelected = defaultRangeSelected;
+        $scope.selectedLabel = rangeSelectionOptions[$scope.rangeSelected].label;
+        
+        $scope.generationMessage = "";
+        $scope.colors = [ '#803690', '#00ADF9', '#DCDCDC', '#46BFBD', '#FDB45C', '#949FB1', '#4D5360'];
+        $scope.title = "Block Transactions";
+        $scope.series = ["Blocks", "Transactions"];
+        $scope.labels = [];
+        $scope.data = [];
+        
+        $scope.titleDiff = "Difficulty (10B)";
+        $scope.labelsDiff = [];
+        $scope.dataDiff = [];
+        
+        $scope.titleMinedValue = "Rewards";
+        $scope.labelsMinedValue = [];
+        $scope.dataMinedValue = [];
 
-        $scope.fetchChartData = function(range) {
-            if(range == undefined) {
-                range = rangeSelectionOptions[defaultRangeSelected];
+        $scope.options = {
+            legend: {
+                display: true,
+                labels: {
+                    color: 'red'
+                }
             }
+        };
+
+        $scope.cancelLoading = function () {
+            $scope.loading = false;
+        }
+
+        $scope.fetchChartData = function (range, index) {
+            if (range == undefined) {
+                range = rangeSelectionOptions[defaultRangeSelected];
+                index = defaultRangeSelected;
+            }
+            $scope.selectedLabel = range.label;
+            $scope.rangeSelected = index;
+            $scope.loading = true;
+            $scope.generationMessage = "Fetching data ...";
 
             const cacheId = _getCacheIds(chartTypeName, range.cache);
             const cachedData = LocalStore.get(cacheId.key);
@@ -45,7 +79,7 @@ function TransactionOverTime($scope, VerusExplorerApi, LocalStore) {
             .getChartData(chartTypeName, range.key)
             .then(function(queryResult) {
                 const data = queryResult.data;
-                if (!queryResult.error && data.labels[0] != undefined) { _createChartData(data, range); }
+                if (!queryResult.error && data != undefined) { _createChartData(data, range); }
             });
         }
 
@@ -57,34 +91,13 @@ function TransactionOverTime($scope, VerusExplorerApi, LocalStore) {
         }
 
         const _createChartData = function (data, range, cachedData) {
+            $scope.generationMessage = "Generating charts ...";
             const dataIndex = {
                 blockCount: 0,
                 txCount: 1,
                 difficulty: 2,
                 minedValue: 3,
             }
-            $scope.colors = [ '#803690', '#00ADF9', '#DCDCDC', '#46BFBD', '#FDB45C', '#949FB1', '#4D5360'];
-            $scope.title = "Block Transactions";
-            $scope.series = ["Blocks", "Transactions"];
-            $scope.labels = [];
-            $scope.data = [];
-            
-            $scope.titleDiff = "Difficulty (10B)";
-            $scope.labelsDiff = [];
-            $scope.dataDiff = [];
-            
-            $scope.titleMinedValue = "Rewards";
-            $scope.labelsMinedValue = [];
-            $scope.dataMinedValue = [];
-
-            $scope.options = {
-                legend: {
-                    display: true,
-                    labels: {
-                        color: 'red'
-                    }
-                }
-            };
 
             if(cachedData != undefined) {
                 data = cachedData;
@@ -104,6 +117,10 @@ function TransactionOverTime($scope, VerusExplorerApi, LocalStore) {
             
             $scope.labelsMinedValue = data.labels;
             $scope.dataMinedValue = data.data[dataIndex.minedValue];
+
+            $scope.loading = false;
+            $scope.generationMessage = "";
+            // $scope.$apply();
         }
         // $scope.params = $routeParams;
 

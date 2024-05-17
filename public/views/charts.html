@@ -29,21 +29,21 @@
         <!-- <div class="col-md-1"></div> -->
         <div class="col-xs-12 col-md-12">
             <tabset>
-                <tab heading="Chain Info">
+                <tab heading="Chain Status">
                     <div data-ng-controller="TransactionOverTimeChartController" data-ng-init="fetchChartData()">
                         <div class="page-header"></div>
-                        <div data-ng-show="loading">
+                        <!-- <div data-ng-show="loading">
                             <span translate>Loading chart...</span> <span class="loader-gif"></span>
-                        </div>
+                        </div> -->
                         <div data-ng-include src="'views/charts/chain_info.html'"></div>
                     </div>
                 </tab>
-                <tab heading="Block Info">
+                <tab heading="Blocks Status">
                     <div data-ng-controller="BlockBasicInfoChartController" data-ng-init="fetchChartData()">
                         <div class="page-header"></div>
-                        <div data-ng-show="loading">
+                        <!-- <div data-ng-show="loading">
                             <span translate>Loading chart...</span> <span class="loader-gif"></span>
-                        </div>
+                        </div> -->
                         <div data-ng-include src="'views/charts/block_basic_info.html'"></div>
                     </div>
                 </tab>
