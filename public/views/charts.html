@@ -29,26 +29,25 @@
         <!-- <div class="col-md-1"></div> -->
         <div class="col-xs-12 col-md-12">
             <tabset>
-                <tab heading="Chain Status">
-                    <div data-ng-controller="TransactionOverTimeChartController" data-ng-init="fetchChartData()">
-                        <div class="page-header"></div>
-                        <!-- <div data-ng-show="loading">
-                            <span translate>Loading chart...</span> <span class="loader-gif"></span>
-                        </div> -->
-                        <div data-ng-include src="'views/charts/chain_info.html'"></div>
+                <tab heading="Chain Status" href="#chain">
+                    <div data-ng-controller="ChainBasicInfoChartController" data-ng-init="fetchChartData()">
+                        <!-- <div class="page-header"></div> -->
+                        <div data-ng-include src="'views/charts/chain_basic_info.html'"></div>
                     </div>
                 </tab>
-                <tab heading="Blocks Status">
+                <tab heading="Blocks Status" href="#blocks">
                     <div data-ng-controller="BlockBasicInfoChartController" data-ng-init="fetchChartData()">
-                        <div class="page-header"></div>
-                        <!-- <div data-ng-show="loading">
-                            <span translate>Loading chart...</span> <span class="loader-gif"></span>
-                        </div> -->
+                        <!-- <div class="page-header"></div> -->
                         <div data-ng-include src="'views/charts/block_basic_info.html'"></div>
                     </div>
                 </tab>
-                <tab heading="Hashrate"></tab>
-                <tab heading="Mining Pools"></tab>
+                <tab heading="Mining Status" href="#mining">
+                    <div data-ng-controller="MiningBasicInfoChartController" data-ng-init="fetchChartData()">
+                        <!-- <div class="page-header"></div> -->
+                        <div data-ng-include src="'views/charts/mining_basic_info.html'"></div>
+                    </div>
+                </tab>
+                <!-- <tab heading="Mining Pools"></tab> -->
             </tabset>
               
             <!-- <div class="page-header">

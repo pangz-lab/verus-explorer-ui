@@ -18,12 +18,40 @@
     <label class="btn btn-info" ng-model="radioModel" uib-btn-radio="'Middle'">Middle</label>
     <label class="btn btn-info" ng-model="radioModel" uib-btn-radio="'Right'">Right</label>
 </div> -->
-<div id="chart">
-    <h3>{{titleConsensus}}</h3>
-    <canvas id="pie" class="chart chart-pie" chart-data="dataConsensusPie" chart-labels="labelsConsensusPie" chart-options="options"></canvas>
+<div>
+
+    <!-- <div class="panel panel-default">
+        <div class="panel-heading">Panel heading without title</div>
+        <div class="panel-body">
+          Panel content
+        </div>
+    </div> -->
+
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h4>{{titleConsensus}}
+                <button 
+                    csv-download
+                    class="btn btn-xs pull-right"
+                    title="download consensus data"
+                    data="dataConsensus"
+                    content-title="labelsConsensus"
+                    filename="'consensus_data'">
+                    <span class="glyphicon glyphicon-download-alt"></span> CSV
+                </button>
+            </h4>
+        </div>
+        <div class="panel-body">
+            <canvas class="chart chart-pie" chart-data="dataConsensusPie" chart-labels="labelsConsensusPie" chart-options="options"></canvas>
+            <h4><center>Distribution</center></h4> 
+            <canvas class="chart-bar" chart-data="dataConsensus" chart-colors="colorsConsensus" chart-labels="labelsConsensus" chart-series="seriesConsensus" chart-options="optionsConsensus" height="80"></canvas>
+        </div>
+    </div>
+
+    <!-- <a class="btn" href="#" csv-download data="dataConsensus" title="labelsConsensus" filename="'consensus_data'"><i class="icon-file"></i></a> -->
+
     <!-- <canvas id="bar" class="chart-horizontal-bar" chart-data="dataConsensus" chart-labels="labelsConsensus" chart-series="seriesConsensus" chart-options="optionsConsensus"></canvas> -->
-    <h4><center>Distribution</center></h4>
-    <canvas id="bar" class="chart-bar" chart-data="dataConsensus" chart-colors="colorsConsensus" chart-labels="labelsConsensus" chart-series="seriesConsensus" chart-options="optionsConsensus" height="50"></canvas>
+    
 
     <!-- <div style="text-align: center;">
         <table style="margin: 0 auto; height: 450px; border-width:0px" border="0">
@@ -43,23 +71,153 @@
 
 
 
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h4>
+                {{titleTotalBlockVoutValue}}
+                <button 
+                    csv-download
+                    data="[dataTotalBlockVoutValue]"
+                    content-title="labelsBlockVoutValue"
+                    filename="'volume_per_block'"
+                    title="download volume/block data"
+                    class="btn btn-xs pull-right">
+                    <span class="glyphicon glyphicon-download-alt"></span> CSV
+                </button>
+            </h4>
+        </div>
+        <div class="panel-body">
+            <canvas class="chart chart-bar" chart-data="dataTotalBlockVoutValue" chart-colors="colors" chart-labels="labelsBlockVoutValue"></canvas>
+        </div>
+    </div>
 
-    <h3>{{titleMinedValue}}</h3>
-    <canvas id="line" class="chart chart-bar" chart-data="dataMinedValue" chart-colors="colors" chart-labels="labelsMinedValue" chart-series="seriesMinedValue"></canvas>
 
-    <h3>{{titleSize}}</h3>
-    <canvas id="bar" class="chart chart-bar" chart-data="dataSize" chart-labels="labelsSize" chart-series="seriesSize" chart-colors="colors" chart-options="optionsBarBase" chart-click="onClick"></canvas>
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h4>
+                {{titleMinedValue}}
+                <button 
+                    csv-download
+                    data="[dataMinedValue]"
+                    content-title="labelsMinedValue"
+                    filename="'mining_reward_per_block'"
+                    title="download mining reward per block data"
+                    class="btn btn-xs pull-right">
+                    <span class="glyphicon glyphicon-download-alt"></span> CSV
+                </button>
+            </h4>
+        </div>
+        <div class="panel-body">
+            <canvas class="chart chart-bar" chart-data="dataMinedValue" chart-colors="colors" chart-labels="labelsMinedValue" chart-series="seriesMinedValue"></canvas>
+        </div>
+    </div>
+
+
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h4>
+                {{titleSize}}
+                <button 
+                    csv-download
+                    data="[dataSize]"
+                    content-title="labelsSize"
+                    filename="'size_per_block'"
+                    title="download size per block data"
+                    class="btn btn-xs pull-right">
+                    <span class="glyphicon glyphicon-download-alt"></span> CSV
+                </button>
+            </h4>
+        </div>
+        <div class="panel-body">
+            <canvas class="chart chart-bar" chart-data="dataSize" chart-labels="labelsSize" chart-series="seriesSize" chart-colors="colors" chart-options="optionsBarBase" chart-click="onClick"></canvas>    
+        </div>
+    </div>
+
+
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h4>
+                {{titleBlockTime}}
+                <button 
+                    csv-download
+                    data="[dataBlockTime]"
+                    content-title="labelsBlockTime"
+                    filename="'time_per_block'"
+                    title="download time per block data"
+                    class="btn btn-xs pull-right">
+                    <span class="glyphicon glyphicon-download-alt"></span> CSV
+                </button>
+            </h4>
+        </div>
+        <div class="panel-body">
+            <canvas class="chart chart-bar" chart-data="dataBlockTime" chart-labels="labelsBlockTime" chart-series="seriesBlockTime" chart-colors="colors" chart-options="optionsBarBase"></canvas>
+        </div>
+    </div>
+
+
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h4>
+                {{titleDiff}}
+                <button 
+                    csv-download
+                    data="[dataDiff]"
+                    content-title="labelsDiff"
+                    filename="'diff_per_block'"
+                    title="download diff per block data"
+                    class="btn btn-xs pull-right">
+                    <span class="glyphicon glyphicon-download-alt"></span> CSV
+                </button>
+            </h4>
+        </div>
+        <div class="panel-body">
+            <canvas class="chart chart-bar" chart-data="dataDiff" chart-labels="labelsDiff" chart-series="seriesDiff" chart-colors="colors" chart-options="optionsBarBase"></canvas>
+        </div>
+    </div>
     
-    <h3>{{titleBlockTime}}</h3>
-    <canvas id="bar" class="chart chart-bar" chart-data="dataBlockTime" chart-labels="labelsBlockTime" chart-series="seriesBlockTime" chart-colors="colors" chart-options="optionsBarBase"></canvas>
 
-    <h3>{{titleDiff}}</h3>
-    <canvas id="bar" class="chart chart-bar" chart-data="dataDiff" chart-labels="labelsDiff" chart-series="seriesDiff" chart-colors="colors" chart-options="optionsBarBase"></canvas>
-    <h3>{{titleTxCount}}</h3>
-    <canvas id="bar" class="chart chart-bar" chart-data="dataTxCount" chart-labels="labelsTxCount" chart-colors="colors" chart-options="optionsBarBase"></canvas>
-    <h3>{{titleTxFee}}</h3>
-    <canvas id="bar" class="chart chart-bar" chart-data="dataTxFee" chart-labels="labelsTxFee" chart-colors="colors" chart-series="seriesTxFee" chart-options="optionsTxFee"></canvas>
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h4>
+                {{titleTxCount}}
+                <button 
+                    csv-download
+                    data="[dataTxCount]"
+                    content-title="labelsTxCount"
+                    filename="'tx_count_per_block'"
+                    title="download tx count per block data"
+                    class="btn btn-xs pull-right">
+                    <span class="glyphicon glyphicon-download-alt"></span> CSV
+                </button>
+            </h4>
+        </div>
+        <div class="panel-body">
+            <canvas class="chart chart-bar" chart-data="dataTxCount" chart-labels="labelsTxCount" chart-colors="colors" chart-options="optionsBarBase"></canvas>
+        </div>
+    </div>
+
+
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h4>
+                {{titleTxFee}}
+                <button 
+                    csv-download
+                    data="[dataTxFee]"
+                    content-title="labelsTxFee"
+                    filename="'tx_fee_per_block'"
+                    title="download tx fee per block data"
+                    class="btn btn-xs pull-right">
+                    <span class="glyphicon glyphicon-download-alt"></span> CSV
+                </button>
+            </h4>
+        </div>
+        <div class="panel-body">
+            <canvas class="chart chart-bar" chart-data="dataTxFee" chart-labels="labelsTxFee" chart-colors="colors" chart-series="seriesTxFee" chart-options="optionsTxFee"></canvas>
+        </div>
+    </div>
     
+
     <!-- <canvas id="doughnut" class="chart chart-doughnut" chart-data="data" chart-labels="labels"></canvas> -->
     <!-- <canvas id="radar" class="chart chart-radar" chart-data="data" chart-options="options" chart-labels="labels"></canvas>  -->
     <!-- <canvas id="base" class="chart-bubble" chart-data="data" chart-series="series" ></canvas>  -->

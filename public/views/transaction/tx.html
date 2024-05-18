@@ -79,8 +79,7 @@
     <div class="col-xs-6 col-sm-4 col-md-4">
         <!-- <span data-ng-show="!tx.isCoinBase &&  !isNaN(parseFloat(tx.fees))" -->
         <span data-ng-show="!tx.isNewlyCreatedCoin" class="txvalues txvalues-default">
-            <span translate>Fee</span>
-            : {{$root.currency.getConvertion(tx.fees)}}
+            <span translate>Fee</span>: {{$root.currency.getConvertion(tx.fees)}}
         </span>
     </div>
     <div class="col-xs-6 col-sm-8 col-md-8 text-right">

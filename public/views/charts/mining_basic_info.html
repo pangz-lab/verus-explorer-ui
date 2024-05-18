@@ -1,0 +1,156 @@
+<h2>Mining Status
+    <small> ( {{selectedLabel}} ) </small>
+    <span class="badge" data-ng-if="loading" data-ng-click="cancelLoading()">
+        <span class="glyphicon glyphicon-remove"></span> {{generationMessage}}
+    </span>
+    <span class="loader-gif" aria-hidden="true" data-ng-if="loading"></span>
+</h2>
+
+<!-- <div class="btn-group" role="group">
+    <button type="button" class="btn btn-info animate-repeat"  data-ng-disabled="loading" data-ng-class="(rangeSelected == $index)? 'active':''" ng-repeat="range in rangeSelection" uib-btn-radio="'{{range.key}}'" ng-click="fetchChartData(range, $index)">
+        {{range.label}}
+    </button>
+</div> -->
+
+
+<!-- <div>
+    <div class="panel panel-default">
+        <div class="panel-heading"> -->
+            <h4>
+                {{titleHashratePie}}
+                <button 
+                    csv-download
+                    data="[dataHashratePie]"
+                    content-title="labelsHashratePie"
+                    filename="'mining_pools_hash'"
+                    title="download mining pools hash data"
+                    class="btn btn-xs pull-right">
+                    <span class="glyphicon glyphicon-download-alt"></span> CSV
+                </button>
+            </h4>
+        <!-- </div>
+        <div class="panel-body" data-ng-if="!loading"> -->
+            <!-- <canvas class="chart chart-bar" chart-data="dataTotalBlockVoutValue" chart-colors="colors" chart-labels="labelsTotalBlockVoutValue"></canvas> -->
+            <canvas class="chart chart-pie" chart-data="dataHashratePie" chart-labels="labelsHashratePie" chart-series="seriesHashratePie" chart-options="options"></canvas>
+
+        <!-- </div>
+    </div> -->
+
+    <!-- <div class="panel panel-default"> -->
+        <!-- Default panel contents -->
+        <!-- <div class="panel-heading">
+        </div>
+        <div class="panel-body"> -->
+            <!-- <p>...</p> -->
+            <!-- </div> -->
+            
+            <h4>Mining Pools</h4>
+            <table class="table">
+                <tr>
+                    <th>#</th>
+                    <th>Name</th>
+                    <th>Hashrate</th>
+                    <th>Miners</th>
+                    <th>Min Pay</th>
+                    <th>Fee</th>
+                    <th>Website</th>
+                    <!-- <th>Type</th> -->
+                    <!-- <th>Country</th> -->
+                </tr>
+                <tr ng-repeat="pool in miningPoolData | orderBy:'-hashrate'">
+                    <td>{{$index + 1}}</td>
+                    <td>{{pool.poolId}}</td>
+                    <td>{{(pool.hashrate / 1e9).toFixed(2)}} <b>GH</b></td>
+                    <td>{{pool.miners < 1? 0 : pool.miners}}</td>
+                    <td><span class="badge">{{pool.minpay}}</span></td>
+                    <td><span class="badge">{{pool.fee}}</span></td>
+                    <td>
+                        <a href="{{pool.url}}">{{pool.url}}</a>
+                        <h5>Country</h5>
+                        <span class="badge" ng-repeat="item in pool.country.split(', ')">{{ item }}</span>
+                        <h5>Type</h5>
+                        <span class="badge badge-warning" ng-repeat="item in pool.feetype.split('|')">{{ item }}</span>
+                    </td>
+                    
+                    <!-- <td>
+                        <ul>
+                            <li ng-repeat="item in pool.feetype.split('|')">{{ item }}</li>
+                        </ul>
+                    </td> -->
+                    <!-- <td> -->
+                        <!-- <ul> -->
+                            <!-- <span class="badge" ng-repeat="item in pool.country.split(', ')">{{ item }}</span> -->
+                        <!-- </ul> -->
+                    <!-- </td> -->
+                </tr>
+            </table>
+        <!-- </div>
+    </div> -->
+
+<!-- 
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h4>
+                {{titleMinedValue}}
+                <button 
+                    csv-download
+                    data="[dataMinedValue]"
+                    content-title="labelsMinedValue"
+                    filename="'reward_over_time'"
+                    title="download reward over time data"
+                    class="btn btn-xs pull-right">
+                    <span class="glyphicon glyphicon-download-alt"></span> CSV
+                </button>
+            </h4>
+        </div>
+        <div class="panel-body">
+            <canvas class="chart chart-bar" chart-data="dataMinedValue" chart-colors="colors" chart-labels="labelsMinedValue" chart-series="seriesMinedValue"></canvas>
+        </div>
+    </div> 
+    
+
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h4>
+                {{titleDiff}}
+                <button 
+                    csv-download
+                    data="[dataDiff]"
+                    content-title="labelsDiff"
+                    filename="'difficulty_over_time'"
+                    title="download difficulty over time data"
+                    class="btn btn-xs pull-right">
+                    <span class="glyphicon glyphicon-download-alt"></span> CSV
+                </button>
+            </h4>
+        </div>
+        <div class="panel-body">
+            <canvas class="chart chart-bar" chart-data="dataDiff" chart-colors="colors" chart-labels="labelsDiff" chart-series="seriesDiff"></canvas>
+        </div>
+    </div> 
+    
+    
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h4>
+                {{title}}
+                <button 
+                    csv-download
+                    data="data"
+                    content-title="labels"
+                    filename="'block_and_tx_over_time'"
+                    title="download block and tx over time data"
+                    class="btn btn-xs pull-right">
+                    <span class="glyphicon glyphicon-download-alt"></span> CSV
+                </button>
+            </h4>
+        </div>
+        <div class="panel-body">
+            <canvas class="chart chart-bar" chart-data="data" chart-labels="labels" chart-options="options" chart-series="series"></canvas>
+        </div>
+    </div> -->
+    <!-- <canvas id="doughnut" class="chart chart-doughnut" chart-data="data" chart-labels="labels"></canvas> -->
+    <!-- <canvas id="radar" class="chart chart-radar" chart-data="data" chart-options="options" chart-labels="labels"></canvas>  -->
+    <!-- <canvas id="base" class="chart-bubble" chart-data="data" chart-series="series" ></canvas>  -->
+    <!-- <canvas id="line" class="chart chart-line" chart-data="data" chart-labels="labels" chart-series="series" chart-options="options" chart-dataset-override="datasetOverride" chart-click="onClick"></canvas> -->
+</div>

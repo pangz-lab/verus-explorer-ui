@@ -3,8 +3,9 @@
 angular
     .module('insight.charts', ["chart.js"])
     .controller('ChartsController', function() {})
-    .controller('TransactionOverTimeChartController', TransactionOverTime)
-    .controller('BlockBasicInfoChartController', BlockBasicInfo);
+    .controller('ChainBasicInfoChartController', ChainBasicInfo)
+    .controller('BlockBasicInfoChartController', BlockBasicInfo)
+    .controller('MiningBasicInfoChartController', MiningBasicInfo);
     // .config(['ChartJsProvider', function (ChartJsProvider) {
     //       ChartJsProvider.setOptions({
     //         colors : [ '#803690', '#00ADF9', '#DCDCDC', '#46BFBD', '#FDB45C', '#949FB1', '#4D5360']

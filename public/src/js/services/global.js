@@ -30,6 +30,22 @@ angular.module('insight.system')
         var halfLength = Math.floor((maxLength - 3) / 2); // Length of the ellipsis in the middle
         return text.substring(0, halfLength) + '...' + text.substring(text.length - halfLength);
     }
+
+    this.createDateFromString = function(dateString, hour, minutes, dateDelimiter) {
+      const timePart = (hour === undefined && minutes === undefined)?
+        '00:00:00' : hour + ':'+minutes+':00';
+      dateDelimiter = dateDelimiter === undefined? '-' : dateDelimiter;
+      const splitDate = dateString.split(dateDelimiter);
+      const year = parseInt(splitDate[0], 10);
+      const month = parseInt(splitDate[1], 10);
+      const day = parseInt(splitDate[2], 10);
+      const months = [
+          'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+          'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+      ];
+      const isoStr = day + ' ' + months[month - 1] + ' ' + year + ' ' + timePart;
+      return  new Date(isoStr);
+  }
   })
   .service('ScrollService', function($window, $timeout) {
     this.scrollToTop = function() {

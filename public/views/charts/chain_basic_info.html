@@ -1,0 +1,115 @@
+<h2>Chain Status
+    <small> ( {{selectedLabel}} ) </small>
+    
+    <span class="badge" data-ng-if="loading" data-ng-click="cancelLoading()">
+        <span class="glyphicon glyphicon-remove"></span> {{generationMessage}}
+    </span>
+    <span class="loader-gif" aria-hidden="true" data-ng-if="loading"></span>
+</h2>
+
+<div class="btn-group" role="group">
+    <button type="button" class="btn btn-info animate-repeat"  data-ng-disabled="loading" data-ng-class="(rangeSelected == $index)? 'active':''" ng-repeat="range in rangeSelection" uib-btn-radio="'{{range.key}}'" ng-click="fetchChartData(range, $index)">
+        {{range.label}}
+    </button>
+</div>
+
+<!-- <div class="btn-group">
+    <label class="btn btn-info" ng-model="radioModel" uib-btn-radio="'Left'">Left</label>
+    <label class="btn btn-info" ng-model="radioModel" uib-btn-radio="'Middle'">Middle</label>
+    <label class="btn btn-info" ng-model="radioModel" uib-btn-radio="'Right'">Right</label>
+</div> -->
+<div>
+
+    <!-- <div class="panel panel-default">
+        <div class="panel-heading">Panel heading without title</div>
+        <div class="panel-body">
+          Panel content
+        </div>
+    </div> -->
+    
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h4>
+                {{titleTotalBlockVoutValue}}
+                <button 
+                    csv-download
+                    data="[dataTotalBlockVoutValue]"
+                    content-title="labelsTotalBlockVoutValue"
+                    filename="'volume_over_time'"
+                    title="download volume over time data"
+                    class="btn btn-xs pull-right">
+                    <span class="glyphicon glyphicon-download-alt"></span> CSV
+                </button>
+            </h4>
+        </div>
+        <div class="panel-body">
+            <canvas class="chart chart-bar" chart-data="dataTotalBlockVoutValue" chart-colors="colors" chart-labels="labelsTotalBlockVoutValue"></canvas>
+        </div>
+    </div>
+
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h4>
+                {{titleMinedValue}}
+                <button 
+                    csv-download
+                    data="[dataMinedValue]"
+                    content-title="labelsMinedValue"
+                    filename="'reward_over_time'"
+                    title="download reward over time data"
+                    class="btn btn-xs pull-right">
+                    <span class="glyphicon glyphicon-download-alt"></span> CSV
+                </button>
+            </h4>
+        </div>
+        <div class="panel-body">
+            <canvas class="chart chart-bar" chart-data="dataMinedValue" chart-colors="colors" chart-labels="labelsMinedValue" chart-series="seriesMinedValue"></canvas>
+        </div>
+    </div> 
+    
+
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h4>
+                {{titleDiff}}
+                <button 
+                    csv-download
+                    data="[dataDiff]"
+                    content-title="labelsDiff"
+                    filename="'difficulty_over_time'"
+                    title="download difficulty over time data"
+                    class="btn btn-xs pull-right">
+                    <span class="glyphicon glyphicon-download-alt"></span> CSV
+                </button>
+            </h4>
+        </div>
+        <div class="panel-body">
+            <canvas class="chart chart-bar" chart-data="dataDiff" chart-colors="colors" chart-labels="labelsDiff" chart-series="seriesDiff"></canvas>
+        </div>
+    </div> 
+    
+    
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h4>
+                {{title}}
+                <button 
+                    csv-download
+                    data="data"
+                    content-title="labels"
+                    filename="'block_and_tx_over_time'"
+                    title="download block and tx over time data"
+                    class="btn btn-xs pull-right">
+                    <span class="glyphicon glyphicon-download-alt"></span> CSV
+                </button>
+            </h4>
+        </div>
+        <div class="panel-body">
+            <canvas class="chart chart-bar" chart-data="data" chart-labels="labels" chart-options="options" chart-series="series"></canvas>
+        </div>
+    </div>
+    <!-- <canvas id="doughnut" class="chart chart-doughnut" chart-data="data" chart-labels="labels"></canvas> -->
+    <!-- <canvas id="radar" class="chart chart-radar" chart-data="data" chart-options="options" chart-labels="labels"></canvas>  -->
+    <!-- <canvas id="base" class="chart-bubble" chart-data="data" chart-series="series" ></canvas>  -->
+    <!-- <canvas id="line" class="chart chart-line" chart-data="data" chart-labels="labels" chart-series="series" chart-options="options" chart-dataset-override="datasetOverride" chart-click="onClick"></canvas> -->
+</div>

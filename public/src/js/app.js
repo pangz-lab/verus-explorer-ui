@@ -41,8 +41,10 @@ const localStore = {
       last10: { key: netSymbol + ':vexp_chart_last10', ttl: 120 },//2 min
       last50: { key: netSymbol + ':vexp_chart_last50', ttl: 120 },//2 min
       last100: { key: netSymbol + ':vexp_chart_last100', ttl: 600 },//10 min
+      last250: { key: netSymbol + ':vexp_chart_last250', ttl: 600 },//10 min
       last500: { key: netSymbol + ':vexp_chart_last500', ttl: 1800 },//30 min
       last1000: { key: netSymbol + ':vexp_chart_last1000', ttl: 3600 },//1 hr
+      last1250: { key: netSymbol + ':vexp_chart_last1250', ttl: 3600 },//1 hr
       last1500: { key: netSymbol + ':vexp_chart_last1500', ttl: 7200 },//2 hr
     }
   },
@@ -52,7 +54,8 @@ const localStore = {
 }
 const chart = {
   types: {
-    chainBasicInfoOverTime: { apiName: 'chainbasicinfoovertime' },
+    miningbasicinfo: { apiName: 'miningbasicinfo' },
+    chainbasicinfo: { apiName: 'chainbasicinfo' },
     blockBasicInfo: { apiName: 'blkbasicinfo' }
   }
 }

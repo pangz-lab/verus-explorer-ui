@@ -40,8 +40,10 @@ const localStore = {
       last10: { key: netSymbol + ':vexp_chart_last10', ttl: 120 },//2 min
       last50: { key: netSymbol + ':vexp_chart_last50', ttl: 120 },//2 min
       last100: { key: netSymbol + ':vexp_chart_last100', ttl: 600 },//10 min
+      last250: { key: netSymbol + ':vexp_chart_last250', ttl: 600 },//10 min
       last500: { key: netSymbol + ':vexp_chart_last500', ttl: 1800 },//30 min
       last1000: { key: netSymbol + ':vexp_chart_last1000', ttl: 3600 },//1 hr
+      last1250: { key: netSymbol + ':vexp_chart_last1250', ttl: 3600 },//1 hr
       last1500: { key: netSymbol + ':vexp_chart_last1500', ttl: 7200 },//2 hr
     }
   },
@@ -51,7 +53,8 @@ const localStore = {
 }
 const chart = {
   types: {
-    chainBasicInfoOverTime: { apiName: 'chainbasicinfoovertime' },
+    miningbasicinfo: { apiName: 'miningbasicinfo' },
+    chainbasicinfo: { apiName: 'chainbasicinfo' },
     blockBasicInfo: { apiName: 'blkbasicinfo' }
   }
 }
@@ -264,6 +267,7 @@ angular
         $location,
         // $window,
         Global,
+        UnitConversionService,
         VerusExplorerApi,
         // VerusWssClient,
         ScrollService,
@@ -409,16 +413,17 @@ angular
         };
 
         var _createDateFromString = function(dateString) {
-            const splitDate = dateString.split('-');
-            const year = parseInt(splitDate[0], 10);
-            const month = parseInt(splitDate[1], 10);
-            const day = parseInt(splitDate[2], 10);
-            const months = [
-                'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-                'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
-            ];
-            const isoStr = day + ' ' + months[month - 1] + ' ' + year + ' 00:00:00';
-            return  new Date(isoStr);
+            return UnitConversionService.createDateFromString(dateString);
+            // const splitDate = dateString.split('-');
+            // const year = parseInt(splitDate[0], 10);
+            // const month = parseInt(splitDate[1], 10);
+            // const day = parseInt(splitDate[2], 10);
+            // const months = [
+            //     'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+            //     'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+            // ];
+            // const isoStr = day + ' ' + months[month - 1] + ' ' + year + ' 00:00:00';
+            // return  new Date(isoStr);
         }
 
         $scope.list = function () {
@@ -582,8 +587,9 @@ angular
 angular
     .module('insight.charts', ["chart.js"])
     .controller('ChartsController', function() {})
-    .controller('TransactionOverTimeChartController', TransactionOverTime)
-    .controller('BlockBasicInfoChartController', BlockBasicInfo);
+    .controller('ChainBasicInfoChartController', ChainBasicInfo)
+    .controller('BlockBasicInfoChartController', BlockBasicInfo)
+    .controller('MiningBasicInfoChartController', MiningBasicInfo);
     // .config(['ChartJsProvider', function (ChartJsProvider) {
     //       ChartJsProvider.setOptions({
     //         colors : [ '#803690', '#00ADF9', '#DCDCDC', '#46BFBD', '#FDB45C', '#949FB1', '#4D5360']
@@ -2070,26 +2076,89 @@ angular.module('insight.transactions').controller('SendRawTransactionController'
 );
 
 // Source: public/src/js/controllers/charts/block_basic_info.js
-function BlockBasicInfo($scope, VerusExplorerApi, LocalStore) {
-    // function($scope, $rootScope, $routeParams, $location, Chart, Charts) {
-    // ChartJsProvider.setOptions({ colors : [ '#803690', '#00ADF9', '#DCDCDC', '#46BFBD', '#FDB45C', '#949FB1', '#4D5360'] });
+function BlockBasicInfo(
+    $scope,
+    VerusExplorerApi,
+    LocalStore) {
     $scope.loading = false;
+    $scope.options = {
+        legend: {
+            display: true,
+            labels: {
+                color: 'red'
+            }
+        }
+    };
+
+    $scope.optionsTxFee = {
+        scales: {
+            xAxes: [{
+                display: true
+            }],
+            yAxes: [{
+                display: true,
+                ticks: {
+                    min: 0.00001,
+                    stepSize: 0.1
+                }
+            }],
+            gridLines: {
+                display: false,
+                //   borderDash: [ 20, 20 ],
+            }
+        },
+
+    }
+    $scope.optionsBarBase = {
+        animation: {
+            duration: 0
+        },
+        elements: {
+            line: {
+                borderWidth: 0
+            },
+            point: {
+                radius: 0
+            }
+        },
+        legend: {
+            display: false,
+            labels: {
+                color: 'red'
+            }
+        },
+        scales: {
+            xAxes: [{
+                display: true
+            }],
+            yAxes: [{
+                display: true,
+            }],
+            gridLines: {
+                display: false,
+                //   borderDash: [ 20, 20 ],
+            },
+        },
+        tooltips: {
+            enabled: true
+        }
+    };
+
     const _saveToCache = function (data, key, ttl) {
         LocalStore.set(key, data, ttl);
     }
-    // TX over time
-    // Block size distribution
-    // Transaction Fees Over Time
-    // Mining pool distribution over time
+
     const chartTypeName = chart.types.blockBasicInfo.apiName;
-    const defaultRangeSelected = 1;
+    const defaultRangeSelected = 2;
     const cacheKeys = localStore.charts.keys;
     const rangeSelectionOptions = [
         { label: '10', key: 'last10', cache: cacheKeys.last10 },
         { label: '50', key: 'last50', cache: cacheKeys.last50 },
         { label: '100', key: 'last100', cache: cacheKeys.last100 },
+        { label: '250', key: 'last250', cache: cacheKeys.last250 },
         { label: '500', key: 'last500', cache: cacheKeys.last500 },
         { label: '1k', key: 'last1000', cache: cacheKeys.last1000 },
+        { label: '1.25k', key: 'last1250', cache: cacheKeys.last1250 },
         { label: '1.5k', key: 'last1500', cache: cacheKeys.last1500 },
     ]
     $scope.generationMessage = "";
@@ -2097,7 +2166,7 @@ function BlockBasicInfo($scope, VerusExplorerApi, LocalStore) {
     $scope.rangeSelected = defaultRangeSelected;
     $scope.selectedLabel = rangeSelectionOptions[$scope.rangeSelected].label;
     $scope.colors = ['#803690', '#00ADF9', '#DCDCDC', '#46BFBD', '#FDB45C', '#949FB1', '#4D5360'];
-    $scope.colorsConsensus = ['#FDB45C', '#FDB45C'];
+    $scope.colorsConsensus = ['#3165d3', '#3165d3'];
 
     $scope.cancelLoading = function () {
         $scope.loading = false;
@@ -2112,6 +2181,7 @@ function BlockBasicInfo($scope, VerusExplorerApi, LocalStore) {
         $scope.rangeSelected = index;
         $scope.loading = true;
         $scope.generationMessage = "Fetching data ...";
+        
 
         const cacheId = _getCacheIds(chartTypeName, range.cache);
         const cachedData = LocalStore.get(cacheId.key);
@@ -2124,6 +2194,7 @@ function BlockBasicInfo($scope, VerusExplorerApi, LocalStore) {
             .getChartData(chartTypeName, range.key)
             .then(function (queryResult) {
                 const data = queryResult.data;
+                $scope.generationMessage = "Generating charts ...";
                 if (!queryResult.error && data != undefined) {
                     _createChartData(data, range);
                 }
@@ -2138,73 +2209,9 @@ function BlockBasicInfo($scope, VerusExplorerApi, LocalStore) {
     }
 
     const _createChartData = function (data, range, cachedData) {
-        $scope.generationMessage = "Generating charts ...";
         $scope.onClick = function (points, evt) {
             console.log(points[0], evt);
             console.log(evt);
-        };
-
-        $scope.options = {
-            legend: {
-                display: true,
-                labels: {
-                    color: 'red'
-                }
-            }
-        };
-
-        $scope.optionsTxFee = {
-            scales: {
-                xAxes: [{
-                    display: true
-                }],
-                yAxes: [{
-                    display: true,
-                    ticks: {
-                        min: 0.00001,
-                        stepSize: 0.1
-                    }
-                }],
-                gridLines: {
-                    display: false,
-                    //   borderDash: [ 20, 20 ],
-                }
-            },
-
-        }
-        $scope.optionsBarBase = {
-            animation: {
-                duration: 4
-            },
-            elements: {
-                line: {
-                    borderWidth: 1
-                },
-                point: {
-                    radius: 0
-                }
-            },
-            legend: {
-                display: false,
-                labels: {
-                    color: 'red'
-                }
-            },
-            scales: {
-                xAxes: [{
-                    display: true
-                }],
-                yAxes: [{
-                    display: true,
-                }],
-                gridLines: {
-                    display: false,
-                    //   borderDash: [ 20, 20 ],
-                }
-            },
-            tooltips: {
-                enabled: true
-            }
         };
 
         $scope.optionsConsensus = {
@@ -2242,17 +2249,6 @@ function BlockBasicInfo($scope, VerusExplorerApi, LocalStore) {
                 enabled: true
             }
         };
-
-        const dataIndex = {
-            size: 0,
-            diff: 1,
-            totalTxFee: 2,
-            txCount: 3,
-            blockType: 4,
-            minedValue: 5,
-            blockTime: 6,
-        }
-
         //Block Type
         $scope.titleConsensus = "Consensus";
         $scope.seriesConsensus = ["PoW", "PoS"];
@@ -2271,7 +2267,7 @@ function BlockBasicInfo($scope, VerusExplorerApi, LocalStore) {
         // $scope.dataSizeBubble = []
 
         //Difficulty
-        $scope.titleDiff = "Difficulty (10B)";
+        $scope.titleDiff = "Difficulty (1T)";
         $scope.seriesDiff = ["Difficulty"];
         $scope.labelsDiff = [];
         $scope.dataDiff = [];
@@ -2295,8 +2291,13 @@ function BlockBasicInfo($scope, VerusExplorerApi, LocalStore) {
         //Block Time
         $scope.titleBlockTime = "Block Time (sec)";
         $scope.seriesBlockTime = ["Block Time"];
-        $scope.labelsBlockTime = ["Time (sec) "];
+        $scope.labelsBlockTime = [];
         $scope.dataBlockTime = [];
+        
+        //Block Vout Value
+        $scope.titleTotalBlockVoutValue = "Volume ("+netSymbol +")";
+        $scope.labelsTotalBlockVoutValue = [];
+        $scope.dataTotalBlockVoutValue = [];
 
 
         if (cachedData != undefined) {
@@ -2306,36 +2307,39 @@ function BlockBasicInfo($scope, VerusExplorerApi, LocalStore) {
             _saveToCache(data, c.key, c.ttl);
         }
 
+        const chartData = data.data;
         $scope.labelsConsensusPie = ['PoW', 'PoS'];
-        $scope.dataConsensusPie = _getConsensusPieData(data.data[dataIndex.blockType]);
+        $scope.dataConsensusPie = _getConsensusPieData(chartData.blockType.data);
 
         $scope.labelsConsensus = data.labels;
-        $scope.dataConsensus = _getConsensusBarData(data.data[dataIndex.blockType]);
+        $scope.dataConsensus = _getConsensusBarData(chartData.blockType.data);
 
         $scope.labelsSize = data.labels;
-        $scope.dataSize = data.data[dataIndex.size];
+        $scope.dataSize = chartData.size.data;
 
         // $scope.dataSizeBubble = _getSizeBubbleData(data.data[dataIndex.size]);
 
 
         $scope.labelsDiff = data.labels;
-        $scope.dataDiff = data.data[dataIndex.diff];
+        $scope.dataDiff = chartData.diff.data;
 
         $scope.labelsTxCount = data.labels;
-        $scope.dataTxCount = data.data[dataIndex.txCount];
+        $scope.dataTxCount = chartData.txCount.data;;
 
         $scope.labelsMinedValue = data.labels;
-        $scope.dataMinedValue = data.data[dataIndex.minedValue];
+        $scope.dataMinedValue = chartData.minedValue.data;;
 
         $scope.labelsTxFee = data.labels;
-        $scope.dataTxFee = data.data[dataIndex.totalTxFee];
+        $scope.dataTxFee = chartData.totalTxFee.data;
 
         $scope.labelsBlockTime = data.labels;
-        $scope.dataBlockTime = data.data[dataIndex.blockTime];
+        $scope.dataBlockTime = chartData.blockTime.data;;
+        
+        $scope.labelsBlockVoutValue = data.labels;
+        $scope.dataTotalBlockVoutValue = chartData.totalBlockVoutValue.data;
 
-        $scope.generationMessage = "";
+        
         $scope.loading = false;
-        // $scope.$apply();
     }
 
     const _getConsensusPieData = function (data) {
@@ -2387,133 +2391,378 @@ function BlockBasicInfo($scope, VerusExplorerApi, LocalStore) {
     // $scope.params = $routeParams;
 
 }
-// Source: public/src/js/controllers/charts/chain_info.js
-function TransactionOverTime($scope, VerusExplorerApi, LocalStore) {
-        // function($scope, $rootScope, $routeParams, $location, Chart, Charts) {
-        // ChartJsProvider.setOptions({ colors : [ '#803690', '#00ADF9', '#DCDCDC', '#46BFBD', '#FDB45C', '#949FB1', '#4D5360'] });
+// Source: public/src/js/controllers/charts/chain_basic_info.js
+function ChainBasicInfo(
+    $scope,
+    VerusExplorerApi,
+    LocalStore,
+    UnitConversionService) {
+
+    $scope.loading = false;
+    const _saveToCache = function(data, key, ttl) {
+        LocalStore.set(key, data, ttl);
+    }
+
+    const chartTypeName = chart.types.chainbasicinfo.apiName;
+    const defaultRangeSelected = 1;
+    const cacheKeys = localStore.charts.keys;
+    const labelType = {
+        withYear: 1,
+        withMonth: 2,
+        withDay: 3,
+        withMinute: 4,
+    }
+    const rangeSelectionOptions = [
+        { label: '10min', key: 'last10Minutes', cache: cacheKeys.last10Minutes, labelType: labelType.withMinute },
+        { label: '30min', key: 'last30Minutes', cache: cacheKeys.last30Minutes, labelType: labelType.withMinute },
+        { label: '1hr', key: 'lastHour', cache: cacheKeys.lastHour, labelType: labelType.withMinute },
+        { label: '3hr', key: 'last3Hours', cache: cacheKeys.last3Hours, labelType: labelType.withMinute },
+        { label: '6hr', key: 'last6Hours', cache: cacheKeys.last6Hours, labelType: labelType.withMinute },
+        { label: '12hr', key: 'last12Hours', cache: cacheKeys.last12Hours, labelType: labelType.withMinute },
+        { label: '24hr', key: 'last24Hours', cache: cacheKeys.last24Hours, labelType: labelType.withMinute },
+        { label: '3d', key: 'last3Days', cache: cacheKeys.last3Days, labelType: labelType.withDay },
+        { label: '1wk', key: 'last7Days', cache: cacheKeys.last7Days, labelType: labelType.withMonth },
+        { label: '2wk', key: 'last15Days', cache: cacheKeys.last15Days, labelType: labelType.withYear },
+        { label: '30d', key: 'last30Days', cache: cacheKeys.last30Days, labelType: labelType.withYear },
+        { label: '90d', key: 'last90Days', cache: cacheKeys.last90Days, labelType: labelType.withYear },
+    ]
+    $scope.rangeSelection = rangeSelectionOptions;
+    $scope.rangeSelected = defaultRangeSelected;
+    $scope.selectedLabel = rangeSelectionOptions[$scope.rangeSelected].label;
+    
+    $scope.generationMessage = "";
+    $scope.colors = [ '#803690', '#00ADF9', '#DCDCDC', '#46BFBD', '#FDB45C', '#949FB1', '#4D5360'];
+    $scope.title = "Block Transactions";
+    $scope.series = ["Blocks", "Transactions"];
+    $scope.labels = [];
+    $scope.data = [];
+    
+    $scope.titleDiff = "Difficulty (1T)";
+    $scope.labelsDiff = [];
+    $scope.dataDiff = [];
+    
+    $scope.titleMinedValue = "Rewards";
+    $scope.labelsMinedValue = [];
+    $scope.dataMinedValue = [];
+
+    $scope.titleTotalBlockVoutValue = "Volume (1k)";
+    $scope.labelsTotalBlockVoutValue = [];
+    $scope.dataTotalBlockVoutValue = [];
+
+    $scope.options = {
+        legend: {
+            display: true,
+            labels: {
+                color: 'red'
+            }
+        }
+    };
+
+    $scope.cancelLoading = function () {
         $scope.loading = false;
-        const _saveToCache = function(data, key, ttl) {
-            LocalStore.set(key, data, ttl);
+    }
+
+    $scope.fetchChartData = function (range, index) {
+        if (range == undefined) {
+            range = rangeSelectionOptions[defaultRangeSelected];
+            index = defaultRangeSelected;
         }
-        // TX over time
-        // Block size distribution
-        // Transaction Fees Over Time
-        // Mining pool distribution over time
-        const chartTypeName = chart.types.chainBasicInfoOverTime.apiName;
-        const defaultRangeSelected = 2;
-        const cacheKeys = localStore.charts.keys;
-        const rangeSelectionOptions = [
-            { label: '10min', key: 'last10Minutes', cache: cacheKeys.last10Minutes },
-            { label: '30min', key: 'last30Minutes', cache: cacheKeys.last30Minutes },
-            { label: '1hr', key: 'lastHour', cache: cacheKeys.lastHour },
-            { label: '3hr', key: 'last3Hours', cache: cacheKeys.last3Hours },
-            { label: '6hr', key: 'last6Hours', cache: cacheKeys.last6Hours },
-            { label: '12hr', key: 'last12Hours', cache: cacheKeys.last12Hours },
-            { label: '24hr', key: 'last24Hours', cache: cacheKeys.last24Hours },
-            { label: '3d', key: 'last3Days', cache: cacheKeys.last3Days },
-            { label: '1wk', key: 'last7Days', cache: cacheKeys.last7Days },
-            { label: '2wk', key: 'last15Days', cache: cacheKeys.last15Days },
-            { label: '30d', key: 'last30Days', cache: cacheKeys.last30Days },
-            { label: '90d', key: 'last90Days', cache: cacheKeys.last90Days },
-        ]
-        $scope.rangeSelection = rangeSelectionOptions;
-        $scope.rangeSelected = defaultRangeSelected;
-        $scope.selectedLabel = rangeSelectionOptions[$scope.rangeSelected].label;
-        
-        $scope.generationMessage = "";
-        $scope.colors = [ '#803690', '#00ADF9', '#DCDCDC', '#46BFBD', '#FDB45C', '#949FB1', '#4D5360'];
-        $scope.title = "Block Transactions";
-        $scope.series = ["Blocks", "Transactions"];
-        $scope.labels = [];
-        $scope.data = [];
-        
-        $scope.titleDiff = "Difficulty (10B)";
-        $scope.labelsDiff = [];
-        $scope.dataDiff = [];
-        
-        $scope.titleMinedValue = "Rewards";
-        $scope.labelsMinedValue = [];
-        $scope.dataMinedValue = [];
+        $scope.selectedLabel = range.label;
+        $scope.rangeSelected = index;
+        $scope.loading = true;
+        $scope.generationMessage = "Fetching data ...";
 
-        $scope.options = {
-            legend: {
-                display: true,
-                labels: {
-                    color: 'red'
-                }
-            }
-        };
-
-        $scope.cancelLoading = function () {
-            $scope.loading = false;
+        const cacheId = _getCacheIds(chartTypeName, range.cache);
+        const cachedData = LocalStore.get(cacheId.key);
+        if(cachedData != undefined) {
+            _createChartData(null, range, cachedData);
+            return;
         }
 
-        $scope.fetchChartData = function (range, index) {
-            if (range == undefined) {
-                range = rangeSelectionOptions[defaultRangeSelected];
-                index = defaultRangeSelected;
-            }
-            $scope.selectedLabel = range.label;
-            $scope.rangeSelected = index;
-            $scope.loading = true;
-            $scope.generationMessage = "Fetching data ...";
-
-            const cacheId = _getCacheIds(chartTypeName, range.cache);
-            const cachedData = LocalStore.get(cacheId.key);
-            if(cachedData != undefined) {
-                _createChartData(null, range, cachedData);
-                return;
-            }
-
-            VerusExplorerApi
-            .getChartData(chartTypeName, range.key)
-            .then(function(queryResult) {
-                const data = queryResult.data;
-                if (!queryResult.error && data != undefined) { _createChartData(data, range); }
-            });
-        }
-
-        const _getCacheIds = function(cacheSuffix, cacheIds) {
-            return {
-                key: cacheIds.key + ':' + cacheSuffix,
-                ttl: cacheIds.ttl
-            }
-        }
-
-        const _createChartData = function (data, range, cachedData) {
+        VerusExplorerApi
+        .getChartData(chartTypeName, range.key)
+        .then(function(queryResult) {
+            const data = queryResult.data;
             $scope.generationMessage = "Generating charts ...";
-            const dataIndex = {
-                blockCount: 0,
-                txCount: 1,
-                difficulty: 2,
-                minedValue: 3,
-            }
+            if (!queryResult.error && data != undefined) { _createChartData(data, range); }
+        });
+    }
 
-            if(cachedData != undefined) {
-                data = cachedData;
-            } else {
-                const c = _getCacheIds(chartTypeName, range.cache)
-                _saveToCache(data, c.key, c.ttl);
-            }
-
-            $scope.labels = data.labels;
-            $scope.data = [
-                data.data[dataIndex.blockCount],
-                data.data[dataIndex.txCount],
-            ];
-
-            $scope.labelsDiff = data.labels;
-            $scope.dataDiff = data.data[dataIndex.difficulty];
-            
-            $scope.labelsMinedValue = data.labels;
-            $scope.dataMinedValue = data.data[dataIndex.minedValue];
-
-            $scope.loading = false;
-            $scope.generationMessage = "";
-            // $scope.$apply();
+    const _getCacheIds = function(cacheSuffix, cacheIds) {
+        return {
+            key: cacheIds.key + ':' + cacheSuffix,
+            ttl: cacheIds.ttl
         }
-        // $scope.params = $routeParams;
+    }
 
+    const _createChartData = function (data, range, cachedData) {
+        if(cachedData != undefined) {
+            data = cachedData;
+        } else {
+            const c = _getCacheIds(chartTypeName, range.cache)
+            _saveToCache(data, c.key, c.ttl);
+        }
+        
+        
+        const chartData = data.data;
+        const labels = _formatDateLabels(data.labels, range.labelType);
+        $scope.labels = labels;
+        $scope.data = [
+            chartData.blockCount.data,
+            chartData.txCount.data,
+        ];
+
+        $scope.labelsDiff = labels;
+        $scope.dataDiff = chartData.difficulty.data;
+
+        $scope.labelsMinedValue = labels;
+        $scope.dataMinedValue = chartData.miningReward.data;
+
+        $scope.titleTotalBlockVoutValue = "Volume ("+chartData.totalBlockVoutValue.options.conv.unit+ ") "+netSymbol;
+        $scope.labelsTotalBlockVoutValue = labels;
+        $scope.dataTotalBlockVoutValue = chartData.totalBlockVoutValue.data;
+
+        $scope.loading = false;
+    }
+
+    const _formatDateLabels = function(dateLabels, type) {
+        var result = [];
+        for(var i = 0; i < dateLabels.length; i++) {
+            result[i] = _formatDateLabel(dateLabels[i], type);
+        }
+        return result
+    }
+    const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    const _formatDateLabel = function(dateLabel, type) {
+        const parts = dateLabel.split(' ');
+        var h = "";
+        var m = "";
+        if(parts[1] == undefined) {
+            h = "00";
+            m = "00";
+        } else {
+            const timeParts = parts[1].split(':');
+            h = timeParts[0].toString().padStart(2, '0');
+            m = timeParts[1].toString().padStart(2, '0');
+        }
+        
+        const date = UnitConversionService
+        .createDateFromString(dateLabel, h, m, '/');
+
+        const year = date.getFullYear().toString();
+        const month = (date.getMonth() + 1).toString().padStart(2, '0');
+        const day = date.getDate().toString().padStart(2, '0');
+        const dayOfWeek = daysOfWeek[date.getDay()];
+        const hour = date.getHours().toString().padStart(2, '0');
+        const minute = date.getMinutes().toString().padStart(2, '0');
+
+        if(type == labelType.withYear) {
+            return year + '/' + month + '/' + day;
+        }
+        
+        if(type == labelType.withMonth) {
+            return month + '/' + day + ' ' + hour + 'h';
+        }
+        
+        if(type == labelType.withDay) {
+            return dayOfWeek + ' ' + hour + ':' + minute;
+        }
+
+        return hour + ':' + minute;
+    }
+}
+// Source: public/src/js/controllers/charts/mining_basic_info.js
+function MiningBasicInfo(
+    $scope,
+    VerusExplorerApi,
+    LocalStore,
+    UnitConversionService) {
+
+    $scope.loading = false;
+    const _saveToCache = function(data, key, ttl) {
+        LocalStore.set(key, data, ttl);
+    }
+
+    const chartTypeName = chart.types.miningbasicinfo.apiName;
+    const defaultRangeSelected = 1;
+    const cacheKeys = localStore.charts.keys;
+    const labelType = {
+        withYear: 1,
+        withMonth: 2,
+        withDay: 3,
+        withMinute: 4,
+    }
+    const rangeSelectionOptions = [
+        { label: '10min', key: 'last10Minutes', cache: cacheKeys.last10Minutes, labelType: labelType.withMinute },
+        { label: '30min', key: 'last30Minutes', cache: cacheKeys.last30Minutes, labelType: labelType.withMinute },
+        { label: '1hr', key: 'lastHour', cache: cacheKeys.lastHour, labelType: labelType.withMinute },
+        { label: '3hr', key: 'last3Hours', cache: cacheKeys.last3Hours, labelType: labelType.withMinute },
+        { label: '6hr', key: 'last6Hours', cache: cacheKeys.last6Hours, labelType: labelType.withMinute },
+        { label: '12hr', key: 'last12Hours', cache: cacheKeys.last12Hours, labelType: labelType.withMinute },
+        { label: '24hr', key: 'last24Hours', cache: cacheKeys.last24Hours, labelType: labelType.withMinute },
+        { label: '3d', key: 'last3Days', cache: cacheKeys.last3Days, labelType: labelType.withDay },
+        { label: '1wk', key: 'last7Days', cache: cacheKeys.last7Days, labelType: labelType.withMonth },
+        { label: '2wk', key: 'last15Days', cache: cacheKeys.last15Days, labelType: labelType.withYear },
+        { label: '30d', key: 'last30Days', cache: cacheKeys.last30Days, labelType: labelType.withYear },
+        { label: '90d', key: 'last90Days', cache: cacheKeys.last90Days, labelType: labelType.withYear },
+    ]
+    $scope.rangeSelection = rangeSelectionOptions;
+    $scope.rangeSelected = defaultRangeSelected;
+    $scope.selectedLabel = rangeSelectionOptions[$scope.rangeSelected].label;
+    
+    $scope.generationMessage = "";
+    $scope.colors = [ '#803690', '#00ADF9', '#DCDCDC', '#46BFBD', '#FDB45C', '#949FB1', '#4D5360'];
+    // $scope.title = "Block Transactions";
+    // $scope.series = ["Blocks", "Transactions"];
+    // $scope.labels = [];
+    // $scope.data = [];
+    
+    // $scope.titleDiff = "Difficulty (1T)";
+    // $scope.labelsDiff = [];
+    // $scope.dataDiff = [];
+
+    $scope.miningPoolData = {};
+
+    $scope.titleHashratePie = "Hashrate (Gh)";
+    $scope.seriesHashratePie = [];
+    $scope.labelsHashratePie = [];
+    $scope.dataHashratePie = [];
+    
+    // $scope.titleMinedValue = "Rewards";
+    // $scope.labelsMinedValue = [];
+    // $scope.dataMinedValue = [];
+
+    // $scope.titleTotalBlockVoutValue = "Volume (1k)";
+    // $scope.labelsTotalBlockVoutValue = [];
+    // $scope.dataTotalBlockVoutValue = [];
+
+    $scope.options = {
+        legend: {
+            display: true,
+            labels: {
+                color: 'red'
+            }
+        }
+    };
+
+    $scope.cancelLoading = function () {
+        $scope.loading = false;
+    }
+
+    $scope.fetchChartData = function (range, index) {
+        if (range == undefined) {
+            range = rangeSelectionOptions[defaultRangeSelected];
+            index = defaultRangeSelected;
+        }
+        $scope.selectedLabel = range.label;
+        $scope.rangeSelected = index;
+        $scope.loading = true;
+        $scope.generationMessage = "Fetching data ...";
+
+        const cacheId = _getCacheIds(chartTypeName, range.cache);
+        const cachedData = LocalStore.get(cacheId.key);
+        if(cachedData != undefined) {
+            _createChartData(null, range, cachedData);
+            return;
+        }
+
+        VerusExplorerApi
+        .getChartData(chartTypeName, range.key)
+        .then(function(queryResult) {
+            const data = queryResult.data;
+            $scope.generationMessage = "Generating charts ...";
+            if (!queryResult.error && data != undefined) { _createChartData(data, range); }
+        });
+    }
+
+    const _getCacheIds = function(cacheSuffix, cacheIds) {
+        return {
+            key: cacheIds.key + ':' + cacheSuffix,
+            ttl: cacheIds.ttl
+        }
+    }
+
+    const _createChartData = function (data, range, cachedData) {
+        if(cachedData != undefined) {
+            data = cachedData;
+        } else {
+            const c = _getCacheIds(chartTypeName, range.cache)
+            _saveToCache(data, c.key, c.ttl);
+        }
+        
+        
+        const chartData = data.data;
+        // const labels = _formatDateLabels(data.labels, range.labelType);
+        const labels = data.labels;
+
+        $scope.miningPoolData = chartData.detail.data;
+
+        $scope.labelsHashratePie = labels;
+        $scope.seriesHashratePie = labels;
+        $scope.dataHashratePie = chartData.hashRate.data;
+        // $scope.data = [
+        //     chartData.blockCount.data,
+        //     chartData.txCount.data,
+        // ];
+
+        // $scope.labelsDiff = labels;
+        // $scope.dataDiff = chartData.difficulty.data;
+
+        // $scope.labelsMinedValue = labels;
+        // $scope.dataMinedValue = chartData.miningReward.data;
+
+        // $scope.titleTotalBlockVoutValue = "Volume ("+chartData.totalBlockVoutValue.options.conv.unit+ ") "+netSymbol;
+        // $scope.labelsTotalBlockVoutValue = labels;
+        // $scope.dataTotalBlockVoutValue = chartData.totalBlockVoutValue.data;
+
+        $scope.loading = false;
+    }
+
+    // const _formatDateLabels = function(dateLabels, type) {
+    //     var result = [];
+    //     for(var i = 0; i < dateLabels.length; i++) {
+    //         result[i] = _formatDateLabel(dateLabels[i], type);
+    //     }
+    //     return result
+    // }
+    // const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    // const _formatDateLabel = function(dateLabel, type) {
+    //     const parts = dateLabel.split(' ');
+    //     var h = "";
+    //     var m = "";
+    //     if(parts[1] == undefined) {
+    //         h = "00";
+    //         m = "00";
+    //     } else {
+    //         const timeParts = parts[1].split(':');
+    //         h = timeParts[0].toString().padStart(2, '0');
+    //         m = timeParts[1].toString().padStart(2, '0');
+    //     }
+        
+    //     const date = UnitConversionService
+    //     .createDateFromString(dateLabel, h, m, '/');
+
+    //     const year = date.getFullYear().toString();
+    //     const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    //     const day = date.getDate().toString().padStart(2, '0');
+    //     const dayOfWeek = daysOfWeek[date.getDay()];
+    //     const hour = date.getHours().toString().padStart(2, '0');
+    //     const minute = date.getMinutes().toString().padStart(2, '0');
+
+    //     if(type == labelType.withYear) {
+    //         return year + '/' + month + '/' + day;
+    //     }
+        
+    //     if(type == labelType.withMonth) {
+    //         return month + '/' + day + ' ' + hour + 'h';
+    //     }
+        
+    //     if(type == labelType.withDay) {
+    //         return dayOfWeek + ' ' + hour + ':' + minute;
+    //     }
+
+    //     return hour + ':' + minute;
+    // }
 }
 // Source: public/src/js/services/address.js
 // 'use strict';
@@ -2729,6 +2978,22 @@ angular.module('insight.system')
         var halfLength = Math.floor((maxLength - 3) / 2); // Length of the ellipsis in the middle
         return text.substring(0, halfLength) + '...' + text.substring(text.length - halfLength);
     }
+
+    this.createDateFromString = function(dateString, hour, minutes, dateDelimiter) {
+      const timePart = (hour === undefined && minutes === undefined)?
+        '00:00:00' : hour + ':'+minutes+':00';
+      dateDelimiter = dateDelimiter === undefined? '-' : dateDelimiter;
+      const splitDate = dateString.split(dateDelimiter);
+      const year = parseInt(splitDate[0], 10);
+      const month = parseInt(splitDate[1], 10);
+      const day = parseInt(splitDate[2], 10);
+      const months = [
+          'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+          'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+      ];
+      const isoStr = day + ' ' + months[month - 1] + ' ' + year + ' ' + timePart;
+      return  new Date(isoStr);
+  }
   })
   .service('ScrollService', function($window, $timeout) {
     this.scrollToTop = function() {
@@ -3386,119 +3651,123 @@ angular
 // var ZeroClipboard = window.ZeroClipboard;
 
 angular.module('insight')
-  .directive('scroll', function ($window) {
-    return function(scope, element, attrs) {
-      angular.element($window).bind('scroll', function() {
-        if (this.pageYOffset >= 200) {
-          scope.secondaryNavbar = true;
-        } else {
-          scope.secondaryNavbar = false;
-        }
-        scope.$apply();
-      });
-    };
-  })
-  .directive('whenScrolled', function($window) {
-    return {
-      restric: 'A',
-      link: function(scope, elm, attr) {
-        var pageHeight, clientHeight, scrollPos;
-        $window = angular.element($window);
-
-        var handler = function() {
-          pageHeight = window.document.documentElement.scrollHeight;
-          clientHeight = window.document.documentElement.clientHeight;
-          scrollPos = window.pageYOffset;
-
-          if (pageHeight - (scrollPos + clientHeight) === 0) {
-            scope.$apply(attr.whenScrolled);
-          }
+    .directive('scroll', function ($window) {
+        return function (scope, element, attrs) {
+            angular.element($window).bind('scroll', function () {
+                if (this.pageYOffset >= 200) {
+                    scope.secondaryNavbar = true;
+                } else {
+                    scope.secondaryNavbar = false;
+                }
+                scope.$apply();
+            });
         };
+    })
+    .directive('whenScrolled', function ($window) {
+        return {
+            restric: 'A',
+            link: function (scope, elm, attr) {
+                var pageHeight, clientHeight, scrollPos;
+                $window = angular.element($window);
 
-        $window.on('scroll', handler);
+                var handler = function () {
+                    pageHeight = window.document.documentElement.scrollHeight;
+                    clientHeight = window.document.documentElement.clientHeight;
+                    scrollPos = window.pageYOffset;
 
-        scope.$on('$destroy', function() {
-          return $window.off('scroll', handler);
-        });
-      }
-    };
-  }).directive('copyToClipboard', function() {
-    return {
-        restrict: 'A',
-        // template: '<div class="tooltip fade right in"><div class="tooltip-arrow"></div><div class="tooltip-inner">Copied!</div></div>',
-        link: function(scope, element, attrs) {
-            // element.attr('uib-tooltip', 'Click to copy'); // Set tooltip text
-            // element.attr('tooltip-trigger', 'mouseenter'); // Show tooltip on mouse enter
-            // element.attr('tooltip-placement', 'top'); // Set tooltip placement
-            // element.tooltip();
-            element.on('click', function() {
-                // this.tooltip('toggle');
-                var textToCopy = attrs.copyToClipboard;
-                // var attachedElement = angular.element('<div class="tooltip fade right in"><div class="tooltip-arrow"></div><div class="tooltip-inner">Copied!</div></div>');
-                // // Append the attachedElement to the body
-                // this.re append(attachedElement);
-                
-                // // Compile the attachedElement to apply AngularJS bindings
-                // $compile(attachedElement)(scope);
-            
-                navigator.clipboard.writeText(textToCopy)
-                    .then(function() {
-                      alert(textToCopy + ' copied!');
-                    })
-                    .catch(function(error) { console.error('Unable to copy text to clipboard: ', error);});
-            });
-        }
-    };
-})
-  // .directive('clipCopy', function() {
-  //   ZeroClipboard.config({
-  //     moviePath: '/lib/zeroclipboard/ZeroClipboard.swf',
-  //     trustedDomains: ['*'],
-  //     allowScriptAccess: 'always',
-  //     forceHandCursor: true
-  //   });
+                    if (pageHeight - (scrollPos + clientHeight) === 0) {
+                        scope.$apply(attr.whenScrolled);
+                    }
+                };
 
-  //   return {
-  //     restric: 'A',
-  //     scope: { clipCopy: '=clipCopy' },
-  //     template: '<div class="tooltip fade right in"><div class="tooltip-arrow"></div><div class="tooltip-inner">Copied!</div></div>',
-  //     link: function(scope, elm) {
-  //       var clip = new ZeroClipboard(elm);
+                $window.on('scroll', handler);
 
-  //       clip.on('load', function(client) {
-  //         var onMousedown = function(client) {
-  //           client.setText(scope.clipCopy);
-  //         };
+                scope.$on('$destroy', function () {
+                    return $window.off('scroll', handler);
+                });
+            }
+        };
+    }).directive('copyToClipboard', function () {
+        return {
+            restrict: 'A',
+            // template: '<div class="tooltip fade right in"><div class="tooltip-arrow"></div><div class="tooltip-inner">Copied!</div></div>',
+            link: function (scope, element, attrs) {
+                // element.attr('uib-tooltip', 'Click to copy'); // Set tooltip text
+                // element.attr('tooltip-trigger', 'mouseenter'); // Show tooltip on mouse enter
+                // element.attr('tooltip-placement', 'top'); // Set tooltip placement
+                // element.tooltip();
+                element.on('click', function () {
+                    // this.tooltip('toggle');
+                    var textToCopy = attrs.copyToClipboard;
+                    // var attachedElement = angular.element('<div class="tooltip fade right in"><div class="tooltip-arrow"></div><div class="tooltip-inner">Copied!</div></div>');
+                    // // Append the attachedElement to the body
+                    // this.re append(attachedElement);
 
-  //         client.on('mousedown', onMousedown);
+                    // // Compile the attachedElement to apply AngularJS bindings
+                    // $compile(attachedElement)(scope);
 
-  //         scope.$on('$destroy', function() {
-  //           client.off('mousedown', onMousedown);
-  //         });
-  //       });
+                    navigator.clipboard.writeText(textToCopy)
+                        .then(function () {
+                            alert(textToCopy + ' copied!');
+                        })
+                        .catch(function (error) { console.error('Unable to copy text to clipboard: ', error); });
+                });
+            }
+        };
+    })
+    .directive('focus', function ($timeout) {
+        return {
+            scope: {
+                trigger: '@focus'
+            },
+            link: function (scope, element) {
+                scope.$watch('trigger', function (value) {
+                    if (value === "true") {
+                        $timeout(function () {
+                            element[0].focus();
+                        });
+                    }
+                });
+            }
+        };
+    })
+    .directive('csvDownload', function () {
+        return {
+            restrict: 'A',
+            scope: {
+                data: '=',
+                contentTitle: '=',
+                filename: '=',
+            },
+            link: function (scope, element) {
+                element.on('click', function () {
+                    if (!scope.data || scope.data[0] === undefined) {
+                        console.error('No title or data provided for CSV download.');
+                        return;
+                    }
 
-  //       clip.on('noFlash wrongflash', function() {
-  //         return elm.remove();
-  //       });
-  //     }
-  //   };
-  // })
-  .directive('focus', function ($timeout) {
-    return {
-      scope: {
-        trigger: '@focus'
-      },
-      link: function (scope, element) {
-        scope.$watch('trigger', function (value) {
-          if (value === "true") {
-            $timeout(function () {
-              element[0].focus();
-            });
-          }
-        });
-      }
-    };
-  });
+                    const fileName = scope.filename != undefined ? scope.filename + '.csv' : 'data.csv';
+                    // Convert data to CSV format
+                    var csvContent = "data:text/csv;charset=utf-8,";
+                    if (scope.contentTitle[0] != undefined) {
+                        csvContent += scope.contentTitle.join(',') + '\n';
+                    }
+                    csvContent += scope.data.map(function (row) {
+                        return row.join(',');
+                    }).join('\n');
+
+                    var encodedUri = encodeURI(csvContent);
+                    var link = document.createElement('a');
+                    link.setAttribute('href', encodedUri);
+                    link.setAttribute('download', fileName);
+                    document.body.appendChild(link);
+
+                    link.click();
+                    document.body.removeChild(link);
+                });
+            }
+        };
+    });
 
 // Source: public/src/js/filters.js
 angular.module('insight')

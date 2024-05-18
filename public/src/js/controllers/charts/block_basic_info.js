@@ -1,23 +1,86 @@
-function BlockBasicInfo($scope, VerusExplorerApi, LocalStore) {
-    // function($scope, $rootScope, $routeParams, $location, Chart, Charts) {
-    // ChartJsProvider.setOptions({ colors : [ '#803690', '#00ADF9', '#DCDCDC', '#46BFBD', '#FDB45C', '#949FB1', '#4D5360'] });
+function BlockBasicInfo(
+    $scope,
+    VerusExplorerApi,
+    LocalStore) {
     $scope.loading = false;
+    $scope.options = {
+        legend: {
+            display: true,
+            labels: {
+                color: 'red'
+            }
+        }
+    };
+
+    $scope.optionsTxFee = {
+        scales: {
+            xAxes: [{
+                display: true
+            }],
+            yAxes: [{
+                display: true,
+                ticks: {
+                    min: 0.00001,
+                    stepSize: 0.1
+                }
+            }],
+            gridLines: {
+                display: false,
+                //   borderDash: [ 20, 20 ],
+            }
+        },
+
+    }
+    $scope.optionsBarBase = {
+        animation: {
+            duration: 0
+        },
+        elements: {
+            line: {
+                borderWidth: 0
+            },
+            point: {
+                radius: 0
+            }
+        },
+        legend: {
+            display: false,
+            labels: {
+                color: 'red'
+            }
+        },
+        scales: {
+            xAxes: [{
+                display: true
+            }],
+            yAxes: [{
+                display: true,
+            }],
+            gridLines: {
+                display: false,
+                //   borderDash: [ 20, 20 ],
+            },
+        },
+        tooltips: {
+            enabled: true
+        }
+    };
+
     const _saveToCache = function (data, key, ttl) {
         LocalStore.set(key, data, ttl);
     }
-    // TX over time
-    // Block size distribution
-    // Transaction Fees Over Time
-    // Mining pool distribution over time
+
     const chartTypeName = chart.types.blockBasicInfo.apiName;
-    const defaultRangeSelected = 1;
+    const defaultRangeSelected = 2;
     const cacheKeys = localStore.charts.keys;
     const rangeSelectionOptions = [
         { label: '10', key: 'last10', cache: cacheKeys.last10 },
         { label: '50', key: 'last50', cache: cacheKeys.last50 },
         { label: '100', key: 'last100', cache: cacheKeys.last100 },
+        { label: '250', key: 'last250', cache: cacheKeys.last250 },
         { label: '500', key: 'last500', cache: cacheKeys.last500 },
         { label: '1k', key: 'last1000', cache: cacheKeys.last1000 },
+        { label: '1.25k', key: 'last1250', cache: cacheKeys.last1250 },
         { label: '1.5k', key: 'last1500', cache: cacheKeys.last1500 },
     ]
     $scope.generationMessage = "";
@@ -25,7 +88,7 @@ function BlockBasicInfo($scope, VerusExplorerApi, LocalStore) {
     $scope.rangeSelected = defaultRangeSelected;
     $scope.selectedLabel = rangeSelectionOptions[$scope.rangeSelected].label;
     $scope.colors = ['#803690', '#00ADF9', '#DCDCDC', '#46BFBD', '#FDB45C', '#949FB1', '#4D5360'];
-    $scope.colorsConsensus = ['#FDB45C', '#FDB45C'];
+    $scope.colorsConsensus = ['#3165d3', '#3165d3'];
 
     $scope.cancelLoading = function () {
         $scope.loading = false;
@@ -40,6 +103,7 @@ function BlockBasicInfo($scope, VerusExplorerApi, LocalStore) {
         $scope.rangeSelected = index;
         $scope.loading = true;
         $scope.generationMessage = "Fetching data ...";
+        
 
         const cacheId = _getCacheIds(chartTypeName, range.cache);
         const cachedData = LocalStore.get(cacheId.key);
@@ -52,6 +116,7 @@ function BlockBasicInfo($scope, VerusExplorerApi, LocalStore) {
             .getChartData(chartTypeName, range.key)
             .then(function (queryResult) {
                 const data = queryResult.data;
+                $scope.generationMessage = "Generating charts ...";
                 if (!queryResult.error && data != undefined) {
                     _createChartData(data, range);
                 }
@@ -66,73 +131,9 @@ function BlockBasicInfo($scope, VerusExplorerApi, LocalStore) {
     }
 
     const _createChartData = function (data, range, cachedData) {
-        $scope.generationMessage = "Generating charts ...";
         $scope.onClick = function (points, evt) {
             console.log(points[0], evt);
             console.log(evt);
-        };
-
-        $scope.options = {
-            legend: {
-                display: true,
-                labels: {
-                    color: 'red'
-                }
-            }
-        };
-
-        $scope.optionsTxFee = {
-            scales: {
-                xAxes: [{
-                    display: true
-                }],
-                yAxes: [{
-                    display: true,
-                    ticks: {
-                        min: 0.00001,
-                        stepSize: 0.1
-                    }
-                }],
-                gridLines: {
-                    display: false,
-                    //   borderDash: [ 20, 20 ],
-                }
-            },
-
-        }
-        $scope.optionsBarBase = {
-            animation: {
-                duration: 4
-            },
-            elements: {
-                line: {
-                    borderWidth: 1
-                },
-                point: {
-                    radius: 0
-                }
-            },
-            legend: {
-                display: false,
-                labels: {
-                    color: 'red'
-                }
-            },
-            scales: {
-                xAxes: [{
-                    display: true
-                }],
-                yAxes: [{
-                    display: true,
-                }],
-                gridLines: {
-                    display: false,
-                    //   borderDash: [ 20, 20 ],
-                }
-            },
-            tooltips: {
-                enabled: true
-            }
         };
 
         $scope.optionsConsensus = {
@@ -170,17 +171,6 @@ function BlockBasicInfo($scope, VerusExplorerApi, LocalStore) {
                 enabled: true
             }
         };
-
-        const dataIndex = {
-            size: 0,
-            diff: 1,
-            totalTxFee: 2,
-            txCount: 3,
-            blockType: 4,
-            minedValue: 5,
-            blockTime: 6,
-        }
-
         //Block Type
         $scope.titleConsensus = "Consensus";
         $scope.seriesConsensus = ["PoW", "PoS"];
@@ -199,7 +189,7 @@ function BlockBasicInfo($scope, VerusExplorerApi, LocalStore) {
         // $scope.dataSizeBubble = []
 
         //Difficulty
-        $scope.titleDiff = "Difficulty (10B)";
+        $scope.titleDiff = "Difficulty (1T)";
         $scope.seriesDiff = ["Difficulty"];
         $scope.labelsDiff = [];
         $scope.dataDiff = [];
@@ -223,8 +213,13 @@ function BlockBasicInfo($scope, VerusExplorerApi, LocalStore) {
         //Block Time
         $scope.titleBlockTime = "Block Time (sec)";
         $scope.seriesBlockTime = ["Block Time"];
-        $scope.labelsBlockTime = ["Time (sec) "];
+        $scope.labelsBlockTime = [];
         $scope.dataBlockTime = [];
+        
+        //Block Vout Value
+        $scope.titleTotalBlockVoutValue = "Volume ("+netSymbol +")";
+        $scope.labelsTotalBlockVoutValue = [];
+        $scope.dataTotalBlockVoutValue = [];
 
 
         if (cachedData != undefined) {
@@ -234,36 +229,39 @@ function BlockBasicInfo($scope, VerusExplorerApi, LocalStore) {
             _saveToCache(data, c.key, c.ttl);
         }
 
+        const chartData = data.data;
         $scope.labelsConsensusPie = ['PoW', 'PoS'];
-        $scope.dataConsensusPie = _getConsensusPieData(data.data[dataIndex.blockType]);
+        $scope.dataConsensusPie = _getConsensusPieData(chartData.blockType.data);
 
         $scope.labelsConsensus = data.labels;
-        $scope.dataConsensus = _getConsensusBarData(data.data[dataIndex.blockType]);
+        $scope.dataConsensus = _getConsensusBarData(chartData.blockType.data);
 
         $scope.labelsSize = data.labels;
-        $scope.dataSize = data.data[dataIndex.size];
+        $scope.dataSize = chartData.size.data;
 
         // $scope.dataSizeBubble = _getSizeBubbleData(data.data[dataIndex.size]);
 
 
         $scope.labelsDiff = data.labels;
-        $scope.dataDiff = data.data[dataIndex.diff];
+        $scope.dataDiff = chartData.diff.data;
 
         $scope.labelsTxCount = data.labels;
-        $scope.dataTxCount = data.data[dataIndex.txCount];
+        $scope.dataTxCount = chartData.txCount.data;;
 
         $scope.labelsMinedValue = data.labels;
-        $scope.dataMinedValue = data.data[dataIndex.minedValue];
+        $scope.dataMinedValue = chartData.minedValue.data;;
 
         $scope.labelsTxFee = data.labels;
-        $scope.dataTxFee = data.data[dataIndex.totalTxFee];
+        $scope.dataTxFee = chartData.totalTxFee.data;
 
         $scope.labelsBlockTime = data.labels;
-        $scope.dataBlockTime = data.data[dataIndex.blockTime];
+        $scope.dataBlockTime = chartData.blockTime.data;;
+        
+        $scope.labelsBlockVoutValue = data.labels;
+        $scope.dataTotalBlockVoutValue = chartData.totalBlockVoutValue.data;
 
-        $scope.generationMessage = "";
+        
         $scope.loading = false;
-        // $scope.$apply();
     }
 
     const _getConsensusPieData = function (data) {

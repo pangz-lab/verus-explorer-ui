@@ -12,6 +12,7 @@ angular
         $location,
         // $window,
         Global,
+        UnitConversionService,
         VerusExplorerApi,
         // VerusWssClient,
         ScrollService,
@@ -157,16 +158,17 @@ angular
         };
 
         var _createDateFromString = function(dateString) {
-            const splitDate = dateString.split('-');
-            const year = parseInt(splitDate[0], 10);
-            const month = parseInt(splitDate[1], 10);
-            const day = parseInt(splitDate[2], 10);
-            const months = [
-                'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-                'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
-            ];
-            const isoStr = day + ' ' + months[month - 1] + ' ' + year + ' 00:00:00';
-            return  new Date(isoStr);
+            return UnitConversionService.createDateFromString(dateString);
+            // const splitDate = dateString.split('-');
+            // const year = parseInt(splitDate[0], 10);
+            // const month = parseInt(splitDate[1], 10);
+            // const day = parseInt(splitDate[2], 10);
+            // const months = [
+            //     'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+            //     'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+            // ];
+            // const isoStr = day + ' ' + months[month - 1] + ' ' + year + ' 00:00:00';
+            // return  new Date(isoStr);
         }
 
         $scope.list = function () {
