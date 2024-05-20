@@ -693,7 +693,7 @@ margin-left: 0;
 
 /* TODO update if needed */
 .panel-default> .panel-body {
-  background-color: #1d1d2a; /* TODO */
+  background-color: #fff; /* TODO */
   border-radius: 6px; /* TODO */
   /* color:#bb9645; */ /* TODO */
   /* border-color: #bb9645; */ /* TODO */

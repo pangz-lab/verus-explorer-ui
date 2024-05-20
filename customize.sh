@@ -1,3 +1,5 @@
+# ./customize.sh vrsc
+# ./customize.sh pbaas/varrr
 SOURCE=custom/$1
 DEST_ROOT=public/
 DEST_APP=$DEST_ROOT/src/js/

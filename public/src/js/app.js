@@ -2,7 +2,7 @@
 
 var testnet = false;
 var netSymbol = testnet ? 'VRSCTEST' : 'VRSC';
-const chainName = "vARRR";
+const chainName = "Verus";
 const coinpaprikaEndpointKey = "vrsc-verus-coin";
 const firstBlockStartDate = new Date(2018, 5, 20);
 const allowedSearchPattern = /^[a-zA-Z0-9@]+$/;

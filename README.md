@@ -52,3 +52,22 @@ Execute the script if you want to see the UI running independently.
 ```bash
 ./start_server.sh
 ```
+
+## UI and Config Customization
+- There are 3 main files to update if there are customization relative to chain
+1. `app.js` - configuration
+2. `common.css` - styling
+3. `index.html` - (use only for including specific font style from external source)
+
+- You mostly need these 3 files when you add update to UI and pbaas configs.
+- These files are located in `custom` folder.
+- Currently only there are 2 cofigurations supported, `VRSC` and `vARRR`.
+- New chain can create their own folder and add the necessary changes and raise the PR
+- Once created, you can run the following
+```bash
+# ./customize.sh [folder name]
+# i.e.
+./customize.sh vrsc
+# or 
+./customize.sh pbaas/varrr
+```
