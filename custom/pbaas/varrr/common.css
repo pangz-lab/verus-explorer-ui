@@ -183,6 +183,12 @@ margin-left: 0;
   cursor: pointer;
 }
 
+/* TODO update if needed */
+.nav-tabs>li.active>a, .nav-tabs>li.active>a:hover, .nav-tabs>li.active>a:focus {
+  background-color: #25233d;
+  color: #bb9645;
+}
+
 .insight {
   font-family: 'Changa', sans-serif;
   font-size: 34px;
@@ -675,11 +681,19 @@ margin-left: 0;
   word-wrap: break-word;
 }
 
+/* TODO update if needed */
+.panel-default>.panel-heading {
+  background-color: #25233d;
+  color: #bb9645;
+  border-color: #bb9645;
+}
+
+/* TODO update if needed */
 .panel-default> .panel-body {
-  background-color: #fff;
-  border-radius: 6px;
-  /* border-top-right-radius: 6px;
-  border-top-left-radius: 6px; */
+  background-color: #1d1d2a;
+  color:#bb9645;
+  border-color: #bb9645;
+  border-radius: 0;
 }
 
 .panel-heading {
