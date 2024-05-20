@@ -20,7 +20,7 @@
                         <!-- {{vout.miniValue}} -->
                         <a href="/tx/{{vout.isSpent}}">
                             <span class="text-danger" data-ng-show="vout.isSpent" tooltip="Output is spent"
-                            tooltip-placement="left">(S)</span>
+                                tooltip-placement="left">(S)</span>
                         </a>
                         <span class="text-success" data-ng-show="!vout.isSpent" tooltip="Output is unspent"
                             tooltip-placement="left">(U)</span>
@@ -31,11 +31,14 @@
                         <span class="text-muted" title="Current Verus Address"
                             data-ng-show="address == $root.currentAddr"
                             data-ng-repeat="address in vout.uiWalletAddress.split(',')">{{vout.uiWalletAddress}}</span>
-                         
-                            <!-- data-ng-repeat="address in vout.uiWalletAddress.split(',')">{{address}}</a> -->
+
+                        <!-- data-ng-repeat="address in vout.uiWalletAddress.split(',')">{{address}}</a> -->
                         <span data-ng-repeat="address in vout.uiWalletAddress.split(',')">
-                            <a href="address/{{address}}" data-ng-show="address != $root.currentAddr && address != '-1'">{{address}}</a>
-                            <span class="text-muted util-nav-label" data-ng-show="address != $root.currentAddr && address == '-1'"> ❓︎ [ NO ADDRESS ] </span>
+                            <a href="address/{{address}}"
+                                data-ng-show="address != $root.currentAddr && address != '-1'">{{address}}</a>
+                            <span class="text-muted util-nav-label"
+                                data-ng-show="address != $root.currentAddr && address == '-1'"> ❓︎ [ NO ADDRESS ]
+                            </span>
                         </span>
                     </div>
                 </div>
@@ -51,7 +54,7 @@
                                 {{currencyBalancePair}}
                                 <a href="/tx/{{vout.isSpent}}">
                                     <span class="text-danger" data-ng-show="vout.isSpent" tooltip="Output is spent"
-                                    tooltip-placement="left">(S)</span>
+                                        tooltip-placement="left">(S)</span>
                                 </a>
                                 <span class="text-success" data-ng-show="!vout.isSpent" tooltip="Output is unspent"
                                     tooltip-placement="left">(U)</span>
@@ -141,7 +144,7 @@
                         </div>
                         <div class="ellipsis">
                             <span data-ng-show="vout.notAddr">
-                            <span class="badge">{{vout.othercommitment}}</span>
+                                <span class="badge">{{vout.othercommitment}}</span>
                             </span>
                             <span class="text-muted" title="Current Verus Address"
                                 data-ng-show="address == $root.currentAddr"
@@ -203,8 +206,7 @@
                             </span>
                         </div>
                         <div class="ellipsis">
-                            <a href="address/{{address}}"
-                                data-ng-repeat="address in vout.scriptPubKey.addresses">
+                            <a href="address/{{address}}" data-ng-repeat="address in vout.scriptPubKey.addresses">
                                 {{address}}</a>
                         </div>
                     </div>

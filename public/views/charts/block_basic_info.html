@@ -1,6 +1,5 @@
 <h2>Blocks Status
     <small> ( Last {{selectedLabel}} ) </small>
-    
     <span class="badge" data-ng-if="loading" data-ng-click="cancelLoading()">
         <span class="glyphicon glyphicon-remove"></span> {{generationMessage}}
     </span>
@@ -13,20 +12,7 @@
     </button>
 </div>
 
-<!-- <div class="btn-group">
-    <label class="btn btn-info" ng-model="radioModel" uib-btn-radio="'Left'">Left</label>
-    <label class="btn btn-info" ng-model="radioModel" uib-btn-radio="'Middle'">Middle</label>
-    <label class="btn btn-info" ng-model="radioModel" uib-btn-radio="'Right'">Right</label>
-</div> -->
 <div>
-
-    <!-- <div class="panel panel-default">
-        <div class="panel-heading">Panel heading without title</div>
-        <div class="panel-body">
-          Panel content
-        </div>
-    </div> -->
-
     <div class="panel panel-default">
         <div class="panel-heading">
             <h4>{{titleConsensus}}
@@ -47,29 +33,6 @@
             <canvas class="chart-bar" chart-data="dataConsensus" chart-colors="colorsConsensus" chart-labels="labelsConsensus" chart-series="seriesConsensus" chart-options="optionsConsensus" height="80"></canvas>
         </div>
     </div>
-
-    <!-- <a class="btn" href="#" csv-download data="dataConsensus" title="labelsConsensus" filename="'consensus_data'"><i class="icon-file"></i></a> -->
-
-    <!-- <canvas id="bar" class="chart-horizontal-bar" chart-data="dataConsensus" chart-labels="labelsConsensus" chart-series="seriesConsensus" chart-options="optionsConsensus"></canvas> -->
-    
-
-    <!-- <div style="text-align: center;">
-        <table style="margin: 0 auto; height: 450px; border-width:0px" border="0">
-            <tr>
-                <td style="height: 100%;">
-                    <button id="leftButton" clas="btn-info" style="height: 100%; width: 100%;">Left</button>
-                </td>
-                <td>
-                    <canvas width="1000px;" height="450px" style="border: 1px solid black;" class="chart chart-bar" chart-data="dataMinedValue" chart-colors="colors" chart-labels="labelsMinedValue" chart-series="seriesMinedValue"></canvas>
-                </td>
-                <td style="height: 100%;">
-                    <button id="rightButton" style="height: 100%; width: 100%;">Right</button>
-                </td>
-            </tr>
-        </table>
-    </div> -->
-
-
 
     <div class="panel panel-default">
         <div class="panel-heading">

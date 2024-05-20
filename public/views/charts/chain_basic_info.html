@@ -1,6 +1,5 @@
 <h2>Chain Status
     <small> ( {{selectedLabel}} ) </small>
-    
     <span class="badge" data-ng-if="loading" data-ng-click="cancelLoading()">
         <span class="glyphicon glyphicon-remove"></span> {{generationMessage}}
     </span>
@@ -8,25 +7,17 @@
 </h2>
 
 <div class="btn-group" role="group">
-    <button type="button" class="btn btn-info animate-repeat"  data-ng-disabled="loading" data-ng-class="(rangeSelected == $index)? 'active':''" ng-repeat="range in rangeSelection" uib-btn-radio="'{{range.key}}'" ng-click="fetchChartData(range, $index)">
+    <button type="button"
+        class="btn btn-info animate-repeat"
+        data-ng-disabled="loading"
+        data-ng-class="(rangeSelected == $index)? 'active':''"
+        ng-repeat="range in rangeSelection"
+        uib-btn-radio="'{{range.key}}'"
+        ng-click="fetchChartData(range, $index)">
         {{range.label}}
     </button>
 </div>
-
-<!-- <div class="btn-group">
-    <label class="btn btn-info" ng-model="radioModel" uib-btn-radio="'Left'">Left</label>
-    <label class="btn btn-info" ng-model="radioModel" uib-btn-radio="'Middle'">Middle</label>
-    <label class="btn btn-info" ng-model="radioModel" uib-btn-radio="'Right'">Right</label>
-</div> -->
-<div>
-
-    <!-- <div class="panel panel-default">
-        <div class="panel-heading">Panel heading without title</div>
-        <div class="panel-body">
-          Panel content
-        </div>
-    </div> -->
-    
+<div>    
     <div class="panel panel-default">
         <div class="panel-heading">
             <h4>
