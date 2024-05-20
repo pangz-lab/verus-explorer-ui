@@ -2,10 +2,22 @@
 
 angular
     .module('insight.charts', ["chart.js"])
+    // .config(['ChartJsProvider', function (ChartJsProvider) {
+    //     // Configure all charts
+    //     // ChartJsProvider.setOptions({
+    //     //   chartColors: ['#FF5252', '#FF8A80'],
+    //     //   responsive: false
+    //     // });
+    //     // Configure all line charts
+    //     ChartJsProvider.setOptions('bar', {
+    //       showLines: false
+    //     });
+    //   }])
     .controller('ChartsController', function() {})
     .controller('ChainBasicInfoChartController', ChainBasicInfo)
     .controller('BlockBasicInfoChartController', BlockBasicInfo)
     .controller('MiningBasicInfoChartController', MiningBasicInfo);
+    
     // .config(['ChartJsProvider', function (ChartJsProvider) {
     //       ChartJsProvider.setOptions({
     //         colors : [ '#803690', '#00ADF9', '#DCDCDC', '#46BFBD', '#FDB45C', '#949FB1', '#4D5360']
