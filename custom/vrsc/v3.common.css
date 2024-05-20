@@ -371,15 +371,14 @@ margin-left: 0;
 .btn-success:hover, .btn-success:focus, .btn-success:active,
 .btn-success.active, .open .dropdown-toggle.btn-success,
 .btn-danger:hover, .btn-danger:focus, .btn-danger:active,
-.btn-danger.active, .open .dropdown-toggle.btn-danger,
-.btn-info:active, .btn-info:hover {
+.btn-danger.active, .open .dropdown-toggle.btn-danger {
   background-color: #fff;
-  /* border: 2px solid #ccc; */
+  border: 2px solid #ccc;
   color: #373D42;
 }
 
 .btn-default:hover, .btn-default:focus, .btn-default:active, .btn-default.active, .open .dropdown-toggle.btn-default {
-  background-color: #D6D6D6;
+  background-color: #fff;
 }
 
 .btn-default {
@@ -397,7 +396,7 @@ margin-left: 0;
 }
 
 .btn-info {
-  background-color: #39b3d7;
+  background-color: #959595;
   color: #fff;
 }
 
@@ -419,8 +418,8 @@ margin-left: 0;
 }
 
 .txvalues-default {
-  background-color: #D6D6D6;
-  color: #1C1C1C;
+  background-color: #39b3d7;
+  color: #fff;
 }
 
 .txvalues-success {
@@ -497,7 +496,7 @@ margin-left: 0;
 -------------------------------------------------- */
 /* Not required for template or sticky footer method. */
 
-#wrap > .container { padding: 80px 15px 0; }
+#wrap > .container { padding: 70px 15px 0; }
 
 #footer > .container { padding: auto 15px; }
 
@@ -638,14 +637,14 @@ margin-left: 0;
 .panel { margin-bottom: 5px;}
 .panel-body {
   /* padding: 10px 15px; */
+  line-height: 1.10;
   word-wrap: break-word;
 }
 
 .panel-default> .panel-body {
   background-color: #fff;
-  border-radius: 6px;
-  /* border-top-right-radius: 6px;
-  border-top-left-radius: 6px; */
+  border-top-right-radius: 6px;
+  border-top-left-radius: 6px;
 }
 
 .panel-heading {
@@ -737,8 +736,6 @@ margin-left: 0;
 }
 
 .transaction-vin-vout {
-  line-height: 1.08;
-  padding: auto;
 }
 
 .v_highlight {
@@ -856,7 +853,7 @@ a.v_highlight_more {
     display: none;
   } 
   #wrap>.container {
-    padding: 80px 15px 0;
+    padding: 50px 15px 0;
   }
   #ngProgress-container {
     top: 50px;
@@ -952,49 +949,31 @@ a.v_highlight_more {
   font-size:20px;
 }
 
-.today-btn {
-  background-color: #4AA658;
-  border: 2px solid #76AF0F;
-  padding: 10px 20px;
-  border-radius: 6px;
-  line-height: 1;
-  font-weight: 500;
-}
-
 .subIntro {
   font-size: 16px
 }
 
 /* Workaround so as not to make the block list move to the right */
 /* Scrollbar START */
-/* ::-webkit-scrollbar {
+::-webkit-scrollbar {
   width: 0px;
 }
 
 ::-webkit-scrollbar:active {
   width: 100%;
-} */
+}
 
 /* Scrollbar END */
 
 .picker-calendar {
   padding: 0%;
   margin: 0%;
-  font-size: 30px;
+  font-size: 24px;
   background-color: transparent;
   border: transparent;
 }
 
-.picker-calendar + ul {
-  padding: 0px;;
-}
-
 .calendar-text-header {
   /* color: #fff; */
-  padding-left: 2px;
-}
-
-.text-header-divider {
-  color: #999;
-  font-size: 10;
+  padding-left: 10px;
 }
