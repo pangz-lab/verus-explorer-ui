@@ -976,13 +976,13 @@ a.v_highlight_more {
 
 /* Workaround so as not to make the block list move to the right */
 /* Scrollbar START */
-::-webkit-scrollbar {
+/* ::-webkit-scrollbar {
   width: 0px;
 }
 
 ::-webkit-scrollbar:active {
   width: 100%;
-}
+} */
 
 /* Scrollbar END */
 

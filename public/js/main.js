@@ -3,7 +3,7 @@ var testnet = false;
 var netSymbol = testnet ? 'VRSCTEST' : 'VRSC';
 const chainName = "Verus";
 const coinpaprikaEndpointKey = "vrsc-verus-coin";
-const firstBlockStartDate = new Date(2018, 4, 20);
+const firstBlockStartDate = new Date(2018, 5, 20);
 const allowedSearchPattern = /^[a-zA-Z0-9@]+$/;
 // const apiServer = testnet ? 'http://127.0.0.1:27486' : 'http://localhost:3001';
 // const apiServer = testnet ? 'http://127.0.0.1:27486' : 'https://api.verus.services';
@@ -269,7 +269,7 @@ angular
         Global,
         UnitConversionService,
         VerusExplorerApi,
-        // VerusWssClient,
+        VerusWssClient,
         ScrollService,
         BlockService
         // $interval
@@ -295,6 +295,16 @@ angular
         $rootScope.scrollToBottom = function () {
             ScrollService.scrollToBottom();
         };
+
+        const wsTopic = VerusWssClient.getMessageTopic();
+        $scope.$on(wsTopic, function(event, rawEventData) {
+            if($scope.pagination.isToday && rawEventData.latestBlock.data !== undefined) {
+                var data = rawEventData.latestBlock.data;
+                data.txCount = data.txs.length;
+                $scope.blocks.push(data);
+                $scope.currentDateTxList.push(data.hash);
+            }
+        });
 
         var _setAlertMessage = function(show, message) {
             $scope.alert = {
@@ -338,9 +348,8 @@ angular
         };
 
         var _validateDate = function(value) {
-            console.log("Date value");
-            console.log(value);
-            if(value > new Date()) {
+            value = new Date(value);
+            if(value.getTime() > (new Date()).getTime()) {
                 _setAlertMessage(true, "Choose current date or previous date only!");
                 setTimeout(function() {
                     _setAlertMessage(false, "");
@@ -348,8 +357,8 @@ angular
                 return false;
             }
 
-            if(value < firstBlockStartDate) {
-                _setAlertMessage(true, "Choose date not later than " + firstBlockStartDate.toUTCString());
+            if(value.getTime() < (firstBlockStartDate).getTime()) {
+                _setAlertMessage(true, "Choose date not older than " + firstBlockStartDate.toUTCString());
                 setTimeout(function() {
                     _setAlertMessage(false, "");
                 }, 3000)
@@ -537,12 +546,12 @@ angular
         };
         
         $scope.toGMT = function(date) {
-            const d = (new Date(date * 1000)).toUTCString();
+            const d = (new Date((date * 1000) + 2)).toUTCString();
             return d.slice(0, d.length - 3);
         }
         
         $scope.toLocal = function(d) {
-            // const d = (new Date(date * 1000)).toLocaleString();
+            // const d = (new Date(date * 1000)).to();
             return d.slice(0, d.length - 3);
         }
 
@@ -579,17 +588,29 @@ angular
         // }, 10000); $scope.blocks = [];
         $scope.params = $routeParams;
         $scope.blocks = [];
-        $scope.params = $routeParams;
+        // $scope.params = $routeParams;
     }
 );
 
 // Source: public/src/js/controllers/charts.js
 angular
     .module('insight.charts', ["chart.js"])
+    // .config(['ChartJsProvider', function (ChartJsProvider) {
+    //     // Configure all charts
+    //     // ChartJsProvider.setOptions({
+    //     //   chartColors: ['#FF5252', '#FF8A80'],
+    //     //   responsive: false
+    //     // });
+    //     // Configure all line charts
+    //     ChartJsProvider.setOptions('bar', {
+    //       showLines: false
+    //     });
+    //   }])
     .controller('ChartsController', function() {})
     .controller('ChainBasicInfoChartController', ChainBasicInfo)
     .controller('BlockBasicInfoChartController', BlockBasicInfo)
     .controller('MiningBasicInfoChartController', MiningBasicInfo);
+    
     // .config(['ChartJsProvider', function (ChartJsProvider) {
     //       ChartJsProvider.setOptions({
     //         colors : [ '#803690', '#00ADF9', '#DCDCDC', '#46BFBD', '#FDB45C', '#949FB1', '#4D5360']
@@ -2109,6 +2130,30 @@ function BlockBasicInfo(
         },
 
     }
+
+    //TEMP
+    // const defaultLegendClickHandler = Chart.defaults.global.legend.onClick;
+    // var newLegendClickHandler = function (e, legendItem) {  
+    // var index = legendItem.datasetIndex;
+    // console.log(index);
+
+    // // if (index > 1) {
+    // //     // Do the original logic
+    // //     defaultLegendClickHandler(e, legendItem);
+    // // } else {
+    // //     let ci = this.chart;
+    // //     [
+    // //         ci.getDatasetMeta(0),
+    // //         ci.getDatasetMeta(1)
+    // //     ].forEach(function(meta) {
+    // //         meta.hidden = meta.hidden === null ? !ci.data.datasets[index].hidden : null;
+    // //     });
+    // //     ci.update();
+    // // }
+    // };
+    // //TEMP
+
+
     $scope.optionsBarBase = {
         animation: {
             duration: 0
@@ -2124,8 +2169,8 @@ function BlockBasicInfo(
         legend: {
             display: false,
             labels: {
-                color: 'red'
-            }
+                fontColor: 'rgb(255, 99, 132)',
+            },
         },
         scales: {
             xAxes: [{
@@ -2209,10 +2254,29 @@ function BlockBasicInfo(
     }
 
     const _createChartData = function (data, range, cachedData) {
-        $scope.onClick = function (points, evt) {
-            console.log(points[0], evt);
-            console.log(evt);
-        };
+        // $scope.onClick = function (points, evt) {
+        //     console.log(points[0], evt);
+        //     console.log(evt);
+        // };
+
+        // $scope.onClick = function(e, legendItem) {
+        //     var index = legendItem.datasetIndex;
+        //     var ci = this.chart;
+        //     // var meta = ci.getDatasetMeta(index);
+        //     console.log("prrinin");
+        //     // console.log(meta);
+        //     console.log(e[0]._chart);
+        //     console.log(e[0]._chart.config);
+        //     console.log(index);
+        //     // console.log(legendItem);
+        //     // console.log(index);
+        
+        //     // // See controller.isDatasetVisible comment
+        //     // meta.hidden = meta.hidden === null ? !ci.data.datasets[index].hidden : null;
+        
+        //     // // We hid a dataset ... rerender the chart
+        //     // ci.update();
+        // }
 
         $scope.optionsConsensus = {
             animation: {
@@ -2307,40 +2371,53 @@ function BlockBasicInfo(
             _saveToCache(data, c.key, c.ttl);
         }
 
+        // const chartLabels = _formatLabelAsLink(data.labels);
+        const chartLabels = data.labels;
         const chartData = data.data;
         $scope.labelsConsensusPie = ['PoW', 'PoS'];
         $scope.dataConsensusPie = _getConsensusPieData(chartData.blockType.data);
 
-        $scope.labelsConsensus = data.labels;
+        $scope.labelsConsensus = chartLabels;
         $scope.dataConsensus = _getConsensusBarData(chartData.blockType.data);
 
-        $scope.labelsSize = data.labels;
+        $scope.labelsSize = chartLabels;
         $scope.dataSize = chartData.size.data;
 
         // $scope.dataSizeBubble = _getSizeBubbleData(data.data[dataIndex.size]);
 
 
-        $scope.labelsDiff = data.labels;
+
+        $scope.labelsDiff = chartLabels;
         $scope.dataDiff = chartData.diff.data;
 
-        $scope.labelsTxCount = data.labels;
-        $scope.dataTxCount = chartData.txCount.data;;
+        $scope.labelsTxCount = chartLabels;
+        $scope.dataTxCount = chartData.txCount.data;
 
-        $scope.labelsMinedValue = data.labels;
-        $scope.dataMinedValue = chartData.minedValue.data;;
+        $scope.labelsMinedValue = chartLabels;
+        $scope.dataMinedValue = chartData.minedValue.data;
 
-        $scope.labelsTxFee = data.labels;
+        $scope.labelsTxFee = chartLabels;
         $scope.dataTxFee = chartData.totalTxFee.data;
 
-        $scope.labelsBlockTime = data.labels;
-        $scope.dataBlockTime = chartData.blockTime.data;;
-        
-        $scope.labelsBlockVoutValue = data.labels;
-        $scope.dataTotalBlockVoutValue = chartData.totalBlockVoutValue.data;
+        $scope.labelsBlockTime = chartLabels;
+        $scope.dataBlockTime = chartData.blockTime.data;
 
+        $scope.titleTotalBlockVoutValue = "Volume ("+chartData.totalBlockVoutValue.options.conv.unit+ ") " + netSymbol;
+        $scope.labelsTotalBlockVoutValue = chartLabels;
+        $scope.dataTotalBlockVoutValue = chartData.totalBlockVoutValue.data;
         
         $scope.loading = false;
     }
+
+    // const _formatLabelAsLink = function(labels) {
+    //     // var result = [];
+    //     // for (var i = 0; i < labels.length; i++) {
+    //     //     result[i] = '<a href="/blocks/'+labels[i]+'"> '+ labels[i] + '</a>';
+    //     // }
+
+    //     // return result;
+    //     return labels;
+    // }
 
     const _getConsensusPieData = function (data) {
         var result = {
@@ -3508,6 +3585,7 @@ angular
             lastReceivedTime = new Date().getTime();
             // console.log('Message from server:', event.data);
             var data = event.data.toString();
+            console.log(event);
             console.log(data);
             data = JSON.parse(data);
             if(data.status != undefined) { $rootScope.$broadcast(wsMessageTopic, data); }

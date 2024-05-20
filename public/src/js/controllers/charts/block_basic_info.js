@@ -31,6 +31,30 @@ function BlockBasicInfo(
         },
 
     }
+
+    //TEMP
+    // const defaultLegendClickHandler = Chart.defaults.global.legend.onClick;
+    // var newLegendClickHandler = function (e, legendItem) {  
+    // var index = legendItem.datasetIndex;
+    // console.log(index);
+
+    // // if (index > 1) {
+    // //     // Do the original logic
+    // //     defaultLegendClickHandler(e, legendItem);
+    // // } else {
+    // //     let ci = this.chart;
+    // //     [
+    // //         ci.getDatasetMeta(0),
+    // //         ci.getDatasetMeta(1)
+    // //     ].forEach(function(meta) {
+    // //         meta.hidden = meta.hidden === null ? !ci.data.datasets[index].hidden : null;
+    // //     });
+    // //     ci.update();
+    // // }
+    // };
+    // //TEMP
+
+
     $scope.optionsBarBase = {
         animation: {
             duration: 0
@@ -46,8 +70,8 @@ function BlockBasicInfo(
         legend: {
             display: false,
             labels: {
-                color: 'red'
-            }
+                fontColor: 'rgb(255, 99, 132)',
+            },
         },
         scales: {
             xAxes: [{
@@ -131,10 +155,29 @@ function BlockBasicInfo(
     }
 
     const _createChartData = function (data, range, cachedData) {
-        $scope.onClick = function (points, evt) {
-            console.log(points[0], evt);
-            console.log(evt);
-        };
+        // $scope.onClick = function (points, evt) {
+        //     console.log(points[0], evt);
+        //     console.log(evt);
+        // };
+
+        // $scope.onClick = function(e, legendItem) {
+        //     var index = legendItem.datasetIndex;
+        //     var ci = this.chart;
+        //     // var meta = ci.getDatasetMeta(index);
+        //     console.log("prrinin");
+        //     // console.log(meta);
+        //     console.log(e[0]._chart);
+        //     console.log(e[0]._chart.config);
+        //     console.log(index);
+        //     // console.log(legendItem);
+        //     // console.log(index);
+        
+        //     // // See controller.isDatasetVisible comment
+        //     // meta.hidden = meta.hidden === null ? !ci.data.datasets[index].hidden : null;
+        
+        //     // // We hid a dataset ... rerender the chart
+        //     // ci.update();
+        // }
 
         $scope.optionsConsensus = {
             animation: {
@@ -229,40 +272,53 @@ function BlockBasicInfo(
             _saveToCache(data, c.key, c.ttl);
         }
 
+        // const chartLabels = _formatLabelAsLink(data.labels);
+        const chartLabels = data.labels;
         const chartData = data.data;
         $scope.labelsConsensusPie = ['PoW', 'PoS'];
         $scope.dataConsensusPie = _getConsensusPieData(chartData.blockType.data);
 
-        $scope.labelsConsensus = data.labels;
+        $scope.labelsConsensus = chartLabels;
         $scope.dataConsensus = _getConsensusBarData(chartData.blockType.data);
 
-        $scope.labelsSize = data.labels;
+        $scope.labelsSize = chartLabels;
         $scope.dataSize = chartData.size.data;
 
         // $scope.dataSizeBubble = _getSizeBubbleData(data.data[dataIndex.size]);
 
 
-        $scope.labelsDiff = data.labels;
+
+        $scope.labelsDiff = chartLabels;
         $scope.dataDiff = chartData.diff.data;
 
-        $scope.labelsTxCount = data.labels;
-        $scope.dataTxCount = chartData.txCount.data;;
+        $scope.labelsTxCount = chartLabels;
+        $scope.dataTxCount = chartData.txCount.data;
 
-        $scope.labelsMinedValue = data.labels;
-        $scope.dataMinedValue = chartData.minedValue.data;;
+        $scope.labelsMinedValue = chartLabels;
+        $scope.dataMinedValue = chartData.minedValue.data;
 
-        $scope.labelsTxFee = data.labels;
+        $scope.labelsTxFee = chartLabels;
         $scope.dataTxFee = chartData.totalTxFee.data;
 
-        $scope.labelsBlockTime = data.labels;
-        $scope.dataBlockTime = chartData.blockTime.data;;
-        
-        $scope.labelsBlockVoutValue = data.labels;
-        $scope.dataTotalBlockVoutValue = chartData.totalBlockVoutValue.data;
+        $scope.labelsBlockTime = chartLabels;
+        $scope.dataBlockTime = chartData.blockTime.data;
 
+        $scope.titleTotalBlockVoutValue = "Volume ("+chartData.totalBlockVoutValue.options.conv.unit+ ") " + netSymbol;
+        $scope.labelsTotalBlockVoutValue = chartLabels;
+        $scope.dataTotalBlockVoutValue = chartData.totalBlockVoutValue.data;
         
         $scope.loading = false;
     }
+
+    // const _formatLabelAsLink = function(labels) {
+    //     // var result = [];
+    //     // for (var i = 0; i < labels.length; i++) {
+    //     //     result[i] = '<a href="/blocks/'+labels[i]+'"> '+ labels[i] + '</a>';
+    //     // }
+
+    //     // return result;
+    //     return labels;
+    // }
 
     const _getConsensusPieData = function (data) {
         var result = {

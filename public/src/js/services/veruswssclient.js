@@ -55,6 +55,7 @@ angular
             lastReceivedTime = new Date().getTime();
             // console.log('Message from server:', event.data);
             var data = event.data.toString();
+            console.log(event);
             console.log(data);
             data = JSON.parse(data);
             if(data.status != undefined) { $rootScope.$broadcast(wsMessageTopic, data); }

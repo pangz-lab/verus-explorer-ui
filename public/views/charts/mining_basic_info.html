@@ -57,7 +57,8 @@
                     <!-- <th>Type</th> -->
                     <!-- <th>Country</th> -->
                 </tr>
-                <tr ng-repeat="pool in miningPoolData | orderBy:'-hashrate'">
+                <!-- <tr ng-repeat="pool in miningPoolData | orderBy:'-hashrate'"> -->
+                <tr ng-repeat="pool in miningPoolData">
                     <td>{{$index + 1}}</td>
                     <td>{{pool.poolId}}</td>
                     <td>{{(pool.hashrate / 1e9).toFixed(2)}} <b>GH</b></td>

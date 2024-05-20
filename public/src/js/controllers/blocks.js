@@ -14,7 +14,7 @@ angular
         Global,
         UnitConversionService,
         VerusExplorerApi,
-        // VerusWssClient,
+        VerusWssClient,
         ScrollService,
         BlockService
         // $interval
@@ -40,6 +40,16 @@ angular
         $rootScope.scrollToBottom = function () {
             ScrollService.scrollToBottom();
         };
+
+        const wsTopic = VerusWssClient.getMessageTopic();
+        $scope.$on(wsTopic, function(event, rawEventData) {
+            if($scope.pagination.isToday && rawEventData.latestBlock.data !== undefined) {
+                var data = rawEventData.latestBlock.data;
+                data.txCount = data.txs.length;
+                $scope.blocks.push(data);
+                $scope.currentDateTxList.push(data.hash);
+            }
+        });
 
         var _setAlertMessage = function(show, message) {
             $scope.alert = {
@@ -83,9 +93,8 @@ angular
         };
 
         var _validateDate = function(value) {
-            console.log("Date value");
-            console.log(value);
-            if(value > new Date()) {
+            value = new Date(value);
+            if(value.getTime() > (new Date()).getTime()) {
                 _setAlertMessage(true, "Choose current date or previous date only!");
                 setTimeout(function() {
                     _setAlertMessage(false, "");
@@ -93,8 +102,8 @@ angular
                 return false;
             }
 
-            if(value < firstBlockStartDate) {
-                _setAlertMessage(true, "Choose date not later than " + firstBlockStartDate.toUTCString());
+            if(value.getTime() < (firstBlockStartDate).getTime()) {
+                _setAlertMessage(true, "Choose date not older than " + firstBlockStartDate.toUTCString());
                 setTimeout(function() {
                     _setAlertMessage(false, "");
                 }, 3000)
@@ -282,12 +291,12 @@ angular
         };
         
         $scope.toGMT = function(date) {
-            const d = (new Date(date * 1000)).toUTCString();
+            const d = (new Date((date * 1000) + 2)).toUTCString();
             return d.slice(0, d.length - 3);
         }
         
         $scope.toLocal = function(d) {
-            // const d = (new Date(date * 1000)).toLocaleString();
+            // const d = (new Date(date * 1000)).to();
             return d.slice(0, d.length - 3);
         }
 
@@ -324,6 +333,6 @@ angular
         // }, 10000); $scope.blocks = [];
         $scope.params = $routeParams;
         $scope.blocks = [];
-        $scope.params = $routeParams;
+        // $scope.params = $routeParams;
     }
 );
