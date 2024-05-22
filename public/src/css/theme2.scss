@@ -8,7 +8,7 @@ body {
   /* color: #959595; */
   /* color: #1C1C1C; */
   color: #999; /* TODO */
-  font-family: 'Changa', sans-serif;
+  font-family: 'Geomanist', sans-serif;
   height: 100%;
   background-color: #1a1a1a;
   line-height: 1;
@@ -28,7 +28,7 @@ b, strong {
 
 h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
   color: #999; /* TODO */
-  font-family: 'Changa', sans-serif;
+  font-family: 'Geomanist', sans-serif;
 }
 
 [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak],
@@ -155,7 +155,7 @@ margin-left: 0;
 
 .navbar-default .navbar-nav>li>a {
   color: #ffffff; /* TODO */
-  font-family: 'Changa', sans-serif;
+  font-family: 'Geomanist', sans-serif;
   padding-left: 20px;
   padding-right: 20px;
 }
@@ -199,7 +199,7 @@ margin-left: 0;
 }
 
 .insight {
-  font-family: 'Changa', sans-serif;
+  font-family: 'Geomanist', sans-serif;
   font-size: 34px;
   font-style: italic;
   font-weight: 700;
@@ -278,15 +278,15 @@ margin-left: 0;
 }
 
 #search::-webkit-input-placeholder {
-  color: #1a1a1a;
-  font-family: 'Changa', sans-serif;
+  color: #a7a7a7;
+  font-family: 'Geomanist', sans-serif;
   font-style: italic;
   font-weight: 100;
 }
 
 #search::-moz-placeholder {
   color: #a7a7a7;
-  font-family: 'Changa', sans-serif;
+  font-family: 'Geomanist', sans-serif;
   font-weight: 100;
 }
 
@@ -489,8 +489,8 @@ margin-left: 0;
 
 /* Set the fixed height of the footer here */
 #footer {
-  background-color: #3165d3; /* TODO */
-  color: #1d1d2a; /* TODO */
+  background-color: #1C1C1C; /* TODO */
+  color: #999; /* TODO */
   height: 51px;
   overflow: hidden;
 }
@@ -498,33 +498,33 @@ margin-left: 0;
 #footer a.insight {
   font-size: 20px;
   text-decoration: none;
-  color: #1a1a1a; /* TODO */
+  color: #999; /* TODO */
 }
 
 #footer a.insight:hover {
-  color: #1a1a1a;
+  color: white;
 }
 
 #footer a.insight small { font-size: 11px; }
-.line-footer { border-top: 2px dashed #2c2c2c; }
+.line-footer { border-top: 2px dashed #ddd; }
 
 #footer .links {
-  color: #2c2c2c;
+  color: #ddd;
   font-size: 10px;
 }
 
 #footer .links a {
-  color: #2c2c2c;
+  color: #ddd;
 }
 
 #footer .links a.selected {
-  color: #eee;
+  color: #999;
   font-weight: bold;
 }
 
 #footer .links a:hover {
   text-decoration: none;
-  color: #1a1a1a;
+  color: #999;
 }
 
 .line-bot {
@@ -948,7 +948,7 @@ a.v_highlight_more {
   .navbar {
     min-height: 50px;
   }
-  #search { color: #1C1C1C; }
+  #search { color: #fff; }
   .txvalues {
     display: block;
     margin: 5px;
