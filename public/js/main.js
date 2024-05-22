@@ -682,10 +682,16 @@ angular
         $rootScope,
         $modal,
         // Global,
-        $location
+        $location,
+        LocalStore
     ) {
         //$scope.global = Global;
-
+        const CACHE_THEME_COLOR = 1;
+        const CACHE_TTL_THEME_COLOR = 1400;
+        
+        const _reloadPage = function() {
+            $location.url($location.url());
+        }
         $rootScope.currency = {
             factor: 1,
             bitstamp: 0,
@@ -693,6 +699,16 @@ angular
             netSymbol: netSymbol,
             symbol: netSymbol
         };
+
+        const themeColor = LocalStore.get(CACHE_THEME_COLOR);
+        const defaultTheme = 0;
+        $rootScope.themeColor = (themeColor == undefined)? defaultTheme : themeColor;
+
+        $scope.toggleTheme = function() {
+            $rootScope.themeColor = $rootScope.themeColor == 1? 0 : 1;
+            LocalStore.set(CACHE_THEME_COLOR, $rootScope.themeColor, CACHE_TTL_THEME_COLOR)
+            _reloadPage();
+        }
 
         $scope.menu = [{
             'title': 'Blocks',

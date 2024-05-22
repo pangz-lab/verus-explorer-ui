@@ -13,6 +13,13 @@
 	<meta data-ng-if="!currency.testnet" name="description" content="Verus Insight. View detailed information on all Verus transactions and blocks.">
 	<link rel="shortcut icon" href="img/icons/favicon.ico" type="image/x-icon">
 	<link rel="stylesheet" type="text/css" href="css/main.min.css">
+	<link rel="stylesheet" type="text/css" href="css/theme-dark.min.css" data-ng-if="$root.themeColor == 1">
+
+
+  <!-- For vARRR used only -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Changa:wght@200..800&family=Orbitron:wght@900&display=swap" rel="stylesheet">
 
 </head>
 <body ng-cloak class="ng-cloak">
@@ -69,7 +76,7 @@
       <a class="insight m10v pull-right" target="_blank" href="/">VerusExplorer <small>API v{{version}}</small></a>
     </div>
   </div>
-  <script language="javascript">window.apiPrefix = '/api';</script>
+  <!-- <script language="javascript">window.apiPrefix = '/api';</script> -->
 	<!-- <script src="/socket.io/socket.io.js"></script> -->
 	<script src="js/vendors.min.js"></script>
 	<script src="js/bignumber.min.js"></script>

@@ -94,6 +94,12 @@ module.exports = function(grunt) {
           'public/src/css/*.css',
         ],
         dest: 'public/css/main.css'
+      },
+      cssCommonDark: {
+        src: [
+          'public/src/css/common-dark.scss',
+        ],
+        dest: 'public/css/theme-dark.css'
       }
     },
     uglify: {
@@ -118,7 +124,11 @@ module.exports = function(grunt) {
       css: {
         src: 'public/css/main.css',
         dest: 'public/css/main.min.css'
-      }
+      },
+      cssCommonDark: {
+        src: 'public/css/theme-dark.css',
+        dest: 'public/css/theme-dark.min.css'
+      },
     },
     markdown: {
       all: {
@@ -146,6 +156,10 @@ module.exports = function(grunt) {
       css: {
         files: ['public/src/css/**/*.css', 'public/src/css/*.css'],
         tasks: ['concat:css', 'cssmin'],
+      },
+      cssCommonDark: {
+        files: ['public/src/css/common-dark.scss'],
+        tasks: ['cssmin'],
       },
     },
     nggettext_extract: {
