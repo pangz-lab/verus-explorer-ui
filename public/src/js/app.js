@@ -10,6 +10,9 @@ const allowedSearchPattern = /^[a-zA-Z0-9@]+$/;
 const apiServer = testnet ? 'http://127.0.0.1:27486' : 'https://wip-ws-insight.pangz.tech'; //2220 ws and express
 const wsServer = testnet ? 'wss://wip-ws-insight.pangz.tech/verus/wss' : 'wss://wip-ws-insight.pangz.tech/verus/wss'; //2220 ws and express
 
+// const apiServer = testnet ? 'http://127.0.0.1:27486' : 'http://localhost:2220'; //2220 ws and express
+// const wsServer = testnet ? 'wss://wip-ws-insight.pangz.tech/verus/wss' : 'ws://localhost:2220/verus/wss'; //2220 ws and express
+
 // Need to secure the API token. Better put the API behind a gateway or a reverse proxy
 const coinPaprikaBaseUri = 'https://api.coinpaprika.com/v1';
 const apiToken =  testnet ? '' : 'Basic dmVydXNkZXNrdG9wOnk4RDZZWGhBRms2alNoSGlSQktBZ1JDeDB0OVpkTWYyUzNLMG83ek44U28="';
@@ -43,9 +46,6 @@ const localStore = {
       last1500: { key: netSymbol + ':vexp_chart_last1500', ttl: 7200 },//2 hr
     }
   },
-  // api: {
-  //   blockchainHeight: { key: netSymbol + ':vexp_chain_height', ttl: 5 }
-  // },
 }
 const chart = {
   types: {
@@ -69,7 +69,7 @@ angular.module('insight',[
   'gettext',
   'angularMoment',
   'insight.system',
-  'insight.socket',
+  // 'insight.socket',
   'insight.blocks',
   'insight.transactions',
   'insight.address',
@@ -79,7 +79,7 @@ angular.module('insight',[
   // 'insight.connection',
   'insight.currency',
   // 'insight.messages',
-  'insight.verusdrpc',
+  // 'insight.verusdrpc',
   'insight.verusexplorerapi',
   'insight.wseventdatamanager',
   'insight.veruswssclient',
@@ -89,17 +89,17 @@ angular.module('insight',[
 ]);
 
 angular.module('insight.system', []);
-angular.module('insight.socket', []);
+// angular.module('insight.socket', []);
 angular.module('insight.blocks', []);
 angular.module('insight.transactions', []);
 angular.module('insight.address', []);
 angular.module('insight.search', []);
 angular.module('insight.charts', [])
 angular.module('insight.status', []);
-angular.module('insight.connection', []);
+// angular.module('insight.connection', []);
 angular.module('insight.currency', []);
-angular.module('insight.messages', []);
-angular.module('insight.verusdrpc', []);
+// angular.module('insight.messages', []);
+// angular.module('insight.verusdrpc', []);
 angular.module('insight.verusexplorerapi', []);
 angular.module('insight.wseventdatamanager', []);
 angular.module('insight.veruswssclient', []);

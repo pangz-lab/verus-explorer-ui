@@ -32,7 +32,7 @@ angular.module('insight.transactions')
             txVoutTotalValue = 0;
             addressCommitments = {};
             const hasVin = tx.vin != undefined && tx.vin[0] != undefined;
-            // const hasVout = tx.vout != undefined && tx.vout[0] != undefined;
+
             ///////////////////////////////////
             // vin operation
             ///////////////////////////////////
@@ -49,7 +49,6 @@ angular.module('insight.transactions')
             // vout operation
             ///////////////////////////////////
             _aggregateItems(tx.vout, function (items, i) {
-                // console.log(typeof(items[i].scriptPubKey.addresses));
                 const addressType = typeof (items[i].scriptPubKey.addresses);
                 const pubKeyAddressess = items[i].scriptPubKey.addresses ? items[i].scriptPubKey.addresses : [];
                 var isIdentityTx = false;
@@ -71,7 +70,6 @@ angular.module('insight.transactions')
                 }
 
 
-                // tx.vout[i].uiWalletAddress = uiWalletAddress[0] == undefined ? ' [ NO ADDRESS ] ' : uiWalletAddress;
                 tx.vout[i].uiWalletAddress = uiWalletAddress[0] == undefined ? unknownAddress : uiWalletAddress;
                 tx.vout[i].isSpent = items[i].spentTxId;
                 tx.vout[i].multipleAddress = pubKeyAddressess.join(',');
@@ -117,10 +115,6 @@ angular.module('insight.transactions')
                     tx.fees = parseFloat(((txVinTotalValue - txVoutTotalValue) + tx.valueBalance).toFixed(8));
                 }
             }
-
-            // TODO
-            // 2. Update full view for transaction
-            // 3. fix sequence or just remove the tx counter? http://localhost:2222/address/iLAZzpXuQpapbysYzLNUDLbpLuGr6NwhbH
         };
 
         var _getPbaasCommitment = function (scriptPubKey) {
@@ -161,9 +155,7 @@ angular.module('insight.transactions')
                 .then(function (rawTx) {
                     const blockData = blockHeight.data;
                     const rawTxData = rawTx.data; 
-                    // console.log(" GETTING >>>");
-                    // console.log(blockData);
-                    // console.log(rawTxData);
+
                     $rootScope.flashMessage = null;
                     _processTX(rawTxData, blockData);
                     $scope.tx = rawTxData;
@@ -174,15 +166,6 @@ angular.module('insight.transactions')
                 })
                 .catch(function (e) {
                     $rootScope.flashMessage = 'Failed to load transaction '+txid+'. Reload to try again.';
-                    // if (e.status === 400) {
-                    //     $rootScope.flashMessage = 'Invalid Transaction ID: ' + $routeParams.txId;
-                    // } else if (e.status === 503) {
-                    //     $rootScope.flashMessage = 'Backend Error. ' + e.data;
-                    // } else {
-                    //     $rootScope.flashMessage = 'Transaction Not Found';
-                    // }
-
-                    // $location.path('/');
                 });
 
             });
@@ -193,9 +176,9 @@ angular.module('insight.transactions')
         // Address page helper methods
         //////////////////////////////////////////////////////////////////////////
         const MAX_ITEM_PER_SCROLL = 5;
-        // const START_TX_INDEX_OFFSET = 2;
         $scope.isGettingAllTx = true;
-        // One item is preloaded after getting all the txs so index 0 is already occupied
+        // One item is preloaded after getting all the txs 
+        // so index 0 is already occupied
         $scope.startTransactionIndex = null;
         $scope.preProcessedTxIds = [];
         $rootScope.addressPage = { transactionCount: 0 }
@@ -229,26 +212,7 @@ angular.module('insight.transactions')
             $scope.isGettingAllTx = true;
             $scope.hasTxFound = false;
             $scope.blockTxCount = hashes.length;
-            // $scope.hasTxFound = false;
-
-            // VerusdRPC.getAddressTxIds([$routeParams.addrStr])
-            // .then(function(data) {
-            //   $scope.preProcessedTxIds = data.result;
-            //   $scope.hasTxFound = data.result[0];
-            //   // Decremented in _findTx method
-            //   startIndexLabel = $scope.preProcessedTxIds.length + 1;
-
-            //   $scope.startTransactionIndex = data.result.length - 1;
-            //   _paginate(_getLastNElements($scope.preProcessedTxIds, $scope.startTransactionIndex, MAX_ITEM_PER_SCROLL));
-
-
-            //   $rootScope.addressPage = { transactionCount: $scope.preProcessedTxIds.length };
-            //   $scope.isGettingAllTx = false;
-            // });
-            // console.log("hashes >>>");
-            // console.log(hashes);
-
-            // startIndexLabel = $scope.preProcessedTxIds.length + 1;
+            
             $scope.preProcessedTxIds = hashes;
             $scope.startTransactionIndex = hashes.length - 1;
             _paginate(
@@ -270,7 +234,6 @@ angular.module('insight.transactions')
                 result.push(a[i]);
                 x += 1;
             }
-            // console.log(result);
             return result;
         }
 
@@ -300,19 +263,8 @@ angular.module('insight.transactions')
 
         var _paginate = function (data) {
             pagesTotal = data.length;
-            // pageNum += 1;
-
-            // data.txs.forEach(function(tx) {
-            //startIndexLabel = txStart
-            // console.log(data);
             data.forEach(function (tx) {
-
-                // startIndexLabel -= 1;  
                 _findTx(tx);
-                // const lastTx = $scope.tx;
-                // $scope.txs.push(lastTx);
-                // $scope.txIndexLabel[lastTx.time] = (startIndexLabel -= 1);
-                // $scope.txs.push(tx);
             });
             $scope.loading = false;
         };
@@ -325,41 +277,27 @@ angular.module('insight.transactions')
         //Initial load
         $scope.load = function (from, hashes) {
             $scope.loadedBy = from;
-            // if($scope.preProcessedTxIds[0] == undefined) {
             if ($scope.loadedBy === 'address') {
                 _getAllAddressTxs();
             } else {
-                // console.log("hashes >>>");
-                // console.log(hashes);
                 _getAllBlockTxs(hashes);
-                // _paginate(_getLastNElements($scope.preProcessedTxIds, $scope.startTransactionIndex, MAX_ITEM_PER_SCROLL));
             }
-            // }
             $scope.loadMore();
         };
 
         //Load more transactions for pagination
         $scope.loadMore = function () {
-            // if (pageNum < pagesTotal && !$scope.loading) {
-
             if ($scope.loadedBy === 'address') {
                 _byAddress();
-                // $scope.loading = false;
             } else {
                 _byBlock();
             }
-            // }
         };
-
-        // Highlighted txout
 
         if ($routeParams.v_type == '>' || $routeParams.v_type == '<') {
             $scope.from_vin = $routeParams.v_type == '<' ? true : false;
             $scope.from_vout = $routeParams.v_type == '>' ? true : false;
             $scope.v_index = parseInt($routeParams.v_index);
-            // console.log("v_index >>> ");
-            // console.log($scope.from_vin);
-            // console.log($scope.v_index);
 
             $scope.itemsExpanded = true;
         }

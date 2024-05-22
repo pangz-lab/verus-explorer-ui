@@ -3,21 +3,17 @@
 angular
 .module('insight.blocks')
 .controller('BlocksController',
-    // function($scope, $rootScope, $routeParams, $location, Global, BlockByHeight, VerusdRPC, ScrollService, BlockService) {
-    // function($scope, $rootScope, $routeParams, $location, Global, VerusdRPC, VerusExplorerApi, ScrollService, BlockService) {
     function (
         $scope,
         $rootScope,
         $routeParams,
         $location,
-        // $window,
         Global,
         UnitConversionService,
         VerusExplorerApi,
         VerusWssClient,
         ScrollService,
         BlockService
-        // $interval
     ) {
         const MAX_HASH_PER_LOAD = 100;
         const dateUrlPath = "blocks-date";
@@ -168,16 +164,6 @@ angular
 
         var _createDateFromString = function(dateString) {
             return UnitConversionService.createDateFromString(dateString);
-            // const splitDate = dateString.split('-');
-            // const year = parseInt(splitDate[0], 10);
-            // const month = parseInt(splitDate[1], 10);
-            // const day = parseInt(splitDate[2], 10);
-            // const months = [
-            //     'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-            //     'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
-            // ];
-            // const isoStr = day + ' ' + months[month - 1] + ' ' + year + ' 00:00:00';
-            // return  new Date(isoStr);
         }
 
         $scope.list = function () {
@@ -296,7 +282,6 @@ angular
         }
         
         $scope.toLocal = function(d) {
-            // const d = (new Date(date * 1000)).to();
             return d.slice(0, d.length - 3);
         }
 
@@ -305,34 +290,12 @@ angular
             const offsetMinutes = date.getTimezoneOffset();
             const offsetHours = Math.abs(offsetMinutes) / 60;
             const sign = offsetMinutes < 0 ? '+' : '-';
-            // const formattedDifference = sign + ' ' + padNumber(Math.floor(offsetHours)) + ':' + padNumber(Math.abs(offsetMinutes % 60));
+
             const formattedDifference = 'GMT' + sign + Math.floor(offsetHours);
             return formattedDifference;
         }
-        
 
-        // $scope.isLocalTimeBehindGMT = function() {
-        //     const localTime = new Date();
-        //     const gmtTime = new Date(localTime.getTime() + localTime.getTimezoneOffset() * 60000);
-        //     const b = localTime.getTime() < gmtTime.getTime();
-        //     return b;
-        // }
-
- 
-
-        // var lazyLoadingInterval = $interval(function () {
-        //     console.log("Load more data every 2 seconds...");
-        //     $scope.loadMorelist();
-        // }, 2000);
-
-        // setTimeout(function () {
-        //     if(lazyLoadingInterval != undefined) {
-        //         $interval.cancel(lazyLoadingInterval);
-        //         lazyLoadingInterval = undefined;
-        //     }
-        // }, 10000); $scope.blocks = [];
         $scope.params = $routeParams;
         $scope.blocks = [];
-        // $scope.params = $routeParams;
     }
 );

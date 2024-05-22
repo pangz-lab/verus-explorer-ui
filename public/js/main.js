@@ -9,6 +9,9 @@ const allowedSearchPattern = /^[a-zA-Z0-9@]+$/;
 const apiServer = testnet ? 'http://127.0.0.1:27486' : 'https://wip-ws-insight.pangz.tech'; //2220 ws and express
 const wsServer = testnet ? 'wss://wip-ws-insight.pangz.tech/verus/wss' : 'wss://wip-ws-insight.pangz.tech/verus/wss'; //2220 ws and express
 
+// const apiServer = testnet ? 'http://127.0.0.1:27486' : 'http://localhost:2220'; //2220 ws and express
+// const wsServer = testnet ? 'wss://wip-ws-insight.pangz.tech/verus/wss' : 'ws://localhost:2220/verus/wss'; //2220 ws and express
+
 // Need to secure the API token. Better put the API behind a gateway or a reverse proxy
 const coinPaprikaBaseUri = 'https://api.coinpaprika.com/v1';
 const apiToken =  testnet ? '' : 'Basic dmVydXNkZXNrdG9wOnk4RDZZWGhBRms2alNoSGlSQktBZ1JDeDB0OVpkTWYyUzNLMG83ek44U28="';
@@ -42,9 +45,6 @@ const localStore = {
       last1500: { key: netSymbol + ':vexp_chart_last1500', ttl: 7200 },//2 hr
     }
   },
-  // api: {
-  //   blockchainHeight: { key: netSymbol + ':vexp_chain_height', ttl: 5 }
-  // },
 }
 const chart = {
   types: {
@@ -68,7 +68,7 @@ angular.module('insight',[
   'gettext',
   'angularMoment',
   'insight.system',
-  'insight.socket',
+  // 'insight.socket',
   'insight.blocks',
   'insight.transactions',
   'insight.address',
@@ -78,7 +78,7 @@ angular.module('insight',[
   // 'insight.connection',
   'insight.currency',
   // 'insight.messages',
-  'insight.verusdrpc',
+  // 'insight.verusdrpc',
   'insight.verusexplorerapi',
   'insight.wseventdatamanager',
   'insight.veruswssclient',
@@ -88,17 +88,17 @@ angular.module('insight',[
 ]);
 
 angular.module('insight.system', []);
-angular.module('insight.socket', []);
+// angular.module('insight.socket', []);
 angular.module('insight.blocks', []);
 angular.module('insight.transactions', []);
 angular.module('insight.address', []);
 angular.module('insight.search', []);
 angular.module('insight.charts', [])
 angular.module('insight.status', []);
-angular.module('insight.connection', []);
+// angular.module('insight.connection', []);
 angular.module('insight.currency', []);
-angular.module('insight.messages', []);
-angular.module('insight.verusdrpc', []);
+// angular.module('insight.messages', []);
+// angular.module('insight.verusdrpc', []);
 angular.module('insight.verusexplorerapi', []);
 angular.module('insight.wseventdatamanager', []);
 angular.module('insight.veruswssclient', []);
@@ -114,49 +114,17 @@ angular
         $scope,
         $rootScope,
         $routeParams,
-        // $location,
         Global,
-        // Address,
-        // getSocket,
-        // VerusdRPC,
         VerusExplorerApi,
         ScrollService
     ) {
         $scope.global = Global;
-
         $rootScope.scrollToTop = function () {
             ScrollService.scrollToTop();
         };
         $rootScope.scrollToBottom = function () {
             ScrollService.scrollToBottom();
         };
-
-        // var socket = getSocket($scope);
-        // var addrStr = $routeParams.addrStr;
-
-        // var _startSocket = function() {
-        //   socket.on('bitcoind/addresstxid', function(data) {
-        //     if (data.address === addrStr) {
-        //       $rootScope.$broadcast('tx', data.txid);
-        //       var base = document.querySelector('base');
-        //       var beep = new Audio(base.href + '/sound/transaction.mp3');
-        //       beep.play();
-        //     }
-        //   });
-        //   socket.emit('subscribe', 'bitcoind/addresstxid', [addrStr]);
-        // };
-
-        // var _stopSocket = function () {
-        //   socket.emit('unsubscribe', 'bitcoind/addresstxid', [addrStr]);
-        // };
-
-        // socket.on('connect', function() {
-        //   _startSocket();
-        // });
-
-        // $scope.$on('$destroy', function(){
-        //   _stopSocket();
-        // });
 
         $scope.params = $routeParams;
         $scope.addressBalance = {
@@ -192,21 +160,7 @@ angular
             .then(function (addressBalance) {
                 const data = addressBalance.data;
                 $scope.addressBalance.loading = false;
-                // if (data.balance) {
-                //     $rootScope.flashMessage = 'Backend Error : ' + data.error.message + '(' + data.error.code + ')';
-                //     // $location.path('/');
-                //     return;
-                // }
-
-                // console.log("Data from address controller");
-                // console.log(data);
-                // // _paginate(data.result);
-                // // $rootScope.titleDetail = address.addrStr.substring(0, 7) + '...';
-                // $rootScope.titleDetail = $routeParams.addrStr.substring(0, 7) + '...';
-                // $rootScope.flashMessage = null;
-                // // $scope.address = $routeParams.addrStr;
-                // $scope.address = $routeParams;
-                // console.log(data);
+               
                 const balance = data.balance == undefined ? 0 : data.balance;
                 const received = data.received == undefined ? 0 : data.received;
                 $scope.balance = ((balance).toFixed(8) / 1e8).toString();
@@ -216,34 +170,7 @@ angular
             .catch(function (e) {
                 $scope.addressBalance.loading = false;
                 $rootScope.flashMessage = 'Failed to load the balance summary. Reload to try again.';
-                // if (e.status === 400) {
-                //     $rootScope.flashMessage = 'Invalid Address: ' + $routeParams.addrStr;
-                // } else if (e.status === 503) {
-                //     $rootScope.flashMessage = 'Backend Error. ' + e.data;
-                // } else {
-                //     $rootScope.flashMessage = 'Address Not Found';
-                // }
-                // $location.path('/');
             });
-
-            //   // Address.get({
-            //   //     addrStr: $routeParams.addrStr
-            //   //   },
-            //   //   function(address) {
-            //   //     $rootScope.titleDetail = address.addrStr.substring(0, 7) + '...';
-            //   //     $rootScope.flashMessage = null;
-            //   //     $scope.address = address;
-            //   //   },
-            //   //   function(e) {
-            //   //     if (e.status === 400) {
-            //   //       $rootScope.flashMessage = 'Invalid Address: ' + $routeParams.addrStr;
-            //   //     } else if (e.status === 503) {
-            //   //       $rootScope.flashMessage = 'Backend Error. ' + e.data;
-            //   //     } else {
-            //   //       $rootScope.flashMessage = 'Address Not Found';
-            //   //     }
-            //   //     $location.path('/');
-            //   //   });
         };
 
     }
@@ -253,21 +180,17 @@ angular
 angular
 .module('insight.blocks')
 .controller('BlocksController',
-    // function($scope, $rootScope, $routeParams, $location, Global, BlockByHeight, VerusdRPC, ScrollService, BlockService) {
-    // function($scope, $rootScope, $routeParams, $location, Global, VerusdRPC, VerusExplorerApi, ScrollService, BlockService) {
     function (
         $scope,
         $rootScope,
         $routeParams,
         $location,
-        // $window,
         Global,
         UnitConversionService,
         VerusExplorerApi,
         VerusWssClient,
         ScrollService,
         BlockService
-        // $interval
     ) {
         const MAX_HASH_PER_LOAD = 100;
         const dateUrlPath = "blocks-date";
@@ -418,16 +341,6 @@ angular
 
         var _createDateFromString = function(dateString) {
             return UnitConversionService.createDateFromString(dateString);
-            // const splitDate = dateString.split('-');
-            // const year = parseInt(splitDate[0], 10);
-            // const month = parseInt(splitDate[1], 10);
-            // const day = parseInt(splitDate[2], 10);
-            // const months = [
-            //     'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-            //     'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
-            // ];
-            // const isoStr = day + ' ' + months[month - 1] + ' ' + year + ' 00:00:00';
-            // return  new Date(isoStr);
         }
 
         $scope.list = function () {
@@ -546,7 +459,6 @@ angular
         }
         
         $scope.toLocal = function(d) {
-            // const d = (new Date(date * 1000)).to();
             return d.slice(0, d.length - 3);
         }
 
@@ -555,236 +467,23 @@ angular
             const offsetMinutes = date.getTimezoneOffset();
             const offsetHours = Math.abs(offsetMinutes) / 60;
             const sign = offsetMinutes < 0 ? '+' : '-';
-            // const formattedDifference = sign + ' ' + padNumber(Math.floor(offsetHours)) + ':' + padNumber(Math.abs(offsetMinutes % 60));
+
             const formattedDifference = 'GMT' + sign + Math.floor(offsetHours);
             return formattedDifference;
         }
-        
 
-        // $scope.isLocalTimeBehindGMT = function() {
-        //     const localTime = new Date();
-        //     const gmtTime = new Date(localTime.getTime() + localTime.getTimezoneOffset() * 60000);
-        //     const b = localTime.getTime() < gmtTime.getTime();
-        //     return b;
-        // }
-
- 
-
-        // var lazyLoadingInterval = $interval(function () {
-        //     console.log("Load more data every 2 seconds...");
-        //     $scope.loadMorelist();
-        // }, 2000);
-
-        // setTimeout(function () {
-        //     if(lazyLoadingInterval != undefined) {
-        //         $interval.cancel(lazyLoadingInterval);
-        //         lazyLoadingInterval = undefined;
-        //     }
-        // }, 10000); $scope.blocks = [];
         $scope.params = $routeParams;
         $scope.blocks = [];
-        // $scope.params = $routeParams;
     }
 );
 
 // Source: public/src/js/controllers/charts.js
 angular
     .module('insight.charts', ["chart.js"])
-    // .config(['ChartJsProvider', function (ChartJsProvider) {
-    //     // Configure all charts
-    //     // ChartJsProvider.setOptions({
-    //     //   chartColors: ['#FF5252', '#FF8A80'],
-    //     //   responsive: false
-    //     // });
-    //     // Configure all line charts
-    //     ChartJsProvider.setOptions('bar', {
-    //       showLines: false
-    //     });
-    //   }])
     .controller('ChartsController', function() {})
     .controller('ChainBasicInfoChartController', ChainBasicInfo)
     .controller('BlockBasicInfoChartController', BlockBasicInfo)
     .controller('MiningBasicInfoChartController', MiningBasicInfo);
-    
-    // .config(['ChartJsProvider', function (ChartJsProvider) {
-    //       ChartJsProvider.setOptions({
-    //         colors : [ '#803690', '#00ADF9', '#DCDCDC', '#46BFBD', '#FDB45C', '#949FB1', '#4D5360']
-    //       });
-    //     }]);
-    // function (
-    //     $scope,
-    //     VerusExplorerApi,
-    //     LocalStore
-    // ) {
-    //         // function($scope, $rootScope, $routeParams, $location, Chart, Charts) {
-    //         // ChartJsProvider.setOptions({ colors : [ '#803690', '#00ADF9', '#DCDCDC', '#46BFBD', '#FDB45C', '#949FB1', '#4D5360'] });
-    //         $scope.loading = false;
-    //         const _saveToCache = function(data, key, ttl) {
-    //             LocalStore.set(key, data, ttl);
-    //         }
-
-
-
-    //         // $scope.labels = ["Download Sales", "In-Store Sales", "Mail-Order Sales"];
-    //         // $scope.data = [300, 500, 100];
-
-    //         // $scope.labels = ['2006', '2007', '2008', '2009', '2010', '2011', '2012'];
-    //         // $scope.series = ['Series A', 'Series B'];
-
-    //         // $scope.data = [
-    //         //   [65, 59, 80, 81, 56, 55, 40],
-    //         //   [28, 48, 40, 19, 86, 27, 90]
-    //         // ];
-
-    //         // $scope.labels =["Eating", "Drinking", "Sleeping", "Designing", "Coding", "Cycling", "Running"];
-    //         // $scope.data = [
-    //         //   [65, 59, 90, 81, 56, 55, 40],
-    //         //   [28, 48, 40, 19, 96, 27, 100]
-    //         // ];
-
-    //         // $scope.series = ['Series A', 'Series B'];
-    //         // $scope.data = [
-    //         //   [{
-    //         //     x: 40,
-    //         //     y: 10,
-    //         //     r: 20
-    //         //   }],
-    //         //   [{
-    //         //     x: 10,
-    //         //     y: 40,
-    //         //     r: 50
-    //         //   }]
-    //         // ];
-
-
-    //         // $scope.title = "Transaction Over Time";
-    //         // $scope.labels = [
-    //         //     "7:00",
-    //         //     "7:10",
-    //         //     "7:20",
-    //         //     "7:30",
-    //         //     "7:40",
-    //         //     "7:50",
-    //         //     "8:00",
-    //         // ];
-    //         // // $scope.series = ['Series A', 'Series B'];
-    //         // $scope.series = ['Transactions'];
-    //         // $scope.data = [
-    //         //     [65, 59, 80, 81, 56, 55, 40],
-    //         //     // [28, 48, 40, 19, 86, 27, 90]
-    //         // ];
-    //         // $scope.onClick = function (points, evt) {
-    //         //     console.log(points, evt);
-    //         // };
-    //         // // $scope.datasetOverride = [{ yAxisID: 'y-axis-1' }, { yAxisID: 'y-axis-2' }];
-    //         // $scope.datasetOverride = [{ yAxisID: 'y-axis-1' }];
-    //         // $scope.options = {
-    //         //     type: 'line',
-    //         //     scales: {
-    //         //         yAxes: [
-    //         //             {
-    //         //                 id: 'y-axis-1',
-    //         //                 type: 'linear',
-    //         //                 display: true,
-    //         //                 position: 'left'
-    //         //             },
-    //         //             // {
-    //         //             //     id: 'y-axis-2',
-    //         //             //     type: 'linear',
-    //         //             //     display: true,
-    //         //             //     position: 'right'
-    //         //             // }
-    //         //         ]
-    //         //     }
-    //         // };
-
-    //         // TX over time
-    //         // Block size distribution
-    //         // Transaction Fees Over Time
-    //         // Mining pool distribution over time
-    //         const chartTypeName = chart.types.chainBasicInfoOverTime.apiName;
-    //         const defaultRangeSelected = 3;
-    //         const cacheKeys = localStore.charts.keys;
-    //         const rangeSelectionOptions = [
-    //             { label: '10min', key: 'last10Minutes', intervalInMinutes: 10, cache: cacheKeys.last10Minutes },
-    //             { label: '30min', key: 'last30Minutes', intervalInMinutes: 10, cache: cacheKeys.last30Minutes },
-    //             { label: '1hr', key: 'lastHour', intervalInMinutes: 10, cache: cacheKeys.lastHour },
-    //             { label: '3hr', key: 'last3Hours', intervalInMinutes: 10, cache: cacheKeys.last3Hours },
-    //             { label: '6hr', key: 'last6Hours', intervalInMinutes: 20, cache: cacheKeys.last6Hours },
-    //             { label: '12hr', key: 'last12Hours', intervalInMinutes: 30, cache: cacheKeys.last12Hours },
-    //             { label: '24hr', key: 'last24Hours', intervalInMinutes: 60, cache: cacheKeys.last24Hours },
-    //             { label: '3d', key: 'last3Days', intervalInMinutes: 60 * 3, cache: cacheKeys.last3Days },
-    //             { label: '1wk', key: 'last7Days', intervalInMinutes: 60 * 24, cache: cacheKeys.last7Days },
-    //             { label: '2wk', key: 'last15Days', intervalInMinutes: 60 * 24 * 5, cache: cacheKeys.last15Days },
-    //             { label: '30d', key: 'last30Days', intervalInMinutes: 60 * 24 * 10, cache: cacheKeys.last30Days },
-    //             { label: '90d', key: 'last90Days', intervalInMinutes: 60 * 24 * 30, cache: cacheKeys.last90Days },
-    //         ]
-    //         $scope.rangeSelection = rangeSelectionOptions;
-    //         $scope.rangeSelected = defaultRangeSelected;
-
-    //         $scope.fetchChartData = function(range) {
-    //             if(range == undefined) {
-    //                 range = rangeSelectionOptions[defaultRangeSelected];
-    //             }
-
-    //             const cacheId = _getCacheIds(chartTypeName, range.cache);
-    //             const cachedData = LocalStore.get(cacheId.key);
-    //             if(cachedData != undefined) {
-    //                 _createTxCountOverTimeData(null, range, cachedData);
-    //                 return;
-    //             }
-
-    //             VerusExplorerApi
-    //             .getChartData(chartTypeName, range.key)
-    //             .then(function(queryResult) {
-    //                 const data = queryResult.data;
-    //                 if (!queryResult.error && data.labels[0] != undefined) { _createTxCountOverTimeData(data, range); }
-    //             });
-    //         }
-
-    //         const _getCacheIds = function(cacheSuffix, cacheIds) {
-    //             return {
-    //                 key: cacheIds.key + ':' + cacheSuffix,
-    //                 ttl: cacheIds.ttl
-    //             }
-    //         }
-
-    //         const _createTxCountOverTimeData = function (data, range, cachedData) {
-    //             $scope.title = "Transaction Over Time";
-    //             $scope.series = ["Blocks", "Transactions"];
-    //             $scope.labels = [];
-    //             $scope.data = [];
-    //             $scope.options = {
-    //                 legend: {
-    //                     display: true,
-    //                     labels: {
-    //                         color: 'red'
-    //                     }
-    //                 }
-    //             };
-
-    //             if(cachedData != undefined) {
-    //                 $scope.labels = cachedData.labels;
-    //                 $scope.data = cachedData.data;
-    //                 return;
-    //             }
-
-    //             $scope.labels = data.labels
-    //             $scope.data = data.data;
-
-    //             const c = _getCacheIds(chartTypeName, range.cache)
-    //             _saveToCache({labels: $scope.labels, data: $scope.data}, c.key, c.ttl);
-    //         }
-    //         // $scope.params = $routeParams;
-
-    //     }
-    // );
-
-// .config(['ChartJsProvider', function (ChartJsProvider) {
-//   ChartJsProvider.setOptions({
-//     colors : [ '#803690', '#00ADF9', '#DCDCDC', '#46BFBD', '#FDB45C', '#949FB1', '#4D5360']
-//   });
-// }]);
 // Source: public/src/js/controllers/connection.js
 // 'use strict';
 
@@ -846,130 +545,82 @@ angular
 
 // Source: public/src/js/controllers/currency.js
 angular.module('insight.currency')
-    .controller('CurrencyController',
-        function ($scope, $rootScope, CoinPaprika) {
-            $rootScope.currency.symbol = defaultCurrency;
+.controller('CurrencyController',
+    function ($scope, $rootScope, CoinPaprika) {
+        $rootScope.currency.symbol = defaultCurrency;
 
-            var _getVrscUsdRate = function () {
-                CoinPaprika.getVerusCoinMarket()
-                    .then(function (res) {
-                        const bitstampRate = parseFloat(res[0].quotes.USD.price);
-                        const poloniexRate = '1.00';
-                        $rootScope.currency.factor = $rootScope.currency.bitstamp = (bitstampRate * poloniexRate);
-                    }).catch(function () {
-                        $rootScope.currency.factor = $rootScope.currency.bitstamp = 0;
-                    });
+        var _getVrscUsdRate = function () {
+            CoinPaprika.getVerusCoinMarket()
+                .then(function (res) {
+                    const bitstampRate = parseFloat(res[0].quotes.USD.price);
+                    const poloniexRate = '1.00';
+                    $rootScope.currency.factor = $rootScope.currency.bitstamp = (bitstampRate * poloniexRate);
+                }).catch(function () {
+                    $rootScope.currency.factor = $rootScope.currency.bitstamp = 0;
+                });
+        }
+
+        var _roundFloat = function (x, n) {
+            if (!parseInt(n, 10) || !parseFloat(x)) n = 0;
+
+            return Math.round(x * Math.pow(10, n)) / Math.pow(10, n);
+        };
+
+        $rootScope.currency.getConvertion = function (value) {
+            value = value * 1; // Convert to number
+
+            if (!isNaN(value) && typeof value !== 'undefined' && value !== null) {
+                if (value === 0.00000000) return '0 ' + this.symbol; // fix value to show
+
+                var response;
+                var decimalNum = 0;
+
+                if (this.symbol === 'USD') {
+                    response = _roundFloat((value * this.factor), 2);
+                } else if (this.symbol === 'm' + netSymbol) {
+                    this.factor = 1000;
+                    response = _roundFloat((value * this.factor), 5);
+                } else if (this.symbol === 'bits') {
+                    this.factor = 1000000;
+                    response = _roundFloat((value * this.factor), 2);
+                } else {
+                    this.factor = 1;
+                    response = value;
+                }
+
+                // prevent sci notation
+                if (response < 1e-7) response = response.toFixed(8);
+
+                var num = response.toString().split('.');
+                const decimalLength = !num[1] ? 5 : num[1].length;
+                const formatter = new Intl.NumberFormat('en-US', {
+                    style: 'decimal',
+                    minimumFractionDigits: decimalLength
+                });
+
+                return formatter.format(response) + ' ' + this.symbol;
             }
 
-            var _roundFloat = function (x, n) {
-                if (!parseInt(n, 10) || !parseFloat(x)) n = 0;
+            return 'value error';
+        };
 
-                return Math.round(x * Math.pow(10, n)) / Math.pow(10, n);
-            };
+        $scope.setCurrency = function (currency) {
+            $rootScope.currency.symbol = currency;
+            localStorage.setItem('insight-currency', currency);
 
-            $rootScope.currency.getConvertion = function (value) {
-                value = value * 1; // Convert to number
-
-                if (!isNaN(value) && typeof value !== 'undefined' && value !== null) {
-                    if (value === 0.00000000) return '0 ' + this.symbol; // fix value to show
-
-                    var response;
-                    var decimalNum = 0;
-
-                    if (this.symbol === 'USD') {
-                        response = _roundFloat((value * this.factor), 2);
-                    } else if (this.symbol === 'm' + netSymbol) {
-                        this.factor = 1000;
-                        response = _roundFloat((value * this.factor), 5);
-                    } else if (this.symbol === 'bits') {
-                        this.factor = 1000000;
-                        response = _roundFloat((value * this.factor), 2);
-                    } else {
-                        this.factor = 1;
-                        response = value;
-                    }
-
-                    // prevent sci notation
-                    if (response < 1e-7) response = response.toFixed(8);
-
-                    var num = response.toString().split('.');
-                    const decimalLength = !num[1] ? 5 : num[1].length;
-                    const formatter = new Intl.NumberFormat('en-US', {
-                        style: 'decimal',
-                        minimumFractionDigits: decimalLength
-                    });
-
-                    return formatter.format(response) + ' ' + this.symbol;
-                }
-
-                return 'value error';
-            };
-
-            $scope.setCurrency = function (currency) {
-                $rootScope.currency.symbol = currency;
-                localStorage.setItem('insight-currency', currency);
-
-                if (currency === 'USD') {
-                    // Currency.get({}, function(res) {
-                    //   $rootScope.currency.factor = $rootScope.currency.bitstamp = res.data.bitstamp;
-                    // });
-                    _getVrscUsdRate();
-                    // var url = "https://api.coinpaprika.com/v1/coins/vrsc-verus-coin/markets + '?callback=JSON_CALLBACK'";
-
-                    // $http.jsonp(url)
-                    // .success(function (data, status, headers, config) {
-                    //   console.log("COINPPP");
-                    //   console.log(data);
-                    //   // $scope.details = data.found;
-                    //   // $scope.statcode = status;
-
-                    // })
-                    // .error(function (data, status, headers, config) {
-                    //   console.log("COINPPP error");
-                    //   console.log(data);
-                    //   console.log(status);
-                    //   $scope.statcode = status;
-                    // });
-
-
-
-
-                } else if (currency === 'm' + netSymbol) {
-                    $rootScope.currency.factor = 1000;
-                } else if (currency === 'bits') {
-                    $rootScope.currency.factor = 1000000;
-                } else {
-                    $rootScope.currency.factor = 1;
-                }
-            };
-
-            // Get initial value
-            // var url = "http://public-api.wordpress.com/rest/v1/sites/wtmpeachtest.wordpress.com/posts?callback=JSON_CALLBACK";
-            // var url = "https://api.coinpaprika.com/v1/coins/vrsc-verus-coin/markets";
-            // const url = 'https://corsproxy.io/?' + encodeURIComponent('https://api.coinpaprika.com/v1/coins/vrsc-verus-coin/markets');
-
-            // // $http.jsonp(url)
-            // $http.get(url)
-            // .success(function (data, status, headers, config) {
-            //   console.log("COINPPP");
-            //   console.log(data);
-            //   // $scope.details = data.found;
-            //   // $scope.statcode = status;
-
-            // })
-            // .error(function (data, status, headers, config) {
-            //   console.log("EROR >>");
-            //   console.log(status);
-            //   $scope.statcode = status;
-            // });
-
-
-
-            // Currency.get({}, function(res) {
-            //   $rootScope.currency.factor = $rootScope.currency.bitstamp = res.data.bitstamp;
-            // });
-            _getVrscUsdRate();
-        });
+            if (currency === 'USD') {
+                _getVrscUsdRate();
+            } else if (currency === 'm' + netSymbol) {
+                $rootScope.currency.factor = 1000;
+            } else if (currency === 'bits') {
+                $rootScope.currency.factor = 1000000;
+            } else {
+                $rootScope.currency.factor = 1;
+            }
+        };
+        _getVrscUsdRate();
+    }
+);
 
 // Source: public/src/js/controllers/footer.js
 angular.module('insight.system')
@@ -1025,7 +676,6 @@ angular.module('insight.system')
 angular
 .module('insight.system')
 .controller('HeaderController',
-    // function($scope, $rootScope, $modal, getSocket, Global, Block) {
     function ($scope, $rootScope, $modal, Global, $location) {
         $scope.global = Global;
 
@@ -1036,7 +686,6 @@ angular
             netSymbol: netSymbol,
             symbol: netSymbol
         };
-        // $scope.currentPath = $location.path();
 
         $scope.menu = [{
             'title': 'Blocks',
@@ -1059,23 +708,6 @@ angular
             });
         };
 
-        // var _getBlock = function(hash) {
-        //   Block.get({
-        //     blockHash: hash
-        //   }, function(res) {
-        //     $scope.totalBlocks = res.height;
-        //   });
-        // };
-
-        // var socket = getSocket($scope);
-        // socket.on('connect', function() {
-        //   socket.emit('subscribe', 'inv');
-
-        //   socket.on('block', function(block) {
-        //     var blockHash = block.toString();
-        //     _getBlock(blockHash);
-        //   });
-        // });
         $scope.isActive = function (route) {
             return route === $location.path();
         };
@@ -1446,104 +1078,8 @@ angular
                 })
                 
             } catch (e) {;
-                __badSearch();
+                _badSearch();
             }
-            
-            // const lastChar = q.charAt(q.length - 1);
-
-            // if (lastChar === '@') {
-            //     VerusExplorerApi
-            //     .getIdentity(q)
-            //     .then(function (idInfo) {
-            //         if (idInfo.data.identity) {
-            //             //Request is a VerusID - get the address
-            //             $location.path('address/' + idInfo.data.identity.identityaddress);
-            //             _resetSearch();
-            //             return;
-            //         }
-
-            //         $scope.loading = false;
-            //         _resetSearch();
-            //         _badQuery();
-            //     });
-            //     return;
-            // }
-
-            // VerusExplorerApi
-            // .getBlockInfo(q)
-            // .then(function (blockInfo) {
-            //     if (blockInfo.data.hash) {
-            //         // Either block height or block hash
-            //         $location.path('block/' + blockInfo.data.hash);
-            //         _resetSearch();
-            //         return;
-            //     }
-
-            //     VerusExplorerApi
-            //     .getAddressTxIds(q)
-            //     .then(function (r) {
-            //         if (r.data[0]) {
-            //             //Request is address
-            //             $location.path('address/' + q);
-            //             _resetSearch();
-            //             return;
-            //         }
-
-            //         VerusExplorerApi
-            //         .getTransactionInfo(q)
-            //         .then(function (r) {
-            //             if (r.data.height) {
-            //                 //Request is a transaction hash
-            //                 $location.path('tx/' + q);
-            //                 _resetSearch();
-            //                 return;
-            //             }
-
-            //             $scope.loading = false;
-            //             _resetSearch();
-            //             _badQuery();
-            //         })
-            //     })
-            // });
-            // 2558891ef5d54ce3e82503655a22c05a774e62be695bbe26454dae93de480cac - 64
-            // iHbTMYB43xqqFVmEqJkqff6GrZDQoaiq6g - 34
-
-            // Block.get({
-            //   blockHash: q
-            // }, function() {
-            //   _resetSearch();
-            //   $location.path('block/' + q);
-            // }, function() { //block not found, search on TX
-            //   Transaction.get({
-            //     txId: q
-            //   }, function() {
-            //     _resetSearch();
-            //     $location.path('tx/' + q);
-            //   }, function() { //tx not found, search on Address
-            //     Address.get({
-            //       addrStr: q
-            //     }, function() {
-            //       _resetSearch();
-            //       $location.path('address/' + q);
-            //     }, function() { // block by height not found
-            //       if (isFinite(q)) { // ensure that q is a finite number. A logical height value.
-            //         BlockByHeight.get({
-            //           blockHeight: q
-            //         }, function(hash) {
-            //           _resetSearch();
-            //           $location.path('/block/' + hash.blockHash);
-            //         }, function() { //not found, fail :(
-            //           $scope.loading = false;
-            //           _badQuery();
-            //         });
-            //       }
-            //       else {
-            //         $scope.loading = false;
-            //         _badQuery();
-            //       }
-            //     });
-            //   });
-            // });
         };
 
     }
@@ -1568,34 +1104,10 @@ angular
         $scope.sync = { syncPercentage: 0 };
         $scope.chainNodeState = {};
         const CACHE_KEY_STATUS = localStore.status.key;
-        // const CACHE_TTL_STATUS = localStore.status.ttl;// 24 hours
         const CACHE_KEY_NODE_STATE = localStore.nodeState.key;
-        // const CACHE_TTL_NODE_STATE = localStore.nodeState.ttl;
-        // const saveToCache = function(data, key, ttl) {
-        //     LocalStore.set(key, data, ttl);
-        // }
 
         const wsTopic = VerusWssClient.getMessageTopic();
         $scope.$on(wsTopic, function(event, rawEventData) {
-            // console.log("Getting message from main listener ...", rawEventData)
-
-            // //Data here is already managed in index.js to maintain realtime update
-            // //even if viewing other tabs
-            // setTimeout(function() {
-            //     const chainStatus = LocalStore.get(CACHE_KEY_STATUS);
-            //     if(chainStatus != undefined) {
-            //         $scope.info = WsEventDataManager.updateStatusScopeData(chainStatus);
-            //     }
-
-            //     const nodeStateCache = LocalStore.get(CACHE_KEY_NODE_STATE);
-            //     if(nodeStateCache != undefined) {
-            //         const r = WsEventDataManager.updateChainNodeStateScopeData(nodeStateCache);
-            //         $scope.sync = r.sync;
-            //         $scope.chainNodeState = r.chainNodeState;
-            //     }
-            //     $scope.$apply();
-            // }, 2000);
-
             if(rawEventData.nodeState.data !== undefined) {
                 const r = WsEventDataManager.updateChainNodeStateScopeData(rawEventData.nodeState.data);
                 $scope.sync = r.sync;
@@ -1623,18 +1135,6 @@ angular
             if (v == null) return '';
             return UnitConversionService.convert(parseFloat(v), unit);
         };
-
-        // const updateStatusScopeData = function(data) {
-        //     $scope.info = data;
-        //     saveToCache(data, CACHE_KEY_STATUS, CACHE_TTL_STATUS);
-        // }
-
-        // function updateChainNodeStateScopeData(data) {
-        //     $scope.chainNodeState = data;
-        //     $scope.sync = data;
-        //     $scope.sync.error = data == undefined;
-        //     saveToCache($scope.chainNodeState, CACHE_KEY_NODE_STATE, CACHE_TTL_NODE_STATE);
-        // }
 
         $scope.getBlockchainStatus = function () {
             const chainStatus = LocalStore.get(CACHE_KEY_STATUS);
@@ -1706,7 +1206,7 @@ angular.module('insight.transactions')
             txVoutTotalValue = 0;
             addressCommitments = {};
             const hasVin = tx.vin != undefined && tx.vin[0] != undefined;
-            // const hasVout = tx.vout != undefined && tx.vout[0] != undefined;
+
             ///////////////////////////////////
             // vin operation
             ///////////////////////////////////
@@ -1723,7 +1223,6 @@ angular.module('insight.transactions')
             // vout operation
             ///////////////////////////////////
             _aggregateItems(tx.vout, function (items, i) {
-                // console.log(typeof(items[i].scriptPubKey.addresses));
                 const addressType = typeof (items[i].scriptPubKey.addresses);
                 const pubKeyAddressess = items[i].scriptPubKey.addresses ? items[i].scriptPubKey.addresses : [];
                 var isIdentityTx = false;
@@ -1745,7 +1244,6 @@ angular.module('insight.transactions')
                 }
 
 
-                // tx.vout[i].uiWalletAddress = uiWalletAddress[0] == undefined ? ' [ NO ADDRESS ] ' : uiWalletAddress;
                 tx.vout[i].uiWalletAddress = uiWalletAddress[0] == undefined ? unknownAddress : uiWalletAddress;
                 tx.vout[i].isSpent = items[i].spentTxId;
                 tx.vout[i].multipleAddress = pubKeyAddressess.join(',');
@@ -1791,10 +1289,6 @@ angular.module('insight.transactions')
                     tx.fees = parseFloat(((txVinTotalValue - txVoutTotalValue) + tx.valueBalance).toFixed(8));
                 }
             }
-
-            // TODO
-            // 2. Update full view for transaction
-            // 3. fix sequence or just remove the tx counter? http://localhost:2222/address/iLAZzpXuQpapbysYzLNUDLbpLuGr6NwhbH
         };
 
         var _getPbaasCommitment = function (scriptPubKey) {
@@ -1835,9 +1329,7 @@ angular.module('insight.transactions')
                 .then(function (rawTx) {
                     const blockData = blockHeight.data;
                     const rawTxData = rawTx.data; 
-                    // console.log(" GETTING >>>");
-                    // console.log(blockData);
-                    // console.log(rawTxData);
+
                     $rootScope.flashMessage = null;
                     _processTX(rawTxData, blockData);
                     $scope.tx = rawTxData;
@@ -1848,15 +1340,6 @@ angular.module('insight.transactions')
                 })
                 .catch(function (e) {
                     $rootScope.flashMessage = 'Failed to load transaction '+txid+'. Reload to try again.';
-                    // if (e.status === 400) {
-                    //     $rootScope.flashMessage = 'Invalid Transaction ID: ' + $routeParams.txId;
-                    // } else if (e.status === 503) {
-                    //     $rootScope.flashMessage = 'Backend Error. ' + e.data;
-                    // } else {
-                    //     $rootScope.flashMessage = 'Transaction Not Found';
-                    // }
-
-                    // $location.path('/');
                 });
 
             });
@@ -1867,9 +1350,9 @@ angular.module('insight.transactions')
         // Address page helper methods
         //////////////////////////////////////////////////////////////////////////
         const MAX_ITEM_PER_SCROLL = 5;
-        // const START_TX_INDEX_OFFSET = 2;
         $scope.isGettingAllTx = true;
-        // One item is preloaded after getting all the txs so index 0 is already occupied
+        // One item is preloaded after getting all the txs 
+        // so index 0 is already occupied
         $scope.startTransactionIndex = null;
         $scope.preProcessedTxIds = [];
         $rootScope.addressPage = { transactionCount: 0 }
@@ -1903,26 +1386,7 @@ angular.module('insight.transactions')
             $scope.isGettingAllTx = true;
             $scope.hasTxFound = false;
             $scope.blockTxCount = hashes.length;
-            // $scope.hasTxFound = false;
-
-            // VerusdRPC.getAddressTxIds([$routeParams.addrStr])
-            // .then(function(data) {
-            //   $scope.preProcessedTxIds = data.result;
-            //   $scope.hasTxFound = data.result[0];
-            //   // Decremented in _findTx method
-            //   startIndexLabel = $scope.preProcessedTxIds.length + 1;
-
-            //   $scope.startTransactionIndex = data.result.length - 1;
-            //   _paginate(_getLastNElements($scope.preProcessedTxIds, $scope.startTransactionIndex, MAX_ITEM_PER_SCROLL));
-
-
-            //   $rootScope.addressPage = { transactionCount: $scope.preProcessedTxIds.length };
-            //   $scope.isGettingAllTx = false;
-            // });
-            // console.log("hashes >>>");
-            // console.log(hashes);
-
-            // startIndexLabel = $scope.preProcessedTxIds.length + 1;
+            
             $scope.preProcessedTxIds = hashes;
             $scope.startTransactionIndex = hashes.length - 1;
             _paginate(
@@ -1944,7 +1408,6 @@ angular.module('insight.transactions')
                 result.push(a[i]);
                 x += 1;
             }
-            // console.log(result);
             return result;
         }
 
@@ -1974,19 +1437,8 @@ angular.module('insight.transactions')
 
         var _paginate = function (data) {
             pagesTotal = data.length;
-            // pageNum += 1;
-
-            // data.txs.forEach(function(tx) {
-            //startIndexLabel = txStart
-            // console.log(data);
             data.forEach(function (tx) {
-
-                // startIndexLabel -= 1;  
                 _findTx(tx);
-                // const lastTx = $scope.tx;
-                // $scope.txs.push(lastTx);
-                // $scope.txIndexLabel[lastTx.time] = (startIndexLabel -= 1);
-                // $scope.txs.push(tx);
             });
             $scope.loading = false;
         };
@@ -1999,41 +1451,27 @@ angular.module('insight.transactions')
         //Initial load
         $scope.load = function (from, hashes) {
             $scope.loadedBy = from;
-            // if($scope.preProcessedTxIds[0] == undefined) {
             if ($scope.loadedBy === 'address') {
                 _getAllAddressTxs();
             } else {
-                // console.log("hashes >>>");
-                // console.log(hashes);
                 _getAllBlockTxs(hashes);
-                // _paginate(_getLastNElements($scope.preProcessedTxIds, $scope.startTransactionIndex, MAX_ITEM_PER_SCROLL));
             }
-            // }
             $scope.loadMore();
         };
 
         //Load more transactions for pagination
         $scope.loadMore = function () {
-            // if (pageNum < pagesTotal && !$scope.loading) {
-
             if ($scope.loadedBy === 'address') {
                 _byAddress();
-                // $scope.loading = false;
             } else {
                 _byBlock();
             }
-            // }
         };
-
-        // Highlighted txout
 
         if ($routeParams.v_type == '>' || $routeParams.v_type == '<') {
             $scope.from_vin = $routeParams.v_type == '<' ? true : false;
             $scope.from_vout = $routeParams.v_type == '>' ? true : false;
             $scope.v_index = parseInt($routeParams.v_index);
-            // console.log("v_index >>> ");
-            // console.log($scope.from_vin);
-            // console.log($scope.v_index);
 
             $scope.itemsExpanded = true;
         }
@@ -2836,63 +2274,37 @@ function MiningBasicInfo(
     //     return hour + ':' + minute;
     // }
 }
-// Source: public/src/js/services/address.js
-// 'use strict';
-
-// // TODO - remove this, no use
-// angular.module('insight.address').factory('Address',
-//   function($resource) {
-//   return $resource(window.apiPrefix + '/addr/:addrStr/?noTxList=1', {
-//     addrStr: '@addStr'
-//   }, {
-//     get: {
-//       method: 'GET',
-//       interceptor: {
-//         response: function (res) {
-//           return res.data;
-//         },
-//         responseError: function (res) {
-//           if (res.status === 404) {
-//             return res;
-//           }
-//         }
-//       }
-//     }
-//   });
-// });
-
- 
 // Source: public/src/js/services/blocks.js
 // TODO: remove the first 3 blocks services
 angular.module('insight.blocks')
-  .factory('Block',
-    function($resource) {
-    return $resource(window.apiPrefix + '/block/:blockHash', {
-      blockHash: '@blockHash'
-    }, {
-      get: {
-        method: 'GET',
-        interceptor: {
-          response: function (res) {
-            return res.data;
-          },
-          responseError: function (res) {
-            if (res.status === 404) {
-              return res;
-            }
-          }
-        }
-      }
-    });
-  })
-  .factory('Blocks',
-    function($resource) {
-      return $resource(window.apiPrefix + '/blocks');
-  })
-  .factory('BlockByHeight',
-    function($resource) {
-      return $resource(window.apiPrefix + '/block-index/:blockHeight');
-  })
+  // .factory('Block',
+  //   function($resource) {
+  //   return $resource(window.apiPrefix + '/block/:blockHash', {
+  //     blockHash: '@blockHash'
+  //   }, {
+  //     get: {
+  //       method: 'GET',
+  //       interceptor: {
+  //         response: function (res) {
+  //           return res.data;
+  //         },
+  //         responseError: function (res) {
+  //           if (res.status === 404) {
+  //             return res;
+  //           }
+  //         }
+  //       }
+  //     }
+  //   });
+  // })
+  // .factory('Blocks',
+  //   function($resource) {
+  //     return $resource(window.apiPrefix + '/blocks');
+  // })
+  // .factory('BlockByHeight',
+  //   function($resource) {
+  //     return $resource(window.apiPrefix + '/block-index/:blockHeight');
+  // })
   .factory('BlockService', function() {
     // return $resource(window.apiPrefix + '/block-index/:blockHeight');
     function getBlockReward(height) {
@@ -2952,73 +2364,67 @@ angular.module('insight.blocks')
   });
 
 // Source: public/src/js/services/charts.js
-angular.module('insight.charts')
-  .factory('Chart',
-    function($resource) {
-    return $resource(window.apiPrefix + '/chart/:chartType', {
-      chartType: '@chartType'
-    }, {
-      get: {
-        method: 'GET',
-        interceptor: {
-          response: function (res) {
-            return res.data;
-          },
-          responseError: function (res) {
-            if (res.status === 404) {
-              return res;
-            }
-          }
-        }
-      }
-    });
-  })
-  .factory('Charts',
-    function($resource) {
-      return $resource(window.apiPrefix + '/charts');
-  });
+// 'use strict';
+
+// angular.module('insight.charts')
+//   .factory('Chart',
+//     function($resource) {
+//     return $resource(window.apiPrefix + '/chart/:chartType', {
+//       chartType: '@chartType'
+//     }, {
+//       get: {
+//         method: 'GET',
+//         interceptor: {
+//           response: function (res) {
+//             return res.data;
+//           },
+//           responseError: function (res) {
+//             if (res.status === 404) {
+//               return res;
+//             }
+//           }
+//         }
+//       }
+//     });
+//   })
+//   .factory('Charts',
+//     function($resource) {
+//       return $resource(window.apiPrefix + '/charts');
+//   });
 
 // Source: public/src/js/services/coinpaprika.js
 angular.module('insight.coinpaprika')
-  .factory('CoinPaprika', function ($http, $q) {
+.factory('CoinPaprika', function ($http, $q) {
     function createRequest(endpoint, method) {
-      const url = 'https://corsproxy.io/?' + encodeURIComponent(coinPaprikaBaseUri + endpoint);
-      return {
-        method: method,
-        url: url
-      }
+        const url = 'https://corsproxy.io/?' + encodeURIComponent(coinPaprikaBaseUri + endpoint);
+        return {
+            method: method,
+            url: url
+        }
     }
 
     function sendRequest(payload) {
-      var deferred = $q.defer();
-      $http(payload)
-      .then(function successCallback(response) {
-        deferred.resolve(response.data);
-      }, function errorCallback(response) {
-        deferred.reject({ status: response.status, data: response.data });
-      });
-      
-      return deferred.promise;
+        var deferred = $q.defer();
+        $http(payload)
+            .then(function successCallback(response) {
+                deferred.resolve(response.data);
+            }, function errorCallback(response) {
+                deferred.reject({ status: response.status, data: response.data });
+            });
+
+        return deferred.promise;
     };
 
     function getVerusCoinMarket() {
-      return sendRequest(createRequest("/coins/vrsc-verus-coin/markets", "GET"));
+        return sendRequest(createRequest("/coins/vrsc-verus-coin/markets", "GET"));
     };
 
     return {
-      getVerusCoinMarket: function() {
-        return getVerusCoinMarket();
-      }
+        getVerusCoinMarket: function () {
+            return getVerusCoinMarket();
+        }
     };
 });
-// Source: public/src/js/services/currency.js
-// 'use strict';
-
-// angular.module('insight.currency').factory('Currency',
-//   function($resource) {
-//     return $resource(window.apiPrefix + '/currency');
-// });
-
 // Source: public/src/js/services/global.js
 //Global service for global variables
 angular.module('insight.system')
@@ -3119,78 +2525,80 @@ angular
         }
 });
 // Source: public/src/js/services/socket.js
-var ScopedSocket = function(socket, $rootScope) {
-  this.socket = socket;
-  this.$rootScope = $rootScope;
-  this.listeners = [];
-};
+// 'use strict';
 
-ScopedSocket.prototype.removeAllListeners = function(opts) {
-  if (!opts) opts = {};
-  for (var i = 0; i < this.listeners.length; i++) {
-    var details = this.listeners[i];
-    if (opts.skipConnect && details.event === 'connect') {
-      continue;
-    }
-    this.socket.removeListener(details.event, details.fn);
-  }
-  this.listeners = [];
-};
+// var ScopedSocket = function (socket, $rootScope) {
+//     this.socket = socket;
+//     this.$rootScope = $rootScope;
+//     this.listeners = [];
+// };
 
-ScopedSocket.prototype.on = function(event, callback) {
-  var socket = this.socket;
-  var $rootScope = this.$rootScope;
+// ScopedSocket.prototype.removeAllListeners = function (opts) {
+//     if (!opts) opts = {};
+//     for (var i = 0; i < this.listeners.length; i++) {
+//         var details = this.listeners[i];
+//         if (opts.skipConnect && details.event === 'connect') {
+//             continue;
+//         }
+//         this.socket.removeListener(details.event, details.fn);
+//     }
+//     this.listeners = [];
+// };
 
-  var wrapped_callback = function() {
-    var args = arguments;
-    $rootScope.$apply(function() {
-      callback.apply(socket, args);
-    });
-  };
-  socket.on(event, wrapped_callback);
+// ScopedSocket.prototype.on = function (event, callback) {
+//     var socket = this.socket;
+//     var $rootScope = this.$rootScope;
 
-  this.listeners.push({
-    event: event,
-    fn: wrapped_callback
-  });
-};
+//     var wrapped_callback = function () {
+//         var args = arguments;
+//         $rootScope.$apply(function () {
+//             callback.apply(socket, args);
+//         });
+//     };
+//     socket.on(event, wrapped_callback);
 
-ScopedSocket.prototype.emit = function(event, data, callback) {
-  var socket = this.socket;
-  var $rootScope = this.$rootScope;
-  var args = Array.prototype.slice.call(arguments);
+//     this.listeners.push({
+//         event: event,
+//         fn: wrapped_callback
+//     });
+// };
 
-  args.push(function() {
-    var args = arguments;
-    $rootScope.$apply(function() {
-      if (callback) {
-        callback.apply(socket, args);
-      }
-    });
-  });
+// ScopedSocket.prototype.emit = function (event, data, callback) {
+//     var socket = this.socket;
+//     var $rootScope = this.$rootScope;
+//     var args = Array.prototype.slice.call(arguments);
 
-  socket.emit.apply(socket, args);
-};
+//     args.push(function () {
+//         var args = arguments;
+//         $rootScope.$apply(function () {
+//             if (callback) {
+//                 callback.apply(socket, args);
+//             }
+//         });
+//     });
 
-angular.module('insight.socket').factory('getSocket',
-  function($rootScope) {
-    var socket = io.connect(null, {
-      'reconnect': true,
-      'reconnection delay': 500,
-    });
-    return function(scope) {
-      var scopedSocket = new ScopedSocket(socket, $rootScope);
-      scope.$on('$destroy', function() {
-        scopedSocket.removeAllListeners();
-      });
-      socket.on('connect', function() {
-        scopedSocket.removeAllListeners({
-          skipConnect: true
-        });
-      });
-      return scopedSocket;
-    };
-  });
+//     socket.emit.apply(socket, args);
+// };
+
+// angular.module('insight.socket').factory('getSocket',
+//     function ($rootScope) {
+//         var socket = io.connect(null, {
+//             'reconnect': true,
+//             'reconnection delay': 500,
+//         });
+//         return function (scope) {
+//             var scopedSocket = new ScopedSocket(socket, $rootScope);
+//             scope.$on('$destroy', function () {
+//                 scopedSocket.removeAllListeners();
+//             });
+//             socket.on('connect', function () {
+//                 scopedSocket.removeAllListeners({
+//                     skipConnect: true
+//                 });
+//             });
+//             return scopedSocket;
+//         };
+//     });
 
 // Source: public/src/js/services/status.js
 // 'use strict';
@@ -3212,44 +2620,46 @@ angular.module('insight.socket').factory('getSocket',
 //     });
 
 // Source: public/src/js/services/transactions.js
-// TODO - remove this, no use
-angular.module('insight.transactions')
-  .factory('Transaction',
-    function($resource) {
-    return $resource(window.apiPrefix + '/tx/:txId', {
-      txId: '@txId'
-    }, {
-      get: {
-        method: 'GET',
-        interceptor: {
-          response: function (res) {
-            return res.data;
-          },
-          responseError: function (res) {
-            if (res.status === 404) {
-              return res;
-            }
-          }
-        }
-      }
-    });
-  })
-  .factory('TransactionsByBlock',
-    function($resource) {
-    return $resource(window.apiPrefix + '/txs', {
-      block: '@block'
-    });
-  })
-  .factory('TransactionsByAddress',
-    function($resource) {
-    return $resource(window.apiPrefix + '/txs', {
-      address: '@address'
-    });
-  })
-  .factory('Transactions',
-    function($resource) {
-      return $resource(window.apiPrefix + '/txs');
-  });
+// 'use strict';
+
+// // TODO - remove this, no use
+// angular.module('insight.transactions')
+//   .factory('Transaction',
+//     function($resource) {
+//     return $resource(window.apiPrefix + '/tx/:txId', {
+//       txId: '@txId'
+//     }, {
+//       get: {
+//         method: 'GET',
+//         interceptor: {
+//           response: function (res) {
+//             return res.data;
+//           },
+//           responseError: function (res) {
+//             if (res.status === 404) {
+//               return res;
+//             }
+//           }
+//         }
+//       }
+//     });
+//   })
+//   .factory('TransactionsByBlock',
+//     function($resource) {
+//     return $resource(window.apiPrefix + '/txs', {
+//       block: '@block'
+//     });
+//   })
+//   .factory('TransactionsByAddress',
+//     function($resource) {
+//     return $resource(window.apiPrefix + '/txs', {
+//       address: '@address'
+//     });
+//   })
+//   .factory('Transactions',
+//     function($resource) {
+//       return $resource(window.apiPrefix + '/txs');
+//   });
 
 // Source: public/src/js/services/verusdrpc.js
 // 'use strict';
@@ -3389,138 +2799,135 @@ angular.module('insight.transactions')
 // Source: public/src/js/services/verusexplorerapi.js
 // Todo add caching to avoid reloading of large resource
 angular.module('insight.verusexplorerapi')
-  .factory('VerusExplorerApi',
-  function (
-    $http,
-    $q
-  ) {
-
-    // const cacheKeys = localStore.api;
-
-    function createPayload(endpoint, params, method) {
-      const requestMethod = method == undefined? "POST": method;
-      return {
-        method: requestMethod,
-        url: apiServer + endpoint,
-        data: {"params": params},
-        headers: {
-          'Content-Type': 'application/json',
-          // "Authorization": apiToken,
-          // Remove this for local api, use the authorization value instead
-          'x-api-key': '12345'
+.factory('VerusExplorerApi',
+    function (
+        $http,
+        $q
+    ) {
+        function createPayload(endpoint, params, method) {
+            const requestMethod = method == undefined ? "POST" : method;
+            return {
+                method: requestMethod,
+                url: apiServer + endpoint,
+                data: { "params": params },
+                headers: {
+                    'Content-Type': 'application/json',
+                    // "Authorization": apiToken,
+                    // Remove this for local api, use the authorization value instead
+                    'x-api-key': '12345'
+                }
+            }
         }
-      }
-    }
 
-    function sendRequest(payload) {
-      var deferred = $q.defer();
-      
-      $http(payload)
-      .then(function successCallback(response) {
-        deferred.resolve(response.data);
-      }, function errorCallback(response) {
-        deferred.reject({ status: response.status, data: response.data });
-      });
-      
-      return deferred.promise;
-    };
+        function sendRequest(payload) {
+            var deferred = $q.defer();
 
-    function getGeneratedBlocks(heightOrTxArray) {
-      return sendRequest(createPayload('/api/blocks/generated', heightOrTxArray));
-    };
-    
-    function getBlockHashesByRange(start, end) {
-      return sendRequest(createPayload('/api/block/hashes', [start, end]));
-    };
-    
-    function getBlockInfo(blockHeightOrHash) {
-      return sendRequest(createPayload("/api/block/" + blockHeightOrHash + "/info", [], "GET"));
-    };
-    
-    function getBlockchainStatus() {
-      return sendRequest(createPayload('/api/blockchain/status', [], "GET"));
-    };
-    
-    function getBlockchainHeight() {
-      return sendRequest(createPayload('/api/blockchain/height', [], "GET"));
-    };
+            $http(payload)
+                .then(function successCallback(response) {
+                    deferred.resolve(response.data);
+                }, function errorCallback(response) {
+                    deferred.reject({ status: response.status, data: response.data });
+                });
 
-    function getBlockchainInfo() {
-      return sendRequest(createPayload('/api/blockchain/info', [], "GET"));
-    };
-    
-    function getMiningInfo() {
-      return sendRequest(createPayload('/api/blockchain/mining/info', [], "GET"));
-    };
-    
-    function getTransactionInfo(txHash) {
-      return sendRequest(createPayload('/api/transaction/'+txHash+'/info', [], "GET"));
-    };
+            return deferred.promise;
+        };
 
-    function getIdentity(identityName, height) {
-      var h = (height == undefined)? '' : '?height='+height;
-      return sendRequest(createPayload('/api/identity/'+identityName+'/info' + h, [], 'GET'));
-    };
-    
-    function getAddressTxIds(address) {
-      return sendRequest(createPayload('/api/address/'+address+'/txids', [], "GET"));
-    };
-    
-    function getAddressBalance(address) {
-      return sendRequest(createPayload('/api/address/'+address+'/balance', [], "GET"));
-    };
+        function getGeneratedBlocks(heightOrTxArray) {
+            return sendRequest(createPayload('/api/blocks/generated', heightOrTxArray));
+        };
 
-    function getChartData(type, range) {
-      const ranges = Object.keys(localStore.charts.keys);
-      if(!ranges.includes(range)) { return Promise.resolve(undefined); }
-      return sendRequest(createPayload('/api/chart/'+type+'/?range='+range, [], "GET"));
-    };
+        function getBlockHashesByRange(start, end) {
+            return sendRequest(createPayload('/api/block/hashes', [start, end]));
+        };
 
-    function search(query) {
-      return sendRequest(createPayload('/api/search/?q='+query, [], "GET"));
-    };
+        function getBlockInfo(blockHeightOrHash) {
+            return sendRequest(createPayload("/api/block/" + blockHeightOrHash + "/info", [], "GET"));
+        };
 
-    return {
-      getGeneratedBlocks: function(heightOrTxArray) {
-        return getGeneratedBlocks(heightOrTxArray);
-      },
-      getBlockHashesByRange: function(start, end) {
-        return getBlockHashesByRange(start, end);
-      },
-      getBlockInfo: function(blockHeightOrHash) {
-        return getBlockInfo(blockHeightOrHash);
-      },
-      getBlockchainStatus: function() {
-        return getBlockchainStatus();
-      },
-      getBlockchainInfo: function() {
-        return getBlockchainInfo();
-      },
-      getMiningInfo: function() {
-        return getMiningInfo();
-      },
-      getBlockchainHeight: function() {
-        return getBlockchainHeight();
-      },
-      getTransactionInfo: function(txHash) {
-        return getTransactionInfo(txHash);
-      },
-      getIdentity: function(identityName, height) {
-        return getIdentity(identityName, height);
-      },
-      getAddressTxIds: function(address) {
-        return getAddressTxIds(address);
-      },
-      getAddressBalance: function(address) {
-        return getAddressBalance(address);
-      },
-      getChartData: function(type, range) {
-        return getChartData(type, range);
-      },
-      search: function(query) {
-        return search(query);
-      },
-    };
+        function getBlockchainStatus() {
+            return sendRequest(createPayload('/api/blockchain/status', [], "GET"));
+        };
+
+        function getBlockchainHeight() {
+            return sendRequest(createPayload('/api/blockchain/height', [], "GET"));
+        };
+
+        function getBlockchainInfo() {
+            return sendRequest(createPayload('/api/blockchain/info', [], "GET"));
+        };
+
+        function getMiningInfo() {
+            return sendRequest(createPayload('/api/blockchain/mining/info', [], "GET"));
+        };
+
+        function getTransactionInfo(txHash) {
+            return sendRequest(createPayload('/api/transaction/' + txHash + '/info', [], "GET"));
+        };
+
+        function getIdentity(identityName, height) {
+            var h = (height == undefined) ? '' : '?height=' + height;
+            return sendRequest(createPayload('/api/identity/' + identityName + '/info' + h, [], 'GET'));
+        };
+
+        function getAddressTxIds(address) {
+            return sendRequest(createPayload('/api/address/' + address + '/txids', [], "GET"));
+        };
+
+        function getAddressBalance(address) {
+            return sendRequest(createPayload('/api/address/' + address + '/balance', [], "GET"));
+        };
+
+        function getChartData(type, range) {
+            const ranges = Object.keys(localStore.charts.keys);
+            if (!ranges.includes(range)) { return Promise.resolve(undefined); }
+            return sendRequest(createPayload('/api/chart/' + type + '/?range=' + range, [], "GET"));
+        };
+
+        function search(query) {
+            return sendRequest(createPayload('/api/search/?q=' + query, [], "GET"));
+        };
+
+        return {
+            getGeneratedBlocks: function (heightOrTxArray) {
+                return getGeneratedBlocks(heightOrTxArray);
+            },
+            getBlockHashesByRange: function (start, end) {
+                return getBlockHashesByRange(start, end);
+            },
+            getBlockInfo: function (blockHeightOrHash) {
+                return getBlockInfo(blockHeightOrHash);
+            },
+            getBlockchainStatus: function () {
+                return getBlockchainStatus();
+            },
+            getBlockchainInfo: function () {
+                return getBlockchainInfo();
+            },
+            getMiningInfo: function () {
+                return getMiningInfo();
+            },
+            getBlockchainHeight: function () {
+                return getBlockchainHeight();
+            },
+            getTransactionInfo: function (txHash) {
+                return getTransactionInfo(txHash);
+            },
+            getIdentity: function (identityName, height) {
+                return getIdentity(identityName, height);
+            },
+            getAddressTxIds: function (address) {
+                return getAddressTxIds(address);
+            },
+            getAddressBalance: function (address) {
+                return getAddressBalance(address);
+            },
+            getChartData: function (type, range) {
+                return getChartData(type, range);
+            },
+            search: function (query) {
+                return search(query);
+            },
+        };
 });
 // Source: public/src/js/services/veruswssclient.js
 angular
