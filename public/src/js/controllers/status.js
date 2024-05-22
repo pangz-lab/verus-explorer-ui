@@ -5,7 +5,7 @@ angular
 .controller('StatusController',
     function (
         $scope,
-        Global,
+        // Global,
         VerusExplorerApi,
         VerusWssClient,
         UnitConversionService,
@@ -13,7 +13,7 @@ angular
         WsEventDataManager
     ) {
         $scope.chainName = chainName;
-        $scope.global = Global;
+        //$scope.global = Global;
         $scope.info = { blocks: 0 };
         $scope.sync = { syncPercentage: 0 };
         $scope.chainNodeState = {};

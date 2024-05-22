@@ -7,16 +7,17 @@ angular.module('insight.system')
         $route,
         $templateCache,
         gettextCatalog,
-        amMoment,
-        Version) {
+        // Version
+        amMoment) {
 
         $scope.defaultLanguage = defaultLanguage;
 
         var _getVersion = function () {
-            Version.get({},
-                function (res) {
-                    $scope.version = res.version;
-                });
+            return '0.0.1';
+            // Version.get({},
+            //     function (res) {
+            //         $scope.version = res.version;
+            //     });
         };
 
         $scope.version = _getVersion();

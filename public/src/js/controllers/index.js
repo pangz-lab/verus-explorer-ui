@@ -5,12 +5,12 @@ angular
 .controller('IndexController',
     function (
         $scope,
-        Global,
+        // Global,
         VerusWssClient,
         LocalStore,
         WsEventDataManager
     ) {
-        $scope.global = Global;
+        //$scope.global = Global;
         $scope.chainName = chainName;
 
         const wsTopic = VerusWssClient.getMessageTopic();

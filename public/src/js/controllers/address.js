@@ -7,11 +7,11 @@ angular
         $scope,
         $rootScope,
         $routeParams,
-        Global,
+        // Global,
         VerusExplorerApi,
         ScrollService
     ) {
-        $scope.global = Global;
+        //$scope.global = Global;
         $rootScope.scrollToTop = function () {
             ScrollService.scrollToTop();
         };

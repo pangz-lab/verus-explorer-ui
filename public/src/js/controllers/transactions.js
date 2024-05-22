@@ -6,10 +6,10 @@ angular.module('insight.transactions')
         $scope,
         $rootScope,
         $routeParams,
-        Global,
+        // Global,
         VerusExplorerApi
     ) {
-        $scope.global = Global;
+        //$scope.global = Global;
         $scope.loading = true;
         $scope.loadedBy = null;
         $scope.addressTxCount = 0;

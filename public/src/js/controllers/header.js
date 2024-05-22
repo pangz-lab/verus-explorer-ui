@@ -3,8 +3,14 @@
 angular
 .module('insight.system')
 .controller('HeaderController',
-    function ($scope, $rootScope, $modal, Global, $location) {
-        $scope.global = Global;
+    function (
+        $scope,
+        $rootScope,
+        $modal,
+        // Global,
+        $location
+    ) {
+        //$scope.global = Global;
 
         $rootScope.currency = {
             factor: 1,

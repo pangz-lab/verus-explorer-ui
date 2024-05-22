@@ -114,11 +114,11 @@ angular
         $scope,
         $rootScope,
         $routeParams,
-        Global,
+        // Global,
         VerusExplorerApi,
         ScrollService
     ) {
-        $scope.global = Global;
+        //$scope.global = Global;
         $rootScope.scrollToTop = function () {
             ScrollService.scrollToTop();
         };
@@ -185,7 +185,7 @@ angular
         $rootScope,
         $routeParams,
         $location,
-        Global,
+        // Global,
         UnitConversionService,
         VerusExplorerApi,
         VerusWssClient,
@@ -194,7 +194,7 @@ angular
     ) {
         const MAX_HASH_PER_LOAD = 100;
         const dateUrlPath = "blocks-date";
-        $scope.global = Global;
+        //$scope.global = Global;
         $scope.loading = false;
         $scope.currentDateTxList = [];
         $scope.lastStartIndex = 0;
@@ -630,16 +630,17 @@ angular.module('insight.system')
         $route,
         $templateCache,
         gettextCatalog,
-        amMoment,
-        Version) {
+        // Version
+        amMoment) {
 
         $scope.defaultLanguage = defaultLanguage;
 
         var _getVersion = function () {
-            Version.get({},
-                function (res) {
-                    $scope.version = res.version;
-                });
+            return '0.0.1';
+            // Version.get({},
+            //     function (res) {
+            //         $scope.version = res.version;
+            //     });
         };
 
         $scope.version = _getVersion();
@@ -676,8 +677,14 @@ angular.module('insight.system')
 angular
 .module('insight.system')
 .controller('HeaderController',
-    function ($scope, $rootScope, $modal, Global, $location) {
-        $scope.global = Global;
+    function (
+        $scope,
+        $rootScope,
+        $modal,
+        // Global,
+        $location
+    ) {
+        //$scope.global = Global;
 
         $rootScope.currency = {
             factor: 1,
@@ -721,12 +728,12 @@ angular
 .controller('IndexController',
     function (
         $scope,
-        Global,
+        // Global,
         VerusWssClient,
         LocalStore,
         WsEventDataManager
     ) {
-        $scope.global = Global;
+        //$scope.global = Global;
         $scope.chainName = chainName;
 
         const wsTopic = VerusWssClient.getMessageTopic();
@@ -855,152 +862,158 @@ angular
 // });
 
 // Source: public/src/js/controllers/scanner.js
-angular.module('insight.system').controller('ScannerController',
-  function($scope, $rootScope, $modalInstance, Global) {
-    $scope.global = Global;
+angular.module('insight.system')
+.controller('ScannerController',
+    function (
+        $scope,
+        $rootScope,
+        $modalInstance
+        // Global
+    ) {
+        //$scope.global = Global;
 
-    // Detect mobile devices
-    var isMobile = {
-      Android: function() {
-          return navigator.userAgent.match(/Android/i);
-      },
-      BlackBerry: function() {
-          return navigator.userAgent.match(/BlackBerry/i);
-      },
-      iOS: function() {
-          return navigator.userAgent.match(/iPhone|iPad|iPod/i);
-      },
-      Opera: function() {
-          return navigator.userAgent.match(/Opera Mini/i);
-      },
-      Windows: function() {
-          return navigator.userAgent.match(/IEMobile/i);
-      },
-      any: function() {
-          return (isMobile.Android() || isMobile.BlackBerry() || isMobile.iOS() || isMobile.Opera() || isMobile.Windows());
-      }
-    };
+        // Detect mobile devices
+        var isMobile = {
+            Android: function () {
+                return navigator.userAgent.match(/Android/i);
+            },
+            BlackBerry: function () {
+                return navigator.userAgent.match(/BlackBerry/i);
+            },
+            iOS: function () {
+                return navigator.userAgent.match(/iPhone|iPad|iPod/i);
+            },
+            Opera: function () {
+                return navigator.userAgent.match(/Opera Mini/i);
+            },
+            Windows: function () {
+                return navigator.userAgent.match(/IEMobile/i);
+            },
+            any: function () {
+                return (isMobile.Android() || isMobile.BlackBerry() || isMobile.iOS() || isMobile.Opera() || isMobile.Windows());
+            }
+        };
 
-    navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
-    window.URL = window.URL || window.webkitURL || window.mozURL || window.msURL;
+        navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
+        window.URL = window.URL || window.webkitURL || window.mozURL || window.msURL;
 
-    $scope.isMobile = isMobile.any();
-    $scope.scannerLoading = false;
+        $scope.isMobile = isMobile.any();
+        $scope.scannerLoading = false;
 
-    var $searchInput = angular.element(document.getElementById('search')),
-        cameraInput,
-        video,
-        canvas,
-        $video,
-        context,
-        localMediaStream;
+        var $searchInput = angular.element(document.getElementById('search')),
+            cameraInput,
+            video,
+            canvas,
+            $video,
+            context,
+            localMediaStream;
 
-    var _scan = function(evt) {
-      if ($scope.isMobile) {
-        $scope.scannerLoading = true;
-        var files = evt.target.files;
+        var _scan = function (evt) {
+            if ($scope.isMobile) {
+                $scope.scannerLoading = true;
+                var files = evt.target.files;
 
-        if (files.length === 1 && files[0].type.indexOf('image/') === 0) {
-          var file = files[0];
+                if (files.length === 1 && files[0].type.indexOf('image/') === 0) {
+                    var file = files[0];
 
-          var reader = new FileReader();
-          reader.onload = (function(theFile) {
-            return function(e) {
-              var mpImg = new MegaPixImage(file);
-              mpImg.render(canvas, { maxWidth: 200, maxHeight: 200, orientation: 6 });
+                    var reader = new FileReader();
+                    reader.onload = (function (theFile) {
+                        return function (e) {
+                            var mpImg = new MegaPixImage(file);
+                            mpImg.render(canvas, { maxWidth: 200, maxHeight: 200, orientation: 6 });
 
-              setTimeout(function() {
-                qrcode.width = canvas.width;
-                qrcode.height = canvas.height;
-                qrcode.imagedata = context.getImageData(0, 0, qrcode.width, qrcode.height);
+                            setTimeout(function () {
+                                qrcode.width = canvas.width;
+                                qrcode.height = canvas.height;
+                                qrcode.imagedata = context.getImageData(0, 0, qrcode.width, qrcode.height);
 
-                try {
-                  //alert(JSON.stringify(qrcode.process(context)));
-                  qrcode.decode();
-                } catch (e) {
-                  alert(e);
+                                try {
+                                    //alert(JSON.stringify(qrcode.process(context)));
+                                    qrcode.decode();
+                                } catch (e) {
+                                    alert(e);
+                                }
+                            }, 1500);
+                        };
+                    })(file);
+
+                    // Read  in the file as a data URL
+                    reader.readAsDataURL(file);
                 }
-              }, 1500);
-            };
-          })(file);
+            } else {
+                if (localMediaStream) {
+                    context.drawImage(video, 0, 0, 300, 225);
 
-          // Read  in the file as a data URL
-          reader.readAsDataURL(file);
-        }
-      } else {
-        if (localMediaStream) {
-          context.drawImage(video, 0, 0, 300, 225);
+                    try {
+                        qrcode.decode();
+                    } catch (e) {
+                        //qrcodeError(e);
+                    }
+                }
 
-          try {
-            qrcode.decode();
-          } catch(e) {
-            //qrcodeError(e);
-          }
-        }
+                setTimeout(_scan, 500);
+            }
+        };
 
-        setTimeout(_scan, 500);
-      }
-    };
+        var _successCallback = function (stream) {
+            video.src = (window.URL && window.URL.createObjectURL(stream)) || stream;
+            localMediaStream = stream;
+            video.play();
+            setTimeout(_scan, 1000);
+        };
 
-    var _successCallback = function(stream) {
-      video.src = (window.URL && window.URL.createObjectURL(stream)) || stream;
-      localMediaStream = stream;
-      video.play();
-      setTimeout(_scan, 1000);
-    };
+        var _scanStop = function () {
+            $scope.scannerLoading = false;
+            $modalInstance.close();
+            if (!$scope.isMobile) {
+                if (localMediaStream.stop) localMediaStream.stop();
+                localMediaStream = null;
+                video.src = '';
+            }
+        };
 
-    var _scanStop = function() {
-      $scope.scannerLoading = false;
-      $modalInstance.close();
-      if (!$scope.isMobile) {
-        if (localMediaStream.stop) localMediaStream.stop();
-        localMediaStream = null;
-        video.src = '';
-      }
-    };
+        var _videoError = function (err) {
+            console.log('Video Error: ' + JSON.stringify(err));
+            _scanStop();
+        };
 
-    var _videoError = function(err) {
-      console.log('Video Error: ' + JSON.stringify(err));
-      _scanStop();
-    };
+        qrcode.callback = function (data) {
+            _scanStop();
 
-    qrcode.callback = function(data) {
-      _scanStop();
+            var str = (data.indexOf('verus:') === 0) ? data.substring(8) : data;
+            console.log('QR code detected: ' + str);
+            $searchInput
+                .val(str)
+                .triggerHandler('change')
+                .triggerHandler('submit');
+        };
 
-      var str = (data.indexOf('verus:') === 0) ? data.substring(8) : data;
-      console.log('QR code detected: ' + str);
-      $searchInput
-        .val(str)
-        .triggerHandler('change')
-        .triggerHandler('submit');
-    };
+        $scope.cancel = function () {
+            _scanStop();
+        };
 
-    $scope.cancel = function() {
-      _scanStop();
-    };
+        $modalInstance.opened.then(function () {
+            $rootScope.isCollapsed = true;
 
-    $modalInstance.opened.then(function() {
-      $rootScope.isCollapsed = true;
-      
-      // Start the scanner
-      setTimeout(function() {
-        canvas = document.getElementById('qr-canvas');
-        context = canvas.getContext('2d');
+            // Start the scanner
+            setTimeout(function () {
+                canvas = document.getElementById('qr-canvas');
+                context = canvas.getContext('2d');
 
-        if ($scope.isMobile) {
-          cameraInput = document.getElementById('qrcode-camera');
-          cameraInput.addEventListener('change', _scan, false);
-        } else {
-          video = document.getElementById('qrcode-scanner-video');
-          $video = angular.element(video);
-          canvas.width = 300;
-          canvas.height = 225;
-          context.clearRect(0, 0, 300, 225);
+                if ($scope.isMobile) {
+                    cameraInput = document.getElementById('qrcode-camera');
+                    cameraInput.addEventListener('change', _scan, false);
+                } else {
+                    video = document.getElementById('qrcode-scanner-video');
+                    $video = angular.element(video);
+                    canvas.width = 300;
+                    canvas.height = 225;
+                    context.clearRect(0, 0, 300, 225);
 
-          navigator.getUserMedia({video: true}, _successCallback, _videoError); 
-        }
-      }, 500);
-    });
+                    navigator.getUserMedia({ video: true }, _successCallback, _videoError);
+                }
+            }, 500);
+        });
 });
 
 // Source: public/src/js/controllers/search.js
@@ -1011,10 +1024,10 @@ angular
         $scope,
         $location,
         $timeout,
-        Global,
+        // Global,
         VerusExplorerApi
     ) {
-        $scope.global = Global;
+        //$scope.global = Global;
         $scope.loading = false;
 
         
@@ -1091,7 +1104,7 @@ angular
 .controller('StatusController',
     function (
         $scope,
-        Global,
+        // Global,
         VerusExplorerApi,
         VerusWssClient,
         UnitConversionService,
@@ -1099,7 +1112,7 @@ angular
         WsEventDataManager
     ) {
         $scope.chainName = chainName;
-        $scope.global = Global;
+        //$scope.global = Global;
         $scope.info = { blocks: 0 };
         $scope.sync = { syncPercentage: 0 };
         $scope.chainNodeState = {};
@@ -1180,10 +1193,10 @@ angular.module('insight.transactions')
         $scope,
         $rootScope,
         $routeParams,
-        Global,
+        // Global,
         VerusExplorerApi
     ) {
-        $scope.global = Global;
+        //$scope.global = Global;
         $scope.loading = true;
         $scope.loadedBy = null;
         $scope.addressTxCount = 0;
@@ -2275,122 +2288,63 @@ function MiningBasicInfo(
     // }
 }
 // Source: public/src/js/services/blocks.js
-// TODO: remove the first 3 blocks services
 angular.module('insight.blocks')
-  // .factory('Block',
-  //   function($resource) {
-  //   return $resource(window.apiPrefix + '/block/:blockHash', {
-  //     blockHash: '@blockHash'
-  //   }, {
-  //     get: {
-  //       method: 'GET',
-  //       interceptor: {
-  //         response: function (res) {
-  //           return res.data;
-  //         },
-  //         responseError: function (res) {
-  //           if (res.status === 404) {
-  //             return res;
-  //           }
-  //         }
-  //       }
-  //     }
-  //   });
-  // })
-  // .factory('Blocks',
-  //   function($resource) {
-  //     return $resource(window.apiPrefix + '/blocks');
-  // })
-  // .factory('BlockByHeight',
-  //   function($resource) {
-  //     return $resource(window.apiPrefix + '/block-index/:blockHeight');
-  // })
-  .factory('BlockService', function() {
-    // return $resource(window.apiPrefix + '/block-index/:blockHeight');
+.factory('BlockService', function () {
     function getBlockReward(height) {
-      var subsidy = new BigNumber(384 * 1e8);
-    
-      // Linear ramp up until 10080
-      if (height < 10080) {
-        subsidy /= 10080;
-        subsidy *= height;
-      }
-    
-      if (height >= 53820 && height < 96408) {
-        subsidy /= 2;
-      }
-      if (height >= 96480 && height < 139680) {
-        subsidy /= 4;
-      }
-      if (height >= 139680 && height < 182880) {
-        subsidy /= 8;
-      }
-      if (height >= 182880 && height < 1278000) {
-        subsidy /= 16;
-      }
-      if (height >= 1278000 && height < 2329920) {
-        subsidy /= 32;
-      }
-      if (height >= 2329920 && height < 3381840){
-        subsidy /= 64;
-      }
-      if (height >= 3381840 && height < 4433760){
-        subsidy /= 128;
-      }
-      if (height >= 4433760 && height < 5485680){
-        subsidy /= 256;
-      }
-      if (height >= 5485680 && height < 6537600){
-        subsidy /= 512;
-      }
-      if (height >= 6537600 && height < 7589520){
-        subsidy /= 1024;
-      }
-      if (height >= 7589520  && height < 8641440){
-        subsidy /= 2048;
-      }
-      // that will be in about 15 years
-      if (height >= 8641440) {
-        subsidy = 0;
-      }
-    
-      return parseInt(subsidy.toString())  / 1e8;
+        var subsidy = new BigNumber(384 * 1e8);
+
+        // Linear ramp up until 10080
+        if (height < 10080) {
+            subsidy /= 10080;
+            subsidy *= height;
+        }
+
+        if (height >= 53820 && height < 96408) {
+            subsidy /= 2;
+        }
+        if (height >= 96480 && height < 139680) {
+            subsidy /= 4;
+        }
+        if (height >= 139680 && height < 182880) {
+            subsidy /= 8;
+        }
+        if (height >= 182880 && height < 1278000) {
+            subsidy /= 16;
+        }
+        if (height >= 1278000 && height < 2329920) {
+            subsidy /= 32;
+        }
+        if (height >= 2329920 && height < 3381840) {
+            subsidy /= 64;
+        }
+        if (height >= 3381840 && height < 4433760) {
+            subsidy /= 128;
+        }
+        if (height >= 4433760 && height < 5485680) {
+            subsidy /= 256;
+        }
+        if (height >= 5485680 && height < 6537600) {
+            subsidy /= 512;
+        }
+        if (height >= 6537600 && height < 7589520) {
+            subsidy /= 1024;
+        }
+        if (height >= 7589520 && height < 8641440) {
+            subsidy /= 2048;
+        }
+        // that will be in about 15 years
+        if (height >= 8641440) {
+            subsidy = 0;
+        }
+
+        return parseInt(subsidy.toString()) / 1e8;
     };
     return {
-      getBlockReward: function(height) {
-        return getBlockReward(height);
-      }
+        getBlockReward: function (height) {
+            return getBlockReward(height);
+        }
     }
-  });
-
-// Source: public/src/js/services/charts.js
-// 'use strict';
-
-// angular.module('insight.charts')
-//   .factory('Chart',
-//     function($resource) {
-//     return $resource(window.apiPrefix + '/chart/:chartType', {
-//       chartType: '@chartType'
-//     }, {
-//       get: {
-//         method: 'GET',
-//         interceptor: {
-//           response: function (res) {
-//             return res.data;
-//           },
-//           responseError: function (res) {
-//             if (res.status === 404) {
-//               return res;
-//             }
-//           }
-//         }
-//       }
-//     });
-//   })
-//   .factory('Charts',
-//     function($resource) {
-//       return $resource(window.apiPrefix + '/charts');
-//   });
+});
 
 // Source: public/src/js/services/coinpaprika.js
 angular.module('insight.coinpaprika')
@@ -2428,72 +2382,72 @@ angular.module('insight.coinpaprika')
 // Source: public/src/js/services/global.js
 //Global service for global variables
 angular.module('insight.system')
-  .factory('Global',[
-    function() {
-      return {};
-    }
-  ])
-  .factory('Version',
-    function($resource) {
-      return $resource(window.apiPrefix + '/version');
-  })
-  .service('UnitConversionService', function() {
-    this.convert = function(value, unitSuffix) {
-      const units = ['-', 'K', 'M', 'G', 'T', 'P', 'E', 'Z', 'Y'];
-      var unitIndex = 0;
-  
-      while (value >= 1000 && unitIndex < units.length - 1) {
-        value /= 1000;
-        unitIndex++;
-      }
-  
-      return value.toFixed(5) + ' ' + units[unitIndex] + unitSuffix;
+// .factory('Global', [
+//     function () {
+//         return {};
+//     }
+// ])
+// .factory('Version',
+//     function ($resource) {
+//         return $resource(window.apiPrefix + '/version');
+//     })
+.service('UnitConversionService', function () {
+    this.convert = function (value, unitSuffix) {
+        const units = ['-', 'K', 'M', 'G', 'T', 'P', 'E', 'Z', 'Y'];
+        var unitIndex = 0;
+
+        while (value >= 1000 && unitIndex < units.length - 1) {
+            value /= 1000;
+            unitIndex++;
+        }
+
+        return value.toFixed(5) + ' ' + units[unitIndex] + unitSuffix;
     }
 
-    this.shortenString = function(text, maxLength) {
+    this.shortenString = function (text, maxLength) {
         if (text.length <= maxLength) return text;
 
         var halfLength = Math.floor((maxLength - 3) / 2); // Length of the ellipsis in the middle
         return text.substring(0, halfLength) + '...' + text.substring(text.length - halfLength);
     }
 
-    this.createDateFromString = function(dateString, hour, minutes, dateDelimiter) {
-      const timePart = (hour === undefined && minutes === undefined)?
-        '00:00:00' : hour + ':'+minutes+':00';
-      dateDelimiter = dateDelimiter === undefined? '-' : dateDelimiter;
-      const splitDate = dateString.split(dateDelimiter);
-      const year = parseInt(splitDate[0], 10);
-      const month = parseInt(splitDate[1], 10);
-      const day = parseInt(splitDate[2], 10);
-      const months = [
-          'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-          'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
-      ];
-      const isoStr = day + ' ' + months[month - 1] + ' ' + year + ' ' + timePart;
-      return  new Date(isoStr);
-  }
-  })
-  .service('ScrollService', function($window, $timeout) {
-    this.scrollToTop = function() {
-      var currentY = $window.pageYOffset;
-      var step = Math.abs(currentY / 25);
-      
-      function scrollStep() {
-        if ($window.pageYOffset > 0) {
-          $window.scrollTo(0, $window.pageYOffset - step);
-          requestAnimationFrame(scrollStep);
+    this.createDateFromString = function (dateString, hour, minutes, dateDelimiter) {
+        const timePart = (hour === undefined && minutes === undefined) ?
+            '00:00:00' : hour + ':' + minutes + ':00';
+        dateDelimiter = dateDelimiter === undefined ? '-' : dateDelimiter;
+        const splitDate = dateString.split(dateDelimiter);
+        const year = parseInt(splitDate[0], 10);
+        const month = parseInt(splitDate[1], 10);
+        const day = parseInt(splitDate[2], 10);
+        const months = [
+            'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+            'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+        ];
+        const isoStr = day + ' ' + months[month - 1] + ' ' + year + ' ' + timePart;
+        return new Date(isoStr);
+    }
+})
+.service('ScrollService', function ($window, $timeout) {
+    this.scrollToTop = function () {
+        var currentY = $window.pageYOffset;
+        var step = Math.abs(currentY / 25);
+
+        function scrollStep() {
+            if ($window.pageYOffset > 0) {
+                $window.scrollTo(0, $window.pageYOffset - step);
+                requestAnimationFrame(scrollStep);
+            }
         }
-      }
-      requestAnimationFrame(scrollStep);
+        requestAnimationFrame(scrollStep);
     };
 
-    this.scrollToBottom = function() {
-      $timeout(function() {
-        var element = document.getElementById('footer');
-        element.scrollIntoView({ behavior: 'smooth', block: 'end' });
-      });
+    this.scrollToBottom = function () {
+        $timeout(function () {
+            var element = document.getElementById('footer');
+            element.scrollIntoView({ behavior: 'smooth', block: 'end' });
+        });
     };
-  });
+});
 
 // Source: public/src/js/services/localstore.js
 // Todo add caching to avoid reloading of large resource

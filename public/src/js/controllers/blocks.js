@@ -8,7 +8,7 @@ angular
         $rootScope,
         $routeParams,
         $location,
-        Global,
+        // Global,
         UnitConversionService,
         VerusExplorerApi,
         VerusWssClient,
@@ -17,7 +17,7 @@ angular
     ) {
         const MAX_HASH_PER_LOAD = 100;
         const dateUrlPath = "blocks-date";
-        $scope.global = Global;
+        //$scope.global = Global;
         $scope.loading = false;
         $scope.currentDateTxList = [];
         $scope.lastStartIndex = 0;

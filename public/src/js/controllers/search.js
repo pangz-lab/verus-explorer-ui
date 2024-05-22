@@ -7,10 +7,10 @@ angular
         $scope,
         $location,
         $timeout,
-        Global,
+        // Global,
         VerusExplorerApi
     ) {
-        $scope.global = Global;
+        //$scope.global = Global;
         $scope.loading = false;
 
         
