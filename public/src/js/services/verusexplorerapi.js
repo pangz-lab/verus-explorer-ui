@@ -85,6 +85,10 @@ angular.module('insight.verusexplorerapi')
             if (!ranges.includes(range)) { return Promise.resolve(undefined); }
             return sendRequest(createPayload('/api/chart/' + type + '/?range=' + range, [], "GET"));
         };
+        
+        function getAggregatorMarketData(source) {
+            return sendRequest(createPayload('/api/a/' + source + '/coin/market', [], "GET"));
+        };
 
         function search(query) {
             return sendRequest(createPayload('/api/search/?q=' + query, [], "GET"));
@@ -126,6 +130,9 @@ angular.module('insight.verusexplorerapi')
             },
             getChartData: function (type, range) {
                 return getChartData(type, range);
+            },
+            getAggregatorMarketData: function (source) {
+                return getAggregatorMarketData(source);
             },
             search: function (query) {
                 return search(query);

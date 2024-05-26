@@ -6,8 +6,9 @@ angular.module('insight.currency')
         $rootScope.currency.symbol = defaultCurrency;
 
         var _getVrscUsdRate = function () {
-            CoinPaprika.getVerusCoinMarket()
-                .then(function (res) {
+            CoinPaprika.getCoinMarket()
+                .then(function (r) {
+                    const res = r.data;
                     const bitstampRate = parseFloat(res[0].quotes.USD.price);
                     const poloniexRate = '1.00';
                     $rootScope.currency.factor = $rootScope.currency.bitstamp = (bitstampRate * poloniexRate);

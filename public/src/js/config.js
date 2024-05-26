@@ -7,10 +7,6 @@ angular.module('insight').config(function($routeProvider) {
       templateUrl: 'views/block.html',
       title: 'Verus Block '
     }).
-    // when('/block-index/:blockHeight', {
-    //   controller: 'BlocksController',
-    //   templateUrl: 'views/redirect.html'
-    // }).
     when('/tx/send', {
       templateUrl: 'views/transaction_sendraw.html',
       title: 'Broadcast Raw Transaction'

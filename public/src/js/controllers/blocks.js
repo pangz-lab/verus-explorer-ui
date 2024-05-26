@@ -15,6 +15,7 @@ angular
         ScrollService,
         BlockService
     ) {
+
         const MAX_HASH_PER_LOAD = 100;
         const dateUrlPath = "blocks-date";
         //$scope.global = Global;

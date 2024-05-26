@@ -3,18 +3,18 @@
 var testnet = false;
 var netSymbol = testnet ? 'VRSCTEST' : 'VRSC';
 const chainName = "Verus";
-const coinpaprikaEndpointKey = "vrsc-verus-coin";
 const firstBlockStartDate = new Date(2018, 5, 20);
 const allowedSearchPattern = /^[a-zA-Z0-9@]+$/;
 
-const apiServer = testnet ? 'http://127.0.0.1:27486' : 'https://wip-ws-insight.pangz.tech'; //2220 ws and express
-const wsServer = testnet ? 'wss://wip-ws-insight.pangz.tech/verus/wss' : 'wss://wip-ws-insight.pangz.tech/verus/wss'; //2220 ws and express
+// const apiServer = testnet ? 'http://127.0.0.1:27486' : 'https://wip-ws-insight.pangz.tech'; //2220 ws and express
+// const wsServer = testnet ? 'wss://wip-ws-insight.pangz.tech/verus/wss' : 'wss://wip-ws-insight.pangz.tech/verus/wss'; //2220 ws and express
 
-// const apiServer = testnet ? 'http://127.0.0.1:27486' : 'http://localhost:2220'; //2220 ws and express
-// const wsServer = testnet ? 'wss://wip-ws-insight.pangz.tech/verus/wss' : 'ws://localhost:2220/verus/wss'; //2220 ws and express
+const apiServer = testnet ? 'http://127.0.0.1:27486' : 'http://localhost:2220'; //2220 ws and express
+const wsServer = testnet ? 'wss://wip-ws-insight.pangz.tech/verus/wss' : 'ws://localhost:2220/verus/wss'; //2220 ws and express
 
 // Need to secure the API token. Better put the API behind a gateway or a reverse proxy
-const coinPaprikaBaseUri = 'https://api.coinpaprika.com/v1';
+// const coinpaprikaEndpointKey = "vrsc-verus-coin";
+// const coinPaprikaBaseUri = 'https://api.coinpaprika.com/v1';
 const apiToken =  testnet ? '' : 'Basic dmVydXNkZXNrdG9wOnk4RDZZWGhBRms2alNoSGlSQktBZ1JDeDB0OVpkTWYyUzNLMG83ek44U28="';
 const localStore = {
   status: { key: netSymbol + ':vexp_stats', ttl: 86400 },

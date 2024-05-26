@@ -1,5 +1,6 @@
 <div class="alert alert-danger" data-ng-show="flashMessage">
     {{$root.flashMessage}}
+    <reload-page></reload-page>
 </div>
 <div data-ng-include src="'views/includes/connection.html'"></div>
 <section data-ng-controller="IndexController" data-ng-init="loadData()">

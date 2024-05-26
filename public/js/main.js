@@ -2,18 +2,18 @@
 var testnet = false;
 var netSymbol = testnet ? 'VRSCTEST' : 'VRSC';
 const chainName = "Verus";
-const coinpaprikaEndpointKey = "vrsc-verus-coin";
 const firstBlockStartDate = new Date(2018, 5, 20);
 const allowedSearchPattern = /^[a-zA-Z0-9@]+$/;
 
-const apiServer = testnet ? 'http://127.0.0.1:27486' : 'https://wip-ws-insight.pangz.tech'; //2220 ws and express
-const wsServer = testnet ? 'wss://wip-ws-insight.pangz.tech/verus/wss' : 'wss://wip-ws-insight.pangz.tech/verus/wss'; //2220 ws and express
+// const apiServer = testnet ? 'http://127.0.0.1:27486' : 'https://wip-ws-insight.pangz.tech'; //2220 ws and express
+// const wsServer = testnet ? 'wss://wip-ws-insight.pangz.tech/verus/wss' : 'wss://wip-ws-insight.pangz.tech/verus/wss'; //2220 ws and express
 
-// const apiServer = testnet ? 'http://127.0.0.1:27486' : 'http://localhost:2220'; //2220 ws and express
-// const wsServer = testnet ? 'wss://wip-ws-insight.pangz.tech/verus/wss' : 'ws://localhost:2220/verus/wss'; //2220 ws and express
+const apiServer = testnet ? 'http://127.0.0.1:27486' : 'http://localhost:2220'; //2220 ws and express
+const wsServer = testnet ? 'wss://wip-ws-insight.pangz.tech/verus/wss' : 'ws://localhost:2220/verus/wss'; //2220 ws and express
 
 // Need to secure the API token. Better put the API behind a gateway or a reverse proxy
-const coinPaprikaBaseUri = 'https://api.coinpaprika.com/v1';
+// const coinpaprikaEndpointKey = "vrsc-verus-coin";
+// const coinPaprikaBaseUri = 'https://api.coinpaprika.com/v1';
 const apiToken =  testnet ? '' : 'Basic dmVydXNkZXNrdG9wOnk4RDZZWGhBRms2alNoSGlSQktBZ1JDeDB0OVpkTWYyUzNLMG83ek44U28="';
 const localStore = {
   status: { key: netSymbol + ':vexp_stats', ttl: 86400 },
@@ -192,6 +192,7 @@ angular
         ScrollService,
         BlockService
     ) {
+
         const MAX_HASH_PER_LOAD = 100;
         const dateUrlPath = "blocks-date";
         //$scope.global = Global;
@@ -550,8 +551,9 @@ angular.module('insight.currency')
         $rootScope.currency.symbol = defaultCurrency;
 
         var _getVrscUsdRate = function () {
-            CoinPaprika.getVerusCoinMarket()
-                .then(function (res) {
+            CoinPaprika.getCoinMarket()
+                .then(function (r) {
+                    const res = r.data;
                     const bitstampRate = parseFloat(res[0].quotes.USD.price);
                     const poloniexRate = '1.00';
                     $rootScope.currency.factor = $rootScope.currency.bitstamp = (bitstampRate * poloniexRate);
@@ -2366,34 +2368,35 @@ angular.module('insight.blocks')
 
 // Source: public/src/js/services/coinpaprika.js
 angular.module('insight.coinpaprika')
-.factory('CoinPaprika', function ($http, $q) {
-    function createRequest(endpoint, method) {
-        const url = 'https://corsproxy.io/?' + encodeURIComponent(coinPaprikaBaseUri + endpoint);
-        return {
-            method: method,
-            url: url
-        }
-    }
+.factory('CoinPaprika',
+function (VerusExplorerApi) {
+    // function createRequest(endpoint, method) {
+    //     const url = 'https://corsproxy.io/?' + encodeURIComponent(coinPaprikaBaseUri + endpoint);
+    //     return {
+    //         method: method,
+    //         url: url
+    //     }
+    // }
 
-    function sendRequest(payload) {
-        var deferred = $q.defer();
-        $http(payload)
-            .then(function successCallback(response) {
-                deferred.resolve(response.data);
-            }, function errorCallback(response) {
-                deferred.reject({ status: response.status, data: response.data });
-            });
+    // function sendRequest(payload) {
+    //     var deferred = $q.defer();
+    //     $http(payload)
+    //         .then(function successCallback(response) {
+    //             deferred.resolve(response.data);
+    //         }, function errorCallback(response) {
+    //             deferred.reject({ status: response.status, data: response.data });
+    //         });
 
-        return deferred.promise;
-    };
+    //     return deferred.promise;
+    // };
 
-    function getVerusCoinMarket() {
-        return sendRequest(createRequest("/coins/vrsc-verus-coin/markets", "GET"));
+    function getCoinMarket() {
+        return VerusExplorerApi.getAggregatorMarketData('coinpaprika');
     };
 
     return {
-        getVerusCoinMarket: function () {
-            return getVerusCoinMarket();
+        getCoinMarket: function () {
+            return getCoinMarket();
         }
     };
 });
@@ -2854,6 +2857,10 @@ angular.module('insight.verusexplorerapi')
             if (!ranges.includes(range)) { return Promise.resolve(undefined); }
             return sendRequest(createPayload('/api/chart/' + type + '/?range=' + range, [], "GET"));
         };
+        
+        function getAggregatorMarketData(source) {
+            return sendRequest(createPayload('/api/a/' + source + '/coin/market', [], "GET"));
+        };
 
         function search(query) {
             return sendRequest(createPayload('/api/search/?q=' + query, [], "GET"));
@@ -2895,6 +2902,9 @@ angular.module('insight.verusexplorerapi')
             },
             getChartData: function (type, range) {
                 return getChartData(type, range);
+            },
+            getAggregatorMarketData: function (source) {
+                return getAggregatorMarketData(source);
             },
             search: function (query) {
                 return search(query);
@@ -3219,7 +3229,18 @@ angular.module('insight')
                 });
             }
         };
-    });
+    })
+    .directive('reloadPage', ['$route', function($route) {
+        return {
+            restrict: 'E', // Restrict the directive to be used as an element
+            template: '<button class="btn btn-info btn-sm" ng-click="reloadPage()">reload</button>', // Template for the directive
+            controller: function($scope) {
+                $scope.reloadPage = function() {
+                    $route.reload(); // Reload the page using $window service
+                };
+            }
+        };
+    }]);
 
 // Source: public/src/js/filters.js
 angular.module('insight')
@@ -3244,10 +3265,6 @@ angular.module('insight').config(function($routeProvider) {
       templateUrl: 'views/block.html',
       title: 'Verus Block '
     }).
-    // when('/block-index/:blockHeight', {
-    //   controller: 'BlocksController',
-    //   templateUrl: 'views/redirect.html'
-    // }).
     when('/tx/send', {
       templateUrl: 'views/transaction_sendraw.html',
       title: 'Broadcast Raw Transaction'
