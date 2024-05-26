@@ -50,7 +50,7 @@ angular
             }
 
             const status = LocalStore.get(localStore.status.key);
-            if(status.blocks != undefined) {
+            if(status != undefined && status.blocks != undefined) {
                 var maxHeight = 0;
                 blocks.forEach(function(item) {
                     if(item.height > maxHeight) {

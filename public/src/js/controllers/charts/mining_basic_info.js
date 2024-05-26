@@ -1,8 +1,7 @@
 function MiningBasicInfo(
     $scope,
     VerusExplorerApi,
-    LocalStore,
-    UnitConversionService) {
+    LocalStore) {
 
     $scope.loading = false;
     const _saveToCache = function(data, key, ttl) {

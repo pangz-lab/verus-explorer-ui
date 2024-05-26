@@ -5,7 +5,6 @@ angular
 .controller('StatusController',
     function (
         $scope,
-        // Global,
         VerusExplorerApi,
         VerusWssClient,
         UnitConversionService,
@@ -13,7 +12,7 @@ angular
         WsEventDataManager
     ) {
         $scope.chainName = chainName;
-        //$scope.global = Global;
+        $scope.loaded = false;
         $scope.info = { blocks: 0 };
         $scope.sync = { syncPercentage: 0 };
         $scope.chainNodeState = {};
@@ -37,6 +36,7 @@ angular
             
             setTimeout(function() {
                 $scope.info = WsEventDataManager.updateStatusScopeData(rawEventData.status.data);
+                $scope.loaded = true;
                 $scope.$apply();
             }, 500);
         });
@@ -51,6 +51,7 @@ angular
         };
 
         $scope.getBlockchainStatus = function () {
+            $scope.loaded = false;
             const chainStatus = LocalStore.get(CACHE_KEY_STATUS);
             if(chainStatus != undefined) {
                 $scope.info = WsEventDataManager.updateStatusScopeData(chainStatus);
@@ -61,6 +62,8 @@ angular
                 const r = WsEventDataManager.updateChainNodeStateScopeData(nodeStateCache);
                 $scope.sync = r.sync;
                 $scope.chainNodeState = r.chainNodeState;
+                $scope.loaded = true;
+                return;
             }
 
             VerusExplorerApi
