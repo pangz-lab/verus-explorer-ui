@@ -6,11 +6,13 @@ const chainName = "Verus";
 const firstBlockStartDate = new Date(2018, 5, 20);
 const allowedSearchPattern = /^[a-zA-Z0-9@]+$/;
 
-// const apiServer = testnet ? 'http://127.0.0.1:27486' : 'https://wip-ws-insight.pangz.tech'; //2220 ws and express
-// const wsServer = testnet ? 'wss://wip-ws-insight.pangz.tech/verus/wss' : 'wss://wip-ws-insight.pangz.tech/verus/wss'; //2220 ws and express
+// const apiServer = 'https://wip-ws-insight.pangz.tech'; //2220 ws and express
+// const wsServer = 'wss://wip-ws-insight.pangz.tech/verus/wss'; //2220 ws and express
 
-const apiServer = testnet ? 'http://127.0.0.1:27486' : 'http://localhost:2220'; //2220 ws and express
-const wsServer = testnet ? 'wss://wip-ws-insight.pangz.tech/verus/wss' : 'ws://localhost:2220/verus/wss'; //2220 ws and express
+const apiServer = 'http://localhost:2220'; //2220 ws and express
+const wsServer = 'ws://localhost:2220/verus/wss'; //2220 ws and express
+
+const wsPingServerInSec = 55;
 
 // Need to secure the API token. Better put the API behind a gateway or a reverse proxy
 // const coinpaprikaEndpointKey = "vrsc-verus-coin";

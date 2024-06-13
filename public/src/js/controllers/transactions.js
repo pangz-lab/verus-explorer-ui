@@ -165,7 +165,7 @@ angular.module('insight.transactions')
                     $scope.txs.push(rawTxData);
                 })
                 .catch(function (e) {
-                    $rootScope.flashMessage = 'Failed to load transaction '+txid+'. Reload to try again.';
+                    $rootScope.flashMessage = 'Failed to load transaction '+txid+'.';
                 });
 
             });

@@ -69,17 +69,17 @@ angular
             VerusExplorerApi
                 .getBlockchainStatus()
                 .then(function (statusResult) {
-                    if(statusResult.error) { return; }
-
-                    if(!statusResult.data.status.error) {
-                        $scope.info = WsEventDataManager.updateStatusScopeData(statusResult.data.status.data);
-                    }
+                    console.log("statusResult >>>");
+                    console.log(statusResult);
+                    if(statusResult.error 
+                        && (statusResult.data.status === undefined || statusResult.data.status.error) 
+                        && (statusResult.data.nodeState === undefined || statusResult.data.nodeState.error)) { return; }
                     
-                    if(!statusResult.data.nodeState.error) {
-                        const r = WsEventDataManager.updateChainNodeStateScopeData(statusResult.data.nodeState.data);
-                        $scope.sync = r.sync;
-                        $scope.chainNodeState = r.chainNodeState;
-                    }
+                    const data = statusResult.data.data;
+                    $scope.info = WsEventDataManager.updateStatusScopeData(data.status.data);
+                    const r = WsEventDataManager.updateChainNodeStateScopeData(data.nodeState.data);
+                    $scope.sync = r.sync;
+                    $scope.chainNodeState = r.chainNodeState;
                     $scope.loaded = true;
                 });
         };

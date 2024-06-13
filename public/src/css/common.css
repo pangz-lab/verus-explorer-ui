@@ -291,7 +291,7 @@ margin-left: 0;
   border-radius: 3px;
   margin: 15px 0;
   padding: 8px 10px;
-  font-size: 12px;
+  font-size: 15px;
   color: #eee;
   text-align: center;
   margin-right: 10px;
@@ -1033,7 +1033,7 @@ a.v_highlight_more {
   margin: 0%;
   font-size: 30px;
   background-color: transparent;
-  border: transparent;
+  border: 0px;
 }
 
 .picker-calendar + ul {

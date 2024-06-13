@@ -26,15 +26,15 @@ angular
                 return;
             }
 
-            // If last received is less than 30 seconds, don't ping
-            if(getLastReceivedInSeconds() > 30) {
+            // If last received is less than wsPingServerInSec seconds, don't ping
+            if(getLastReceivedInSeconds() > wsPingServerInSec) {
                 console.log("pinging server")
                 wsChannelObject.send("ping from client");
                 return;
             }
 
             console.log("will send ping later to save bandwidth...");
-        }, 30000);
+        }, wsPingServerInSec * 1000);
 
         function getLastReceivedInSeconds() {
             const currentTime = new Date().getTime();

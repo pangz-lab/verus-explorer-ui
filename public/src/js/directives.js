@@ -123,7 +123,8 @@ angular.module('insight')
     .directive('reloadPage', ['$route', function($route) {
         return {
             restrict: 'E', // Restrict the directive to be used as an element
-            template: '<button class="btn btn-info btn-sm" ng-click="reloadPage()">reload</button>', // Template for the directive
+            // template: '<button class="btn btn-info btn-sm" ng-click="reloadPage()">reload</button>', // Template for the directive
+            template: '<a href="" ng-click="reloadPage()"> Reload to try again.</a>', // Template for the directive
             controller: function($scope) {
                 $scope.reloadPage = function() {
                     $route.reload(); // Reload the page using $window service

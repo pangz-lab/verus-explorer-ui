@@ -159,7 +159,7 @@ module.exports = function(grunt) {
       },
       cssCommonDark: {
         files: ['public/src/css/theme2.scss'],
-        tasks: ['concat:css', 'cssmin'],
+        tasks: ['concat:cssCommonDark', 'cssmin'],
       },
     },
     nggettext_extract: {

@@ -5,11 +5,13 @@ const chainName = "Verus";
 const firstBlockStartDate = new Date(2018, 5, 20);
 const allowedSearchPattern = /^[a-zA-Z0-9@]+$/;
 
-// const apiServer = testnet ? 'http://127.0.0.1:27486' : 'https://wip-ws-insight.pangz.tech'; //2220 ws and express
-// const wsServer = testnet ? 'wss://wip-ws-insight.pangz.tech/verus/wss' : 'wss://wip-ws-insight.pangz.tech/verus/wss'; //2220 ws and express
+// const apiServer = 'https://wip-ws-insight.pangz.tech'; //2220 ws and express
+// const wsServer = 'wss://wip-ws-insight.pangz.tech/verus/wss'; //2220 ws and express
 
-const apiServer = testnet ? 'http://127.0.0.1:27486' : 'http://localhost:2220'; //2220 ws and express
-const wsServer = testnet ? 'wss://wip-ws-insight.pangz.tech/verus/wss' : 'ws://localhost:2220/verus/wss'; //2220 ws and express
+const apiServer = 'http://localhost:2220'; //2220 ws and express
+const wsServer = 'ws://localhost:2220/verus/wss'; //2220 ws and express
+
+const wsPingServerInSec = 55;
 
 // Need to secure the API token. Better put the API behind a gateway or a reverse proxy
 // const coinpaprikaEndpointKey = "vrsc-verus-coin";
@@ -169,7 +171,7 @@ angular
             })
             .catch(function (e) {
                 $scope.addressBalance.loading = false;
-                $rootScope.flashMessage = 'Failed to load the balance summary. Reload to try again.';
+                $rootScope.flashMessage = 'Failed to load the balance summary.';
             });
         };
 
@@ -793,7 +795,7 @@ angular
             }
 
             const status = LocalStore.get(localStore.status.key);
-            if(status.blocks != undefined) {
+            if(status != undefined && status.blocks != undefined) {
                 var maxHeight = 0;
                 blocks.forEach(function(item) {
                     if(item.height > maxHeight) {
@@ -1124,7 +1126,6 @@ angular
 .controller('StatusController',
     function (
         $scope,
-        // Global,
         VerusExplorerApi,
         VerusWssClient,
         UnitConversionService,
@@ -1132,7 +1133,7 @@ angular
         WsEventDataManager
     ) {
         $scope.chainName = chainName;
-        //$scope.global = Global;
+        $scope.loaded = false;
         $scope.info = { blocks: 0 };
         $scope.sync = { syncPercentage: 0 };
         $scope.chainNodeState = {};
@@ -1156,6 +1157,7 @@ angular
             
             setTimeout(function() {
                 $scope.info = WsEventDataManager.updateStatusScopeData(rawEventData.status.data);
+                $scope.loaded = true;
                 $scope.$apply();
             }, 500);
         });
@@ -1170,6 +1172,7 @@ angular
         };
 
         $scope.getBlockchainStatus = function () {
+            $scope.loaded = false;
             const chainStatus = LocalStore.get(CACHE_KEY_STATUS);
             if(chainStatus != undefined) {
                 $scope.info = WsEventDataManager.updateStatusScopeData(chainStatus);
@@ -1180,22 +1183,24 @@ angular
                 const r = WsEventDataManager.updateChainNodeStateScopeData(nodeStateCache);
                 $scope.sync = r.sync;
                 $scope.chainNodeState = r.chainNodeState;
+                $scope.loaded = true;
+                return;
             }
 
             VerusExplorerApi
                 .getBlockchainStatus()
                 .then(function (statusResult) {
-                    if(statusResult.error) { return; }
-
-                    if(!statusResult.data.status.error) {
-                        $scope.info = WsEventDataManager.updateStatusScopeData(statusResult.data.status.data);
-                    }
+                    console.log("statusResult >>>");
+                    console.log(statusResult);
+                    if(statusResult.error 
+                        && (statusResult.data.status === undefined || statusResult.data.status.error) 
+                        && (statusResult.data.nodeState === undefined || statusResult.data.nodeState.error)) { return; }
                     
-                    if(!statusResult.data.nodeState.error) {
-                        const r = WsEventDataManager.updateChainNodeStateScopeData(statusResult.data.nodeState.data);
-                        $scope.sync = r.sync;
-                        $scope.chainNodeState = r.chainNodeState;
-                    }
+                    const data = statusResult.data.data;
+                    $scope.info = WsEventDataManager.updateStatusScopeData(data.status.data);
+                    const r = WsEventDataManager.updateChainNodeStateScopeData(data.nodeState.data);
+                    $scope.sync = r.sync;
+                    $scope.chainNodeState = r.chainNodeState;
                     $scope.loaded = true;
                 });
         };
@@ -1372,7 +1377,7 @@ angular.module('insight.transactions')
                     $scope.txs.push(rawTxData);
                 })
                 .catch(function (e) {
-                    $rootScope.flashMessage = 'Failed to load transaction '+txid+'. Reload to try again.';
+                    $rootScope.flashMessage = 'Failed to load transaction '+txid+'.';
                 });
 
             });
@@ -1965,9 +1970,9 @@ function ChainBasicInfo(
         { label: '24hr', key: 'last24Hours', cache: cacheKeys.last24Hours, labelType: labelType.withMinute },
         { label: '3d', key: 'last3Days', cache: cacheKeys.last3Days, labelType: labelType.withDay },
         { label: '1wk', key: 'last7Days', cache: cacheKeys.last7Days, labelType: labelType.withMonth },
-        { label: '2wk', key: 'last15Days', cache: cacheKeys.last15Days, labelType: labelType.withYear },
-        { label: '30d', key: 'last30Days', cache: cacheKeys.last30Days, labelType: labelType.withYear },
-        { label: '90d', key: 'last90Days', cache: cacheKeys.last90Days, labelType: labelType.withYear },
+        // { label: '2wk', key: 'last15Days', cache: cacheKeys.last15Days, labelType: labelType.withYear },
+        // { label: '30d', key: 'last30Days', cache: cacheKeys.last30Days, labelType: labelType.withYear },
+        // { label: '90d', key: 'last90Days', cache: cacheKeys.last90Days, labelType: labelType.withYear },
     ]
     $scope.rangeSelection = rangeSelectionOptions;
     $scope.rangeSelected = defaultRangeSelected;
@@ -2118,8 +2123,7 @@ function ChainBasicInfo(
 function MiningBasicInfo(
     $scope,
     VerusExplorerApi,
-    LocalStore,
-    UnitConversionService) {
+    LocalStore) {
 
     $scope.loading = false;
     const _saveToCache = function(data, key, ttl) {
@@ -2940,15 +2944,15 @@ angular
                 return;
             }
 
-            // If last received is less than 30 seconds, don't ping
-            if(getLastReceivedInSeconds() > 30) {
+            // If last received is less than wsPingServerInSec seconds, don't ping
+            if(getLastReceivedInSeconds() > wsPingServerInSec) {
                 console.log("pinging server")
                 wsChannelObject.send("ping from client");
                 return;
             }
 
             console.log("will send ping later to save bandwidth...");
-        }, 30000);
+        }, wsPingServerInSec * 1000);
 
         function getLastReceivedInSeconds() {
             const currentTime = new Date().getTime();
@@ -3233,7 +3237,8 @@ angular.module('insight')
     .directive('reloadPage', ['$route', function($route) {
         return {
             restrict: 'E', // Restrict the directive to be used as an element
-            template: '<button class="btn btn-info btn-sm" ng-click="reloadPage()">reload</button>', // Template for the directive
+            // template: '<button class="btn btn-info btn-sm" ng-click="reloadPage()">reload</button>', // Template for the directive
+            template: '<a href="" ng-click="reloadPage()"> Reload to try again.</a>', // Template for the directive
             controller: function($scope) {
                 $scope.reloadPage = function() {
                     $route.reload(); // Reload the page using $window service

@@ -28,9 +28,9 @@ function ChainBasicInfo(
         { label: '24hr', key: 'last24Hours', cache: cacheKeys.last24Hours, labelType: labelType.withMinute },
         { label: '3d', key: 'last3Days', cache: cacheKeys.last3Days, labelType: labelType.withDay },
         { label: '1wk', key: 'last7Days', cache: cacheKeys.last7Days, labelType: labelType.withMonth },
-        { label: '2wk', key: 'last15Days', cache: cacheKeys.last15Days, labelType: labelType.withYear },
-        { label: '30d', key: 'last30Days', cache: cacheKeys.last30Days, labelType: labelType.withYear },
-        { label: '90d', key: 'last90Days', cache: cacheKeys.last90Days, labelType: labelType.withYear },
+        // { label: '2wk', key: 'last15Days', cache: cacheKeys.last15Days, labelType: labelType.withYear },
+        // { label: '30d', key: 'last30Days', cache: cacheKeys.last30Days, labelType: labelType.withYear },
+        // { label: '90d', key: 'last90Days', cache: cacheKeys.last90Days, labelType: labelType.withYear },
     ]
     $scope.rangeSelection = rangeSelectionOptions;
     $scope.rangeSelected = defaultRangeSelected;
