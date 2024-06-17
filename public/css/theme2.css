@@ -1039,6 +1039,7 @@ a.v_highlight_more {
   margin: 0%;
   font-size: 30px;
   background-color: transparent;
+  border: 0px;
 }
 
 .picker-calendar + ul {

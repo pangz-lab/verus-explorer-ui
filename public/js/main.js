@@ -1,22 +1,37 @@
 // Source: public/src/js/app.js
-var testnet = false;
-var netSymbol = testnet ? 'VRSCTEST' : 'VRSC';
+const isContainerized = true;
+const isApiBound = false;
+
+//Remove this. check usage
+const testnet = false;
+const netSymbol = 'VRSC';
 const chainName = "Verus";
 const firstBlockStartDate = new Date(2018, 5, 20);
 const allowedSearchPattern = /^[a-zA-Z0-9@]+$/;
-
-// const apiServer = 'https://wip-ws-insight.pangz.tech'; //2220 ws and express
-// const wsServer = 'wss://wip-ws-insight.pangz.tech/verus/wss'; //2220 ws and express
-
-const apiServer = 'http://localhost:2220'; //2220 ws and express
-const wsServer = 'ws://localhost:2220/verus/wss'; //2220 ws and express
-
 const wsPingServerInSec = 55;
+
+var apiServer = isContainerized? '{{ENV_API_SERVER}}' : 'https://wip-ws-insight.pangz.tech'; //2220 ws and express
+var apiToken = isContainerized? '{{ENV_API_TOKEN}}' : 'Basic dmVydXNkZXNrdG9wOnk4RDZZWGhBRms2alNoSGlSQktBZ1JDeDB0OVpkTWYyUzNLMG83ek44U28="';
+var wsServer = isContainerized? '{{ENV_WS_SERVER}}' : 'wss://wip-ws-insight.pangz.tech/verus/wss'; //2220 ws and express
+
+// if(isContainerized) {
+//   //Containerized
+//   apiServer = isContainerized? '{{ENV_API_SERVER}}' : ;
+//   apiToken = isContainerized? '{{ENV_API_TOKEN}}' : ;
+//   wsServer = isContainerized? '{{ENV_WS_SERVER}}' : ;
+// } 
+
+if (isApiBound) {
+  apiServer = 'http://localhost:2220'; //2220 ws and express
+  wsServer = 'ws://localhost:2220/verus/wss'; //2220 ws and express
+}
+
+// const apiServer = 'http://localhost:2220'; //2220 ws and express
+// const wsServer = 'ws://localhost:2220/verus/wss'; //2220 ws and express
 
 // Need to secure the API token. Better put the API behind a gateway or a reverse proxy
 // const coinpaprikaEndpointKey = "vrsc-verus-coin";
 // const coinPaprikaBaseUri = 'https://api.coinpaprika.com/v1';
-const apiToken =  testnet ? '' : 'Basic dmVydXNkZXNrdG9wOnk4RDZZWGhBRms2alNoSGlSQktBZ1JDeDB0OVpkTWYyUzNLMG83ek44U28="';
 const localStore = {
   status: { key: netSymbol + ':vexp_stats', ttl: 86400 },
   latestBlocks: { key: netSymbol + ':vexp_blocks_received', ttl: 86400 },
