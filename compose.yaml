@@ -1,0 +1,9 @@
+version: "3.9"
+services:
+  verus-explorer-ui:
+    image: pangzlab/verus-explorer-ui
+    container_name: verus-explorer-ui
+    env_file:
+      - .env
+    ports:
+      - "3331:80"
