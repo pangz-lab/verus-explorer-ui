@@ -66,6 +66,10 @@ msgstr "Блок"
 msgid "Block Reward"
 msgstr "Награда за блок"
 
+#: public/views/block.html
+msgid "Block Generation"
+msgstr "Генерация блока"
+
 #: public/views/block_list.html:33 public/views/block_list.html:8
 #: public/views/dummy-translations.html:1 public/views/status.html:92
 msgid "Blocks"
@@ -556,3 +560,12 @@ msgstr "дата"
 #: public/views/block_list.html:9
 msgid "mined on:"
 msgstr "дата:"
+
+#~ msgid "Help"
+#~ msgstr "Помощь"
+
+#~ msgid "Explorer Status"
+#~ msgstr "Статус исследователя"
+
+#~ msgid "Data Visualization"
+#~ msgstr "Визуализация данных"

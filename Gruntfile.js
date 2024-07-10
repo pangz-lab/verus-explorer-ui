@@ -73,6 +73,7 @@ module.exports = function(grunt) {
       },
       main: {
         src: [
+          'public/src/js/app_conf.js',
           'public/src/js/app.js',
           'public/src/js/controllers/*.js',
           'public/src/js/controllers/charts/*.js',

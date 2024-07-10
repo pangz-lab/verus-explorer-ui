@@ -1,106 +1,65 @@
 <div data-ng-include src="'views/includes/connection.html'"></div>
 <section>
-  <div class="page-header">
-    <h1 translate>Help section</h1>
+  <!-- <div class="page-header">
+    <h1 translate>Help section Te</h1>
+  </div> -->
+  <div class="row">
+    <div class="col-xs-12 col-md-12">
+        <h1 translate>Help</h1>
+    </div>
   </div>
+
   <div id="help" class="row">
-
-    
-      <h2 translate>API commands</h2>
-      <table class="table" data-ng-controller="StatusController" data-ng-init="getSync()">
-        <tbody>
-          <tr>
-            <td translate><b>View Address</b></td>
-            <td class="text-right ellipsis"><a href="api/address/RP9tNCn6LHEYS7Yrp3NVuSu7DJZjAW6GyT">https://insight.verus.io/api/address/RP9tNCn6LHEYS7Yrp3NVuSu7DJZjAW6GyT</a></td>
-          </tr>
-          <tr>
-            <td translate><b>View Address Balance</b></td>
-            <td class="text-right ellipsis"><a href="api/address/RP9tNCn6LHEYS7Yrp3NVuSu7DJZjAW6GyT/balance">https://insight.verus.io/api/address/RP9tNCn6LHEYS7Yrp3NVuSu7DJZjAW6GyT/balance</a></td>
-          </tr>
-          <tr>
-            <td translate><b>View Address unconfirmed Balance</b></td>
-            <td class="text-right ellipsis"><a href="api/address/RP9tNCn6LHEYS7Yrp3NVuSu7DJZjAW6GyT/unconfirmedBalance">https://insight.verus.io/api/address/RP9tNCn6LHEYS7Yrp3NVuSu7DJZjAW6GyT/unconfirmedBalance</a></td>
-          </tr>
-          <tr>
-            <td translate><b>View Address Total Received</b></td>
-            <td class="text-right ellipsis"><a href="api/address/RP9tNCn6LHEYS7Yrp3NVuSu7DJZjAW6GyT/totalReceived">https://insight.verus.io/api/address/RP9tNCn6LHEYS7Yrp3NVuSu7DJZjAW6GyT/TotalReceived</a></td>
-          </tr>
-          <tr>
-            <td translate><b>View Address Total Sent</b></td>
-            <td class="text-right ellipsis"><a href="api/address/RP9tNCn6LHEYS7Yrp3NVuSu7DJZjAW6GyT/totalSent">https://insight.verus.io/api/address/RP9tNCn6LHEYS7Yrp3NVuSu7DJZjAW6GyT/totalSent</a></td>
-          </tr>
-          <tr>
-            <td translate><b>View Address UTXOs</b></td>
-            <td class="text-right ellipsis"><a href="api/address/RP9tNCn6LHEYS7Yrp3NVuSu7DJZjAW6GyT/utxo">https://insight.verus.io/api/address/RP9tNCn6LHEYS7Yrp3NVuSu7DJZjAW6GyT/utxo</a></td>
-          </tr>
-          <tr>
-            <td translate><b>View Address transactions</b></td>
-            <td class="text-right ellipsis"><a href="api/address/RP9tNCn6LHEYS7Yrp3NVuSu7DJZjAW6GyT/txs">https://insight.verus.io/api/address/RP9tNCn6LHEYS7Yrp3NVuSu7DJZjAW6GyT/txs</a></td>
-          </tr>
-          <tr>
-            <td translate><b>View Transaction details</b></td>
-            <td class="text-right"><a href="api/tx/60678d67f25f21014c2f6b8fb3948ea3a2522f76339315c81b7a47f9ce7d5d63">https://insight.verus.io/api/tx/106f....8c30c59b033b</a></td>
-          </tr>
-          <tr>
-            <td translate><b>Get Block</b></td>
-            <td class="text-right"><a href="api/block/0a5cde67e52e9d855f5e22928a730801e2d70ad7606ad767e16d00f2d546115b">https://insight.verus.io/api/block/block-hash</a></td>
-          </tr>
-          <tr>
-            <td translate><b>getdifficulty:</b><br> Returns the current difficulty.</td>
-            <td class="text-right"><a href="api/getdifficulty">https://insight.verus.io/api/getdifficulty</a></td>
-          </tr>
-          <tr>
-            <td translate><b>getblockcount:</b><br> Returns the current block index. </td>
-            <td class="text-right"><a href="api/getblockcount">https://insight.verus.io/api/getblockcount</a></td>
-          </tr>
-          <tr>
-            <td translate><b>getblockhash [index]:</b><br> Returns the hash of the block at Number, index 0 is the genesis block.</td>
-            <td class="text-right"><a href="api/getblockhash?index=1337">https://insight.verus.io/api/getblockhash?index=1337</a></td>
-          </tr>
-          <tr>
-            <td translate><b>getblock [hash]:</b><br> Returns information about the block with the given hash. </td>
-            <td class="text-right"><a href="/api/getblock?hash=0000000000e1373d9c645c5a77376fe36b69c77180962414ebbf2e63c115d85e">https://insight.verus.io/api/getblock?hash=00000000..180962414ebbf2e63c115d85e</a></td>
-          </tr>
-          <tr>
-            <td translate><b>getnetworkhashps:</b><br> Returns the current network hashrate. (hash/s)</td>
-            <td class="text-right"><a href="/api/getnetworkhashps">https://insight.verus.io/api/getnetworkhashps</a></td>
-          </tr>
-        </tbody>
-      </table>
-
-      <h2 translate>Website Links</h2>
-      <table class="table" style="table-layout: fixed" >
-
-        <tbody>
-          <tr>
-            <td translate>Main Website Technology</td>
-            <td class="text-right ellipsis"><a href="https://verus.io/technology">https://verus.io/technology</a></td>
-          </tr>
-          <tr>
-            <td translate>Verus Wiki</td>
-            <td class="text-right ellipsis"><a href="https://wiki.verus.io/#!index.md">https://wiki.verus.io/#!index.md</a></td>
-          </tr>
-        </tbody>
-      </table>
-
-      <h2 translate>Transaction information</h2>
-      <table class="table" style="table-layout: fixed" >
-
-        <tbody>
-          <tr>
-            <td translate>Reserve Transfer</td>
-            <td class="text-right ellipsis">This transaction contacins a Verus currency transfer</td>
-          </tr>
-          <tr>
-            <td translate>Cross Chain Export</td>
-            <td class="text-right ellipsis">This transaction is a transfer to a Verus currency or PBAAS chain</td>
-          </tr>
-          <tr>
-            <td translate>PBAAS Notarization</td>
-            <td class="text-right ellipsis">This transaction is a notarisation across a chain to imute the chains together</td>
-          </tr>
-        </tbody>
-      </table>
-   
+    <div class="col-xs-12 col-md-12">
+        <h2 translate>API commands</h2>
+        
+        <table class="table" data-ng-controller="HelpController">
+          <tbody>
+  
+            <tr data-ng-repeat="api in apis">
+              <td translate>
+                <b>{{api.title}}</b>
+              </td>
+              <td class="text-right ellipsis">
+                <a href="{{api.url}}">{{api.urlText}}</a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+  
+        <h2 translate>Website Links</h2>
+        <table class="table" style="table-layout: fixed" >
+  
+          <tbody>
+            <tr>
+              <td translate>Main Website Technology</td>
+              <td class="text-right ellipsis"><a href="https://verus.io/technology">https://verus.io/technology</a></td>
+            </tr>
+            <tr>
+              <td translate>Verus Wiki</td>
+              <td class="text-right ellipsis"><a href="https://wiki.verus.io/#!index.md">https://wiki.verus.io/#!index.md</a></td>
+            </tr>
+          </tbody>
+        </table>
+  
+        <h2 translate>Transaction information</h2>
+        <table class="table" style="table-layout: fixed" >
+  
+          <tbody>
+            <tr>
+              <td translate>Reserve Transfer</td>
+              <td class="text-right ellipsis">This transaction contacins a Verus currency transfer</td>
+            </tr>
+            <tr>
+              <td translate>Cross Chain Export</td>
+              <td class="text-right ellipsis">This transaction is a transfer to a Verus currency or PBAAS chain</td>
+            </tr>
+            <tr>
+              <td translate>PBaaS Notarization</td>
+              <td class="text-right ellipsis">This transaction is a notarisation across a chain to imute the chains together</td>
+            </tr>
+          </tbody>
+        </table>
+    </div>
   </div>
 </section>

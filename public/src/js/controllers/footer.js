@@ -31,11 +31,7 @@ angular.module('insight.system')
         }
 
         var _getVersion = function () {
-            return '0.0.1';
-            // Version.get({},
-            //     function (res) {
-            //         $scope.version = res.version;
-            //     });
+            return apiVersion;
         };
 
         $scope.version = _getVersion();

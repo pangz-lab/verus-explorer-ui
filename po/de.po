@@ -80,6 +80,10 @@ msgstr "Block"
 msgid "Block Reward"
 msgstr "Belohnung"
 
+#: public/views/block.html
+msgid "Block Generation"
+msgstr "Blockgenerierung"
+
 #: public/views/block_list.html public/views/dummy-translations.html
 #: public/views/status.html
 msgid "Blocks"
@@ -472,3 +476,15 @@ msgstr "vom:"
 
 msgid "Waiting for blocks"
 msgstr "Warte auf Blöcke"
+
+#~ msgid "Charts"
+#~ msgstr "Diagramme"
+
+#~ msgid "Help"
+#~ msgstr "Hilfe"
+
+#~ msgid "Explorer Status"
+#~ msgstr "Explorer Status"
+
+#~ msgid "Data Visualization"
+#~ msgstr "Datenvisualisierung"

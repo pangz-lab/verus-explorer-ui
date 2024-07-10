@@ -86,6 +86,10 @@ msgid "Block"
 msgstr "ブロック"
 
 #: public/views/block.html
+msgid "Block Generation"
+msgstr "ブロック生成"
+
+#: public/views/block.html
 msgid "Block Reward"
 msgstr "ブロック報酬"
 
@@ -128,7 +132,7 @@ msgstr "検証数"
 
 #: public/views/includes/header.html
 msgid "Conn"
-msgstr "接続数"
+msgstr "ｺﾈｸｼｮﾝ"
 
 #: public/views/status.html
 msgid "Connections to other nodes"
@@ -186,7 +190,7 @@ msgstr "シリアライズデータのハッシュ値"
 #: public/views/index.html public/views/status.html
 #: public/views/includes/header.html
 msgid "Height"
-msgstr "ブロック高"
+msgstr "高"
 
 #: public/views/transaction.html public/views/transaction/tx.html
 msgid "Included in Block"
@@ -615,3 +619,15 @@ msgstr "採掘日時:"
 
 #~ msgid "Waiting for blocks <span class=\"loader-gif\"></span>"
 #~ msgstr "ブロックを待っています <span class=\"loader-gif\"></span>"
+
+#~ msgid "Charts"
+#~ msgstr "チャート"
+
+#~ msgid "Help"
+#~ msgstr "ヘルプ"
+
+#~ msgid "Explorer Status"
+#~ msgstr "エクスプローラのステータス"
+
+#~ msgid "Data Visualization"
+#~ msgstr "データ可視化"
