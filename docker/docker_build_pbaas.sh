@@ -6,4 +6,4 @@ cd ../
 ./customize.sh pbaas/$PBAAS_FOLDER
 
 cd docker
-./docker_build.sh pbaas.$PBAAS_FOLDER.$VER
+./docker_build.sh $VER-pbaas.$PBAAS_FOLDER
