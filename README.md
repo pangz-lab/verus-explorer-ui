@@ -41,16 +41,16 @@ grunt
 ```
 
 ## UI and Config Customization
-- There are 4 main files to update if there are customization relative to chain
+- There are 4 main files to update if there are customization needed relative to chain.
 1. `app_conf.js` - configuration
 2. `common.css` - styling
 2. `theme2.scss` - styling for dark or light theme
 3. `index.html` - (use only for including specific font style from external source)
 
-- You mostly need these 3 files when you add update to UI and pbaas configs.
+- You only need these 4 files when you update to UIs and pbaas configs.
 - These files are located in `custom` folder.
-- Currently only there are 2 cofigurations supported, `VRSC` and `vARRR`.
-- New chain can create their own folder and add the necessary changes and raise the PR
+- Currently there are 2 cofigurations supported, `VRSC` and `vARRR`.
+- New chain can create their own folder and add the necessary changes and raise a PR
 - Once created, you can run the following
 ```bash
 # ./customize.sh [folder name]
@@ -62,7 +62,7 @@ grunt
 
 # Docker
 ## Prerequisite:
-- [Docker](https://docs.docker.com/engine/install/) - `v27.0.3`
+- [Docker](https://docs.docker.com/engine/install/) - `v27.0.3+`
 
 ## Creating your own docker image
 - Creating the image requires the development installation(see `Development Prerequisites`).
