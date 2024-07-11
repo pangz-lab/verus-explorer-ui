@@ -27,7 +27,7 @@ angular.module('insight.transactions')
         };
 
         var _processTX = function (tx, currentBlockHeight) {
-            console.log("VIN >>");
+            // console.log("VIN >>");
             txVinTotalValue = 0;
             txVoutTotalValue = 0;
             addressCommitments = {};

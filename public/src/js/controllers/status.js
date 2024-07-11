@@ -69,8 +69,8 @@ angular
             VerusExplorerApi
                 .getBlockchainStatus()
                 .then(function (statusResult) {
-                    console.log("statusResult >>>");
-                    console.log(statusResult);
+                    // console.log("statusResult >>>");
+                    // console.log(statusResult);
                     if(statusResult.error 
                         && (statusResult.data.status === undefined || statusResult.data.status.error) 
                         && (statusResult.data.nodeState === undefined || statusResult.data.nodeState.error)) { return; }

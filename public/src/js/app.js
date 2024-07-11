@@ -1,7 +1,4 @@
 'use strict';
-// Need to secure the API token. Better put the API behind a gateway or a reverse proxy
-// const coinpaprikaEndpointKey = "vrsc-verus-coin";
-// const coinPaprikaBaseUri = 'https://api.coinpaprika.com/v1';
 const localStore = {
   status: { key: netSymbol + ':vexp_stats', ttl: 86400 },
   latestBlocks: { key: netSymbol + ':vexp_blocks_received', ttl: 86400 },

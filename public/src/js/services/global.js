@@ -2,15 +2,6 @@
 
 //Global service for global variables
 angular.module('insight.system')
-// .factory('Global', [
-//     function () {
-//         return {};
-//     }
-// ])
-// .factory('Version',
-//     function ($resource) {
-//         return $resource(window.apiPrefix + '/version');
-//     })
 .service('UnitConversionService', function () {
     this.convert = function (value, unitSuffix) {
         const units = ['-', 'K', 'M', 'G', 'T', 'P', 'E', 'Z', 'Y'];

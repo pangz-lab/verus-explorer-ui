@@ -8,6 +8,9 @@ angular
         var lastReceivedTime = new Date().getTime();
         var wsChannelObject = connectToWsServer();
         const wsMessageTopic = 'wsmessage';
+        function conslog(m) {
+            //console.log(m);
+        }
 
         this.getMessageTopic = function() {
             return wsMessageTopic;
@@ -18,34 +21,34 @@ angular
                 
                 removeEventListeners();
 
-                console.log('Closing the current connection ...');
+                conslog('Closing the current connection ...');
                 wsChannelObject.close();
                 
-                console.log('Opening a new one ...');
+                conslog('Opening a new one ...');
                 wsChannelObject = connectToWsServer();
                 return;
             }
 
             // If last received is less than wsPingServerInSec seconds, don't ping
             if(getLastReceivedInSeconds() > wsPingServerInSec) {
-                console.log("pinging server")
+                conslog("pinging server")
                 wsChannelObject.send("ping from client");
                 return;
             }
 
-            console.log("will send ping later to save bandwidth...");
+            conslog("will send ping later to save bandwidth...");
         }, wsPingServerInSec * 1000);
 
         function getLastReceivedInSeconds() {
             const currentTime = new Date().getTime();
             const elapsedTimeInSeconds = (currentTime - lastReceivedTime) / 1000;
-            console.log("Last data received : " + elapsedTimeInSeconds + ' seconds ago');
+            conslog("Last data received : " + elapsedTimeInSeconds + ' seconds ago');
             return elapsedTimeInSeconds;
         }
 
         function removeEventListeners() {
             if(wsChannelObject == undefined) { return; }
-            console.log('Removing event listeners...');
+            conslog('Removing event listeners...');
             wsChannelObject.removeEventListener('message', messageEventListener);
             wsChannelObject.removeEventListener('open', openEventListener);
             wsChannelObject.removeEventListener('ping', pingEventListener);
@@ -53,20 +56,20 @@ angular
 
         function messageEventListener (event) {
             lastReceivedTime = new Date().getTime();
-            // console.log('Message from server:', event.data);
+            // conslog('Message from server:', event.data);
             var data = event.data.toString();
-            console.log(event);
-            console.log(data);
+            conslog(event);
+            conslog(data);
             data = JSON.parse(data);
             if(data.status != undefined) { $rootScope.$broadcast(wsMessageTopic, data); }
         };
         
         function openEventListener (event) {
-            console.log('Connected to WebSocket server');
+            conslog('Connected to WebSocket server');
         };
         
         function pingEventListener (event) {
-            console.log('Server is pinging us.');
+            conslog('Server is pinging us.');
         };
 
         function connectToWsServer() {
@@ -78,7 +81,7 @@ angular
             socket.addEventListener('ping', pingEventListener);
             socket.addEventListener('message', messageEventListener);
             socket.addEventListener('close', function close() {
-                console.log('>> WebSocket service connection closed ...');
+                conslog('>> WebSocket service connection closed ...');
             });
 
             return socket;

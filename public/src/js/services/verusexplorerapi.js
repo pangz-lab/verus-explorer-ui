@@ -7,6 +7,7 @@ angular.module('insight.verusexplorerapi')
         $http,
         $q
     ) {
+        const version = 'v1';
         function createPayload(endpoint, params, method) {
             const requestMethod = method == undefined ? "POST" : method;
             return {
@@ -15,9 +16,7 @@ angular.module('insight.verusexplorerapi')
                 data: { "params": params },
                 headers: {
                     'Content-Type': 'application/json',
-                    // "Authorization": apiToken,
-                    // Remove this for local api, use the authorization value instead
-                    'x-api-key': '12345'
+                    'x-api-key': apiToken
                 }
             }
         }
@@ -36,65 +35,71 @@ angular.module('insight.verusexplorerapi')
         };
 
         function getGeneratedBlocks(heightOrTxArray) {
-            return sendRequest(createPayload('/api/blocks/generated', heightOrTxArray));
+            return sendRequest(createPayload('/api/'+version+'/blocks/generated', heightOrTxArray));
         };
 
         function getBlockHashesByRange(start, end) {
-            return sendRequest(createPayload('/api/block/hashes', [start, end]));
+            return sendRequest(createPayload('/api/'+version+'/block/hashes', [start, end]));
         };
 
         function getBlockInfo(blockHeightOrHash) {
-            return sendRequest(createPayload("/api/block/" + blockHeightOrHash + "/info", [], "GET"));
+            return sendRequest(createPayload('/api/'+version+'/block/' + blockHeightOrHash + "/info", [], "GET"));
         };
 
         function getBlockchainStatus() {
-            return sendRequest(createPayload('/api/blockchain/status', [], "GET"));
+            return sendRequest(createPayload('/api/'+version+'/blockchain/status', [], "GET"));
         };
 
         function getBlockchainHeight() {
-            return sendRequest(createPayload('/api/blockchain/height', [], "GET"));
+            return sendRequest(createPayload('/api/'+version+'/blockchain/height', [], "GET"));
         };
 
         function getBlockchainInfo() {
-            return sendRequest(createPayload('/api/blockchain/info', [], "GET"));
+            return sendRequest(createPayload('/api/'+version+'/blockchain/info', [], "GET"));
         };
 
         function getMiningInfo() {
-            return sendRequest(createPayload('/api/blockchain/mining/info', [], "GET"));
+            return sendRequest(createPayload('/api/'+version+'/blockchain/mining/info', [], "GET"));
         };
 
         function getTransactionInfo(txHash) {
-            return sendRequest(createPayload('/api/transaction/' + txHash + '/info', [], "GET"));
+            return sendRequest(createPayload('/api/'+version+'/transaction/' + txHash + '/info', [], "GET"));
         };
 
         function getIdentity(identityName, height) {
             var h = (height == undefined) ? '' : '?height=' + height;
-            return sendRequest(createPayload('/api/identity/' + identityName + '/info' + h, [], 'GET'));
+            return sendRequest(createPayload('/api/'+version+'/identity/' + identityName + '/info' + h, [], 'GET'));
         };
 
         function getAddressTxIds(address) {
-            return sendRequest(createPayload('/api/address/' + address + '/txids', [], "GET"));
+            return sendRequest(createPayload('/api/'+version+'/address/' + address + '/txids', [], "GET"));
         };
 
         function getAddressBalance(address) {
-            return sendRequest(createPayload('/api/address/' + address + '/balance', [], "GET"));
+            return sendRequest(createPayload('/api/'+version+'/address/' + address + '/balance', [], "GET"));
         };
 
         function getChartData(type, range) {
             const ranges = Object.keys(localStore.charts.keys);
             if (!ranges.includes(range)) { return Promise.resolve(undefined); }
-            return sendRequest(createPayload('/api/chart/' + type + '/?range=' + range, [], "GET"));
+            return sendRequest(createPayload('/api/'+version+'/chart/' + type + '/?range=' + range, [], "GET"));
         };
         
         function getAggregatorMarketData(source) {
-            return sendRequest(createPayload('/api/a/' + source + '/coin/market', [], "GET"));
+            return sendRequest(createPayload('/api/'+version+'/a/' + source + '/coin/market', [], "GET"));
         };
 
         function search(query) {
-            return sendRequest(createPayload('/api/search/?q=' + query, [], "GET"));
+            return sendRequest(createPayload('/api/'+version+'/search/?q=' + query, [], "GET"));
         };
 
         return {
+            createPayload: function (endpoint, params, method) {
+                return createPayload(endpoint, params, method);
+            },
+            sendRequest: function (payload) {
+                return sendRequest(payload);
+            },
             getGeneratedBlocks: function (heightOrTxArray) {
                 return getGeneratedBlocks(heightOrTxArray);
             },

@@ -15,7 +15,7 @@ angular
 
         const wsTopic = VerusWssClient.getMessageTopic();
         $scope.$on(wsTopic, function(_, rawEventData) {
-            console.log("Getting message from main listener [INDEXCTRL]...", rawEventData)
+            // console.log("Getting message from main listener [INDEXCTRL]...", rawEventData)
             if( rawEventData.latestBlock.error
                 || rawEventData.latestTxs.error
                 || rawEventData.nodeState.error

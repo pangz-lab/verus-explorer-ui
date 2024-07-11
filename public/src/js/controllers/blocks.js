@@ -228,7 +228,7 @@ angular
                 $scope.loading = false;
                 return;
             }
-            console.log("added more to list >>");
+            // console.log("added more to list >>");
             $scope.lastStartIndex = $scope.lastStartIndex - MAX_HASH_PER_LOAD;
 
             _createBlockSummary(

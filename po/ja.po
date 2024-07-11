@@ -132,7 +132,7 @@ msgstr "検証数"
 
 #: public/views/includes/header.html
 msgid "Conn"
-msgstr "ｺﾈｸｼｮﾝ"
+msgstr "ｺﾈｸ"
 
 #: public/views/status.html
 msgid "Connections to other nodes"

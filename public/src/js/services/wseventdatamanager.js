@@ -44,9 +44,7 @@ angular
                 txs: d.txs
             });
             currentSize += 1;
-            if(resultBlocks[MAX_BLOCKS_COUNT] != undefined) {
-                console.log("before BLOCK POP");
-                console.log(resultBlocks);
+            if(resultBlocks[MAX_BLOCKS_COUNT] != undefined) {                
                 resultBlocks.pop();
             }
         }
@@ -83,8 +81,6 @@ angular
             });
 
             if(resultTxs[MAX_TX_COUNT] != undefined) {
-                console.log("before POP");
-                console.log(resultTxs);
                 resultTxs.pop();
             }
         }

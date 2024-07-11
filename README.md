@@ -1,11 +1,13 @@
 # Verus Explorer UI
 This is a new Verus Coin Web Explorer.
-UI is originally based from `insight-ui-komodo` redesigned to work on the new VerusExplorer API.
+UI is originally based from `insight-ui-komodo` redesigned to work for the new VerusExplorer API.
+
 # Prerequisite:
 1. `nodejs` - `v20.4`
 2. `npm` - `v9.7`
 3. `grunt-cli` - `v1.4.3`
 3. `bower` - `v1.8.14`
+
 > Lower version of `grunt-cli` and `bower` might also work but not 100% guaranteed.
 # Development
 ```bash
@@ -70,4 +72,19 @@ Execute the script if you want to see the UI running independently.
 ./customize.sh vrsc
 # or 
 ./customize.sh pbaas/varrr
+```
+
+
+# Docker
+## Prerequisite:
+- [Docker](https://docs.docker.com/engine/install/) - `v27.0.3`
+
+## Creating your own docker image
+- Creating the image requires the development installation(see `Development Prerequisites`).
+- The script will create a release build first then create the image.
+### Setup
+- Go to `docker` folder.
+- Run the following.
+```bash
+./docker_build.sh <version>
 ```
