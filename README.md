@@ -40,25 +40,11 @@ Leave it running while making your changes.
 grunt
 ```
 
-# Extras
-## Optional
-Execute the script if you want to see the UI running independently.
-<br>This is an optional setup used only during the development.
-<br>Feel free to use other alternatives.
-
-<b>Requirement</b>
-- [`php`](https://www.php.net/manual/en/features.commandline.webserver.php) - `v5.4+`
-
-<br><i>Check `verus-explorer-setup` repo to run the necessary setup.</i>
-
-```bash
-./start_server.sh
-```
-
 ## UI and Config Customization
-- There are 3 main files to update if there are customization relative to chain
-1. `app.js` - configuration
+- There are 4 main files to update if there are customization relative to chain
+1. `app_conf.js` - configuration
 2. `common.css` - styling
+2. `theme2.scss` - styling for dark or light theme
 3. `index.html` - (use only for including specific font style from external source)
 
 - You mostly need these 3 files when you add update to UI and pbaas configs.
@@ -74,7 +60,6 @@ Execute the script if you want to see the UI running independently.
 ./customize.sh pbaas/varrr
 ```
 
-
 # Docker
 ## Prerequisite:
 - [Docker](https://docs.docker.com/engine/install/) - `v27.0.3`
@@ -87,4 +72,19 @@ Execute the script if you want to see the UI running independently.
 - Run the following.
 ```bash
 ./docker_build.sh <version>
+```
+
+# Extras
+## Optional
+Execute the script if you want to see the UI running independently.
+<br>This is an optional setup used only during the development.
+<br>Feel free to use other alternatives.
+
+<b>Requirement</b>
+- [`php`](https://www.php.net/manual/en/features.commandline.webserver.php) - `v5.4+`
+
+<br><i>Check `verus-explorer-setup` repo to run the necessary setup.</i>
+
+```bash
+./start_server.sh
 ```

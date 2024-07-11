@@ -11,4 +11,4 @@ cp -p $SOURCE/index.html $DEST_ROOT
 cp -p $SOURCE/*.css $DEST_CSS1
 cp -p $SOURCE/*.png $DEST_IMG1
 cp -p $SOURCE/icons/favicon.ico $DEST_ICON
-cp -p $SOURCE/app.js $DEST_APP
+cp -p $SOURCE/app_conf.js $DEST_APP
