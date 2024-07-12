@@ -2,7 +2,7 @@ const currentApiVersion = 'v1.0.0'
 const currentUiVersion = 'v1.0.0'
 const netSymbol = 'vARRR';
 const chainName = "vARRR";
-const firstBlockStartDate = new Date(2024, 3, 3, 6, 47);//GMT
+const firstBlockStartDate = new Date(2024, 3, 3);//GMT
 const isApiBound = false;
 var enableContainer = '{{ENV_ENABLE_CONTAINER}}';
 
