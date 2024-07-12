@@ -28,4 +28,4 @@ mv dist $BASE_FOLDER/
 cd $BASE_FOLDER
 
 echo "Building $IMAGE_OWNER/$IMAGE_NAME image with version: $VERSION"
-sudo docker build --no-cache -t $IMAGE_OWNER/$IMAGE_NAME:latest -t $IMAGE_OWNER/$IMAGE_NAME:$VERSION .
+sudo docker build --no-cache -t $IMAGE_OWNER/$IMAGE_NAME:$VERSION .

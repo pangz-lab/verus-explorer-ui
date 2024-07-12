@@ -9,7 +9,7 @@ angular
         VerusExplorerApi
     ) {
         const host = apiServer;
-        const address = "RP9tNCn6LHEYS7Yrp3NVuSu7DJZjAW6GyT";
+        const address = "R9HC5WtHbpoa51NCUAz86XLCmGTbkf45NT";
         const tx = "57fc2c458fd27ab212e23feebcd14f2f2a9de16bff413d8e11402dfdb0c5bdcc";
         const ver = 'v1';
 
@@ -31,10 +31,10 @@ angular
             {"title": "Blockchain Status", "url": "/api/" + ver + "/blockchain/status", "urlText": host + "/api/" + ver + "/blockchain/status"},
             {"title": "Blockchain Info", "url": "/api/" + ver + "/blockchain/info", "urlText": host + "/api/" + ver + "/blockchain/info"},
             {"title": "Blockchain Mining Info", "url": "/api/" + ver + "/blockchain/mining/info", "urlText": host + "/api/" + ver + "/blockchain/mining/info"},
-            {"title": "Block Info", "url": "/api/" + ver + "/block/3000000/info", "urlText": host + "/api/" + ver + "/block/3000000/info"},
+            {"title": "Block Info", "url": "/api/" + ver + "/block/1/info", "urlText": host + "/api/" + ver + "/block/1/info"},
             {"title": "Address Balance", "url": "/api/" + ver + "/address/"+address+"/balance", "urlText": host + "/api/" + ver + "/address/"+address+"/balance"},
-            {"title": "Address Tx IDs", "url": "/api/" + ver + "/address/"+address+"/txids?maxHeight=3000000", "urlText": host + "/api/" + ver + "/address/"+address+"/txids?maxHeight=3000000"},
-            {"title": "Identity Info", "url": "/api/" + ver + "/identity/Verus@/info?height=3000000", "urlText": host + "/api/" + ver + "/identity/Verus@/info?height=3000000"},
+            {"title": "Address Tx IDs", "url": "/api/" + ver + "/address/"+address+"/txids?maxHeight=1", "urlText": host + "/api/" + ver + "/address/"+address+"/txids?maxHeight=1"},
+            {"title": "Identity Info", "url": "/api/" + ver + "/identity/Verus@/info?height=1", "urlText": host + "/api/" + ver + "/identity/Verus@/info?height=1"},
             {"title": "Transaction Info", "url": "/api/" + ver + "/transaction/"+tx+"/info", "urlText": host + "/api/" + ver + "/transaction/"+tx+"/info"},
         ];
 

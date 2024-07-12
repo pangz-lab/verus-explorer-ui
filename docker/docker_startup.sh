@@ -1,7 +1,10 @@
 #!/bin/sh
 BASE_DIR=/usr/share/nginx/html
 MAIN_CONFIG_FILE=main.min.js
-MAIN_TEMP_CONFIG_FILE=main.min.js.template
+MAIN_BASE_CONFIG_FILE=main.min.js.template
+MAIN_TEMP_CONFIG_FILE=main.min.js.template.tmp
+
+cp $BASE_DIR/js/$MAIN_BASE_CONFIG_FILE $BASE_DIR/js/$MAIN_TEMP_CONFIG_FILE
 
 # Replace placeholders with environment variables
 sed -i "s|{{ENV_ENABLE_CONTAINER}}|true|g" $BASE_DIR/js/$MAIN_TEMP_CONFIG_FILE

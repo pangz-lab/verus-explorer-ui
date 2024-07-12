@@ -8,5 +8,7 @@ COPY ./nginx.conf /etc/nginx/nginx.conf
 
 RUN chmod +x /usr/local/bin/startup.sh
 
+EXPOSE 80
+
 # Override the default command
 CMD ["sh", "-c", "/usr/local/bin/startup.sh && nginx -g 'daemon off;'"]

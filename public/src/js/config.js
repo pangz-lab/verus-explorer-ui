@@ -62,6 +62,21 @@ angular.module('insight')
   .run(function($rootScope, $route, $location, $routeParams, $anchorScroll, ngProgress, gettextCatalog, amMoment) {
     gettextCatalog.currentLanguage = defaultLanguage;
     amMoment.changeLocale(defaultLanguage);
+    const protocol = $location.protocol();
+    const host = $location.host();
+    const port = $location.port();
+
+    var baseUrl = protocol + '://' + host;
+    if ((protocol === 'http' && port !== 80) || (protocol === 'https' && port !== 443)) {
+      baseUrl += ':' + port;
+    }
+
+    $rootScope.chainInfo = {
+      baseUrl: baseUrl,
+      name: chainName,
+      symbol: netSymbol,
+    }
+
     $rootScope.$on('$routeChangeStart', function() {
       ngProgress.start();
     });

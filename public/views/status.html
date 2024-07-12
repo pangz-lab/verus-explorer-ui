@@ -101,21 +101,21 @@
                         <tr>
                             <td translate>Circulating Supply Transparent</td>
                             <td class="text-right">
-                                {{shortenValue(info.circulatingSupply)}} VRSC
+                                {{shortenValue(info.circulatingSupply)}} {{$root.chainInfo.symbol}}
                                 <span class="loader-gif" data-ng-if="!loaded"></span>
                             </td>
                         </tr>
                         <tr>
                             <td translate>Circulating Supply in Z addresses</td>
                             <td class="text-right">
-                                {{shortenValue(info.circulatingZSupply)}} VRSC
+                                {{shortenValue(info.circulatingZSupply)}} {{$root.chainInfo.symbol}}
                                 <span class="loader-gif" data-ng-if="!loaded"></span>
                             </td>
                         </tr>
                         <tr>
                             <td translate>Circulating Supply Total</td>
                             <td class="text-right">
-                                {{shortenValue(info.circulatingSupplyTotal)}} VRSC
+                                {{shortenValue(info.circulatingSupplyTotal)}} {{$root.chainInfo.symbol}}
                                 <span class="loader-gif" data-ng-if="!loaded"></span>
                             </td>
                         </tr>
