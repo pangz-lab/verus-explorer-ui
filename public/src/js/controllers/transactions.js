@@ -43,6 +43,12 @@ angular.module('insight.transactions')
                     : items[i].address;
 
                 txVinTotalValue += items[i].value;
+                items[i].crosschainReserverBalance = [];
+
+                if(items[i].vout != undefined) {
+                    const voutIndex = parseInt(items[i].vout);
+                     _getCrosschainReserveBalance(items[i], items[i].value, voutIndex, items[i].txid);
+                }
             });
 
             ///////////////////////////////////
@@ -117,6 +123,32 @@ angular.module('insight.transactions')
             }
         };
 
+        var _getCrosschainReserveBalance = function(vin, vinValue, voutIndex, txId) {
+            vin.crosschainReserverBalance = [];
+            VerusExplorerApi
+            .getTransactionInfo(txId)
+            .then(function (rawTx) {
+                const rawTxData = rawTx.data;
+                vin.crosschainReserverBalance = [];
+
+                if(vinValue != rawTxData.vout[voutIndex].value) { return; }
+                if(rawTxData.vout[voutIndex].scriptPubKey.reserve_balance == undefined) { return }
+                const rawScriptReserveBalance = rawTxData.vout[voutIndex].scriptPubKey.reserve_balance;
+                var crosschainReserveBalance = [];
+
+                const entries = Object.entries(rawScriptReserveBalance);
+                for (var i = 0; i < entries.length; i++) {
+                    crosschainReserveBalance.push({chain: entries[i][0], value: entries[i][1]});
+                }
+
+                vin.crosschainReserverBalance = crosschainReserveBalance;
+            })
+            .catch(function (e) {
+                // vin.crosschainReserverBalance = []
+                // Nothing to do here. Just accept the error and move on.
+            });
+        }
+
         var _getPbaasCommitment = function (scriptPubKey) {
             if (scriptPubKey.reserve_balance == undefined) {
                 return [];
@@ -136,6 +168,7 @@ angular.module('insight.transactions')
             if (scriptPubKey.identitycommitment) return scriptPubKey.identitycommitment;
             if (scriptPubKey.reservetransfer) return '💱 Reserve Transfer';
             if (scriptPubKey.pbaasNotarization) return '⛓ PBaaS Notarization';
+            if (scriptPubKey.finalizeNotarization) return '🔏 Finalize Notarization';
             return '';
         }
 

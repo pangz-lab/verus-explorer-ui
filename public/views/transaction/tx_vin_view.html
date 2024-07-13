@@ -20,8 +20,6 @@
 
     <!-- Simple view [VIN] -->
     <div data-ng-if="!itemsExpanded" data-ng-init="currentInNoExpanded=0; sizeInNoExpanded=5">
-
-
         <!-- <div class="panel panel-default" data-ng-repeat="vin in tx.vinSimple| startFrom:currentInNoExpanded*sizeInNoExpanded | limitTo:sizeInNoExpanded"> -->
         <div class="panel panel-default"
             data-ng-repeat="vin in tx.vin| startFrom:currentInNoExpanded*sizeInNoExpanded | limitTo:sizeInNoExpanded">
@@ -34,13 +32,18 @@
                 <div class="ellipsis">
                     <!-- <span data-ng-show="vin.notAddr">{{vin.addr}}</span> -->
                     <!-- <span data-ng-show="vin.notAddr">{{vin.uiWalletAddress}}</span>
-            <span class="text-muted" title="Current Verus Address" data-ng-show="vin.addr == $root.currentAddr">{{vin.uiWalletAddress}}</span>
-            <a href="address/{{vin.uiWalletAddress}}" data-ng-show="!vin.notAddr && vin.addr != $root.currentAddr">{{vin.uiWalletAddress}}</a> -->
+                <span class="text-muted" title="Current Verus Address" data-ng-show="vin.addr == $root.currentAddr">{{vin.uiWalletAddress}}</span>
+                <a href="address/{{vin.uiWalletAddress}}" data-ng-show="!vin.notAddr && vin.addr != $root.currentAddr">{{vin.uiWalletAddress}}</a> -->
                     <a href="address/{{vin.uiWalletAddress}}" data-ng-show="$root.currentAddr != vin.uiWalletAddress">{{vin.uiWalletAddress}}</a>
                     <span class="text-muted" data-ng-show="$root.currentAddr == vin.uiWalletAddress">{{vin.uiWalletAddress}}</span>
                 </div>
-                <div data-ng-show="vin.unconfirmedInput" class="text-danger"> <span
-                        class="glyphicon glyphicon-warning-sign"></span> (Input unconfirmed)</div>
+
+
+                <!-- Error states -->
+                <div data-ng-show="vin.unconfirmedInput" class="text-danger">
+                    <span class="glyphicon glyphicon-warning-sign"></span> 
+                    (Input unconfirmed)
+                </div>
                 <div data-ng-show="vin.dbError" class="text-danger">
                     <span class="glyphicon glyphicon-warning-sign"></span>
                     <span translate>Incoherence in levelDB detected:</span> {{vin.dbError}}
@@ -50,6 +53,20 @@
                     <span translate>Double spent attempt detected. From tx:</span>
                     <!-- <a href="tx/{{vin.doubleSpentTxID}}">{{vin.doubleSpentTxID}},{{vin.doubleSpentIndex}}</a> -->
                     <a href="tx/{{vin.doubleSpentTxID}}"> TODO </a>
+                </div>
+            </div>
+
+
+
+            <!-- Crosschain currency balance >>> -->
+            <div data-ng-if="vin.crosschainReserverBalance[0] != undefined">
+                <div data-ng-repeat="crosschainReserverBalance in vin.crosschainReserverBalance">
+                    <div class="panel-body">
+                        <div class="pull-right btc-value">
+                            <!-- class="{'text-success': $root.currentAddr == vout.addr}"> -->
+                            {{crosschainReserverBalance.value}} {{crosschainReserverBalance.chain}}
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
