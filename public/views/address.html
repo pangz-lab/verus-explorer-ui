@@ -83,14 +83,16 @@
                                 <a href="address/{{IDPrimary}}">{{IDPrimary}}</a>
                             </td>
                         </tr>
-                        <tr data-ng-if="address.currencybalances">
-                            <td><strong translate>All currency balances</strong></td>
+                        <tr data-ng-if="currencyBalances[0]">
+                            <td><strong translate>All Currency Balances</strong></td>
                             <td class="ellipsis text-right">
                                 <table style="margin-left: auto; margin-right: 0;">
                                     <tbody>
-                                        <tr data-ng-repeat="(key, value) in address.currencybalances">
-                                            <td style="text-align: left;">{{key}}</td>
-                                            <td style="text-align: right;  padding-left: 30px;">{{value}}</td>
+                                        <tr data-ng-repeat="pair in currencyBalances">
+                                            <td style="text-align: left;">
+                                                <span><b><i>{{pair.currency}}</i></b></span>
+                                            </td>
+                                            <td style="text-align: right;  padding-left: 30px;">{{pair.balance}}</td>
                                         </tr>
                                     </tbody>
                                 </table>

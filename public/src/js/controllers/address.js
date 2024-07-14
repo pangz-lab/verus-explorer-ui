@@ -7,11 +7,9 @@ angular
         $scope,
         $rootScope,
         $routeParams,
-        // Global,
         VerusExplorerApi,
         ScrollService
     ) {
-        //$scope.global = Global;
         $rootScope.scrollToTop = function () {
             ScrollService.scrollToTop();
         };
@@ -34,6 +32,7 @@ angular
             $scope.balance = 0;
             $scope.totalReceived = 0;
             $scope.totalSent = 0;
+            $scope.currencyBalances = [];
 
             if ($scope.isIdentityAddress) {
                 VerusExplorerApi
@@ -59,12 +58,35 @@ angular
                 $scope.balance = ((balance).toFixed(8) / 1e8).toString();
                 $scope.totalReceived = ((received).toFixed(8) / 1e8).toString();
                 $scope.totalSent = ((received - balance) / 1e8).toString();
+                
+                if(Object.keys(data.currencybalance).length > 1) {
+                    _getCurrencyBalance(data.currencybalance)
+                }
             })
             .catch(function (e) {
                 $scope.addressBalance.loading = false;
                 $rootScope.flashMessage = 'Failed to load the balance summary.';
             });
         };
+
+        var _getCurrencyBalance = function(currencyBalances) {
+            console.log(currencyBalances);
+            const entries = Object.entries(currencyBalances);
+            const kIAddress = 0;
+            const kCurrency = 1;
+            for (var i = 0; i < entries.length; i++) {
+                const pair = entries[i];
+                VerusExplorerApi
+                .getIdentity(pair[kIAddress])
+                .then(function (addressResult) {
+                    const r = addressResult.data;
+                    $scope.currencyBalances.push({
+                        currency: r.identity.name,
+                        balance: pair[kCurrency],
+                    })
+                });
+            }
+        }
 
     }
 );
