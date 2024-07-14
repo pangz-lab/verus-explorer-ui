@@ -1,6 +1,7 @@
 'use strict';
 angular.module('insight.blocks')
-.factory('BlockService', function () {
+.factory('BlockService', function (LocalStore) {
+    const blockHeightStore = localStore.currentBlockHeight;
     function getBlockReward(height) {
         var subsidy = new BigNumber(384 * 1e8);
 
@@ -50,7 +51,22 @@ angular.module('insight.blocks')
 
         return parseInt(subsidy.toString()) / 1e8;
     };
+
+    function setCurrentHeight(value) {
+        LocalStore.set(blockHeightStore.key, value, blockHeightStore.ttl);
+    }
+
+    function getCurrentHeight() {
+        return LocalStore.get(blockHeightStore.key);
+    }
+
     return {
+        setCurrentHeight: function (height) {
+            setCurrentHeight(height);
+        },
+        getCurrentHeight: function () {
+            return getCurrentHeight();
+        },
         getBlockReward: function (height) {
             return getBlockReward(height);
         }

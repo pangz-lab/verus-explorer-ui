@@ -6,10 +6,9 @@ angular.module('insight.transactions')
         $scope,
         $rootScope,
         $routeParams,
-        // Global,
-        VerusExplorerApi
+        VerusExplorerApi,
+        BlockService
     ) {
-        //$scope.global = Global;
         $scope.loading = true;
         $scope.loadedBy = null;
         $scope.addressTxCount = 0;
@@ -138,13 +137,15 @@ angular.module('insight.transactions')
 
                 const entries = Object.entries(rawScriptReserveBalance);
                 for (var i = 0; i < entries.length; i++) {
-                    crosschainReserveBalance.push({chain: entries[i][0], value: entries[i][1]});
+                    crosschainReserveBalance.push({
+                        chain: entries[i][0],
+                        value: entries[i][1]
+                    });
                 }
 
                 vin.crosschainReserverBalance = crosschainReserveBalance;
             })
             .catch(function (e) {
-                // vin.crosschainReserverBalance = []
                 // Nothing to do here. Just accept the error and move on.
             });
         }
@@ -177,32 +178,39 @@ angular.module('insight.transactions')
         // Common method for transaction and address pages
         //////////////////////////////////////////////////////////////////////////
         var _findTx = function (txid) {
-            // TODO - improve this.
-            // reduce getBlockCount call, add cooldown time based on the last request
-            // localstorage can be used
-            VerusExplorerApi
-            .getBlockchainHeight()
-            .then(function (blockHeight) {
+            var currentBlockHeight = BlockService.getCurrentHeight();
+            if(currentBlockHeight == undefined) {
                 VerusExplorerApi
-                .getTransactionInfo(txid)
-                .then(function (rawTx) {
-                    const blockData = blockHeight.data;
-                    const rawTxData = rawTx.data; 
-
-                    $rootScope.flashMessage = null;
-                    _processTX(rawTxData, blockData);
-                    $scope.tx = rawTxData;
-                    
-                    // Used for address page only(not for transaction page)
-                    rawTxData.timing = new Date(rawTxData.time).getTime();
-                    $scope.txs.push(rawTxData);
-                })
-                .catch(function (e) {
-                    $rootScope.flashMessage = 'Failed to load transaction '+txid+'.';
+                .getBlockchainHeight()
+                .then(function (blockHeight) {
+                    const currentHeight = blockHeight.data;
+                    BlockService.setCurrentHeight(currentHeight);
+                    _requestRawTx(txid, currentHeight);
                 });
+                return;
+            }
 
-            });
+            _requestRawTx(txid, currentBlockHeight);
         };
+
+        var _requestRawTx = function(txid, currentBlockHeight) {
+            VerusExplorerApi
+            .getTransactionInfo(txid)
+            .then(function (rawTx) {
+                const rawTxData = rawTx.data; 
+
+                $rootScope.flashMessage = null;
+                _processTX(rawTxData, currentBlockHeight);
+                $scope.tx = rawTxData;
+                
+                // Used for address page only(not for transaction page)
+                rawTxData.timing = new Date(rawTxData.time).getTime();
+                $scope.txs.push(rawTxData);
+            })
+            .catch(function (e) {
+                $rootScope.flashMessage = 'Failed to load transaction '+txid+'.';
+            });
+        }
 
 
         //////////////////////////////////////////////////////////////////////////

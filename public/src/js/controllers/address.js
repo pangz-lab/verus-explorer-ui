@@ -34,18 +34,6 @@ angular
             $scope.totalSent = 0;
             $scope.currencyBalances = [];
 
-            if ($scope.isIdentityAddress) {
-                VerusExplorerApi
-                .getIdentity(address)
-                .then(function (addressResult) {
-                    const r = addressResult.data;
-                    const identityNonRootName = r.friendlyname;
-                    const identityRootName = r.identity.name;
-                    $scope.primaryAddressIds = r.identity.primaryaddresses;
-                    $scope.identityName = (r.identity.parent == r.identity.systemid) ? identityRootName : identityNonRootName;
-                });
-            }
-
             $scope.addressBalance.loading = true;
             VerusExplorerApi
             .getAddressBalance(address)
@@ -67,10 +55,21 @@ angular
                 $scope.addressBalance.loading = false;
                 $rootScope.flashMessage = 'Failed to load the balance summary.';
             });
+
+            if ($scope.isIdentityAddress) {
+                VerusExplorerApi
+                .getIdentity(address)
+                .then(function (addressResult) {
+                    const r = addressResult.data;
+                    const identityNonRootName = r.friendlyname;
+                    const identityRootName = r.identity.name;
+                    $scope.primaryAddressIds = r.identity.primaryaddresses;
+                    $scope.identityName = (r.identity.parent == r.identity.systemid) ? identityRootName : identityNonRootName;
+                });
+            }
         };
 
         var _getCurrencyBalance = function(currencyBalances) {
-            console.log(currencyBalances);
             const entries = Object.entries(currencyBalances);
             const kIAddress = 0;
             const kCurrency = 1;

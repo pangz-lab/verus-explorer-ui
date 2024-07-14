@@ -9,7 +9,8 @@ angular
         VerusWssClient,
         UnitConversionService,
         LocalStore,
-        WsEventDataManager
+        WsEventDataManager,
+        BlockService
     ) {
         $scope.chainName = chainName;
         $scope.loaded = false;
@@ -38,6 +39,10 @@ angular
                 $scope.info = WsEventDataManager.updateStatusScopeData(rawEventData.status.data);
                 $scope.loaded = true;
                 $scope.$apply();
+
+                // Maintains the global blockchain height;
+                // Can be put anywhere as long as the current block height can be received
+                BlockService.setCurrentHeight($scope.info.blocks);
             }, 500);
         });
 

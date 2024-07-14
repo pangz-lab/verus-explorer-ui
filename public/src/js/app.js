@@ -1,5 +1,6 @@
 'use strict';
 const localStore = {
+  currentBlockHeight: { key: netSymbol + ':vexp_block_height', ttl: 120 },
   status: { key: netSymbol + ':vexp_stats', ttl: 86400 },
   latestBlocks: { key: netSymbol + ':vexp_blocks_received', ttl: 86400 },
   latestBlockTxs: { key: netSymbol + ':vexp_txs_received', ttl: 86400 },

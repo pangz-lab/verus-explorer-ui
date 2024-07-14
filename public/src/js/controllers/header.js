@@ -7,11 +7,8 @@ angular
         $scope,
         $rootScope,
         $modal,
-        // Global,
         $location
     ) {
-        //$scope.global = Global;
-        
         $rootScope.currency = {
             factor: 1,
             bitstamp: 0,
