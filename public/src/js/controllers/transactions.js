@@ -46,7 +46,7 @@ angular.module('insight.transactions')
 
                 if(items[i].vout != undefined) {
                     const voutIndex = parseInt(items[i].vout);
-                     _getCrosschainReserveBalance(items[i], items[i].value, voutIndex, items[i].txid);
+                    _getCrosschainReserveBalance(items[i], items[i].value, voutIndex, items[i].txid);
                 }
             });
 
@@ -57,6 +57,7 @@ angular.module('insight.transactions')
                 const addressType = typeof (items[i].scriptPubKey.addresses);
                 const pubKeyAddressess = items[i].scriptPubKey.addresses ? items[i].scriptPubKey.addresses : [];
                 var isIdentityTx = false;
+                var isCommitmentCrosschainImport = false;
                 var identityPrimaryName = "";
                 var uiWalletAddress = "";
 
@@ -73,8 +74,9 @@ angular.module('insight.transactions')
                 } else {
                     uiWalletAddress = pubKeyAddressess.join(",");
                 }
-
-
+                
+                isCommitmentCrosschainImport = items[i].scriptPubKey.crosschainimport != undefined;
+                tx.vout[i].crosschainImportCurrencyBalancePair = [];
                 tx.vout[i].uiWalletAddress = uiWalletAddress[0] == undefined ? unknownAddress : uiWalletAddress;
                 tx.vout[i].isSpent = items[i].spentTxId;
                 tx.vout[i].multipleAddress = pubKeyAddressess.join(',');
@@ -103,6 +105,12 @@ angular.module('insight.transactions')
                         const data = hexInfo.data;
                         tx.vout[i].pay2ScriptHashAddress = data.p2sh;
                     });
+                }
+
+                if(isCommitmentCrosschainImport) {
+                    const valueIns = items[i].scriptPubKey.crosschainimport.valuein != undefined ?
+                        items[i].scriptPubKey.crosschainimport.valuein : {};
+                    _getCrosschainImportCurrencyBalancePair(tx.vout[i], valueIns);
                 }
             });
 
@@ -183,6 +191,25 @@ angular.module('insight.transactions')
             if (scriptPubKey.pbaasnotarization) return '⛓ PBaaS Notarization';
             if (scriptPubKey.finalizeNotarization) return '🔏 Finalize Notarization';
             return '';
+        }
+
+        var _getCrosschainImportCurrencyBalancePair = function(vout, valueIns) {
+            vout.crosschainImportCurrencyBalancePair = [];
+            const entries = Object.entries(valueIns);
+            const kIAddress = 0;
+            const kCurrency = 1;
+            for (var i = 0; i < entries.length; i++) {
+                const pair = entries[i];
+                VerusExplorerApi
+                .getIdentity(pair[kIAddress])
+                .then(function (addressResult) {
+                    const r = addressResult.data;
+                    vout.crosschainImportCurrencyBalancePair.push({
+                        currency: r.identity.name,
+                        balance: pair[kCurrency],
+                    })
+                });
+            }
         }
 
 

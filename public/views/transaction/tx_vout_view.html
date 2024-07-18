@@ -154,6 +154,15 @@
                     </div>
                 </div>
 
+                <!-- Crosschain import currency balance pair >>> -->
+                <div data-ng-if="vout.crosschainImportCurrencyBalancePair[0] != undefined">
+                    <div data-ng-repeat="pair in vout.crosschainImportCurrencyBalancePair">
+                        <div class="panel-body">
+                            <div class="pull-right btc-value">{{pair.balance}} {{pair.currency}}</div>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </div>
         <div class="showmore_collapse text-left" data-ng-show="tx.vout.length > 5"
