@@ -82,6 +82,7 @@ angular.module('insight.transactions')
                 tx.vout[i].othercommitment = _getOtherTxCommitment(items[i].scriptPubKey);
                 tx.vout[i].pbaasCurrencies = _getPbaasCommitment(items[i].scriptPubKey);
                 tx.vout[i].isPbaasCurrencyExist = tx.vout[i].pbaasCurrencies[0] != undefined;
+                tx.vout[i].pay2ScriptHashAddress = "";
 
                 txVoutTotalValue += items[i].value;
 
@@ -91,6 +92,16 @@ angular.module('insight.transactions')
                     .then(function (idInfo) {
                         const data = idInfo.data;
                         tx.vout[i].identityTxTypeLabel = (data.result) ? "📇 Verus ID Mutation" : "🪪 Identity Commitment";
+                    });
+                }
+
+                if(tx.vout[i].uiWalletAddress == unknownAddress) {
+                    const hexScript = tx.vout[i].scriptPubKey.hex;
+                    VerusExplorerApi
+                    .getTransactionHexScriptInfo(hexScript)
+                    .then(function (hexInfo) {
+                        const data = hexInfo.data;
+                        tx.vout[i].pay2ScriptHashAddress = data.p2sh;
                     });
                 }
             });
@@ -166,6 +177,7 @@ angular.module('insight.transactions')
         var _getOtherTxCommitment = function (scriptPubKey) {
             if (scriptPubKey.crosschainimport) return '📥 Crosschain Import';
             if (scriptPubKey.crosschainexport) return '📤 Crosschain Export';
+            if (scriptPubKey.finalizeexport) return '📤 Finalize Export';
             if (scriptPubKey.identitycommitment) return scriptPubKey.identitycommitment;
             if (scriptPubKey.reservetransfer) return '💱 Reserve Transfer';
             if (scriptPubKey.pbaasnotarization) return '⛓ PBaaS Notarization';

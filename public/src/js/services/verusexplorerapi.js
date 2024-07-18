@@ -65,6 +65,10 @@ angular.module('insight.verusexplorerapi')
         function getTransactionInfo(txHash) {
             return sendRequest(createPayload('/api/'+version+'/transaction/' + txHash + '/info', [], "GET"));
         };
+        
+        function getTransactionHexScriptInfo(hexScript) {
+            return sendRequest(createPayload('/api/'+version+'/transaction/hexscript/' + hexScript + '/info', [], "GET"));
+        };
 
         function getIdentity(identityName, height) {
             var h = (height == undefined) ? '' : '?height=' + height;
@@ -123,6 +127,9 @@ angular.module('insight.verusexplorerapi')
             },
             getTransactionInfo: function (txHash) {
                 return getTransactionInfo(txHash);
+            },
+            getTransactionHexScriptInfo: function (hexScript) {
+                return getTransactionHexScriptInfo(hexScript);
             },
             getIdentity: function (identityName, height) {
                 return getIdentity(identityName, height);

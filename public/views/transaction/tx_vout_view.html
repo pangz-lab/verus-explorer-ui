@@ -37,7 +37,7 @@
                             <a href="address/{{address}}"
                                 data-ng-show="address != $root.currentAddr && address != '-1'">{{address}}</a>
                             <span class="text-muted util-nav-label"
-                                data-ng-show="address != $root.currentAddr && address == '-1'"> ❓︎ [ NO ADDRESS ]
+                                data-ng-show="address != $root.currentAddr && address == '-1'"> [P2SH]❓︎ {{vout.pay2ScriptHashAddress}}
                             </span>
                         </span>
                     </div>
