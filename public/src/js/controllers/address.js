@@ -80,7 +80,7 @@ angular
                 .then(function (addressResult) {
                     const r = addressResult.data;
                     $scope.currencyBalances.push({
-                        currency: r.identity.name,
+                        currency: r.identity.friendlyname.split('@')[0],
                         balance: pair[kCurrency],
                     })
                 });

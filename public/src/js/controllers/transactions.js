@@ -225,7 +225,7 @@ angular.module('insight.transactions')
                 .then(function (addressResult) {
                     const r = addressResult.data;
                     vout.crosschainImportCurrencyBalancePair.push({
-                        currency: r.identity.name,
+                        currency: r.identity.friendlyname.split('@')[0],
                         balance: pair[kCurrency],
                     })
                 });
