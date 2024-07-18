@@ -168,7 +168,7 @@ angular.module('insight.transactions')
             if (scriptPubKey.crosschainexport) return '📤 Crosschain Export';
             if (scriptPubKey.identitycommitment) return scriptPubKey.identitycommitment;
             if (scriptPubKey.reservetransfer) return '💱 Reserve Transfer';
-            if (scriptPubKey.pbaasNotarization) return '⛓ PBaaS Notarization';
+            if (scriptPubKey.pbaasnotarization) return '⛓ PBaaS Notarization';
             if (scriptPubKey.finalizeNotarization) return '🔏 Finalize Notarization';
             return '';
         }
