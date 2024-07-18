@@ -74,9 +74,11 @@ angular.module('insight.transactions')
                 } else {
                     uiWalletAddress = pubKeyAddressess.join(",");
                 }
-                
+
                 isCommitmentCrosschainImport = items[i].scriptPubKey.crosschainimport != undefined;
-                tx.vout[i].crosschainImportCurrencyBalancePair = [];
+                
+                tx.vout[i].isTxWithFeePoolOrStakeGuard = items[i].scriptPubKey.feepool || items[i].scriptPubKey.stakeguard;
+                tx.vout[i].isMainTxAddressValueZero = items[i].value != undefined? items[i].value == 0 : true;
                 tx.vout[i].uiWalletAddress = uiWalletAddress[0] == undefined ? unknownAddress : uiWalletAddress;
                 tx.vout[i].isSpent = items[i].spentTxId;
                 tx.vout[i].multipleAddress = pubKeyAddressess.join(',');
@@ -85,6 +87,8 @@ angular.module('insight.transactions')
                 tx.vout[i].pbaasCurrencies = _getPbaasCommitment(items[i].scriptPubKey);
                 tx.vout[i].isPbaasCurrencyExist = tx.vout[i].pbaasCurrencies[0] != undefined;
                 tx.vout[i].pay2ScriptHashAddress = "";
+                tx.vout[i].crosschainImportCurrencyBalancePair = [];
+                tx.vout[i].feePool = 0;
 
                 txVoutTotalValue += items[i].value;
 
@@ -111,6 +115,17 @@ angular.module('insight.transactions')
                     const valueIns = items[i].scriptPubKey.crosschainimport.valuein != undefined ?
                         items[i].scriptPubKey.crosschainimport.valuein : {};
                     _getCrosschainImportCurrencyBalancePair(tx.vout[i], valueIns);
+                }
+
+                if(tx.vout[i].isTxWithFeePoolOrStakeGuard) {
+                    if(items[i].scriptPubKey.feepool != undefined) {
+                        const currencyValues = Object.entries(items[i].scriptPubKey.feepool.currencyvalues);
+                        tx.vout[i].feePool = currencyValues[0][1];
+                    }
+                    if(items[i].scriptPubKey.stakeguard != undefined) {
+                        const currencyValues = Object.entries(items[i].scriptPubKey.stakeguard.currencyvalues);
+                        tx.vout[i].feePool = currencyValues[0][1];
+                    }
                 }
             });
 
@@ -188,8 +203,13 @@ angular.module('insight.transactions')
             if (scriptPubKey.finalizeexport) return '📤 Finalize Export';
             if (scriptPubKey.identitycommitment) return scriptPubKey.identitycommitment;
             if (scriptPubKey.reservetransfer) return '💱 Reserve Transfer';
+            if (scriptPubKey.reservedeposit) return '💵 Reserve Deposit';
+            if (scriptPubKey.reserveoutput) return '💸 Reserve Output';
             if (scriptPubKey.pbaasnotarization) return '⛓ PBaaS Notarization';
-            if (scriptPubKey.finalizeNotarization) return '🔏 Finalize Notarization';
+            if (scriptPubKey.earnednotarization) return '⛓ Earned Notarization';
+            if (scriptPubKey.acceptednotarization) return '⛓ Notarization';
+            if (scriptPubKey.finalizenotarization) return '🔏 Finalize Notarization';
+            if (scriptPubKey.notaryevidence) return '📝 Notary Evidence';
             return '';
         }
 

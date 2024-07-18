@@ -16,8 +16,12 @@
                 <div class="panel-body">
                     <div class="pull-right btc-value"
                         data-ng-class="{'text-success': $root.currentAddr == vout.uiWalletAddress}">
-                        {{$root.currency.getConvertion(vout.value)}}
-                        <!-- {{vout.miniValue}} -->
+                        <span data-ng-show="!vout.isMainTxAddressValueZero"> {{$root.currency.getConvertion(vout.value)}}</span>
+                        <span data-ng-show="vout.isMainTxAddressValueZero" class="badge">{{vout.othercommitment}}</span>
+                        <span data-ng-show="vout.isTxWithFeePoolOrStakeGuard">
+                            <span>{{$root.currency.getConvertion(vout.feePool)}}</span>
+                        </span>
+                        
                         <a href="/tx/{{vout.isSpent}}">
                             <span class="text-danger" data-ng-show="vout.isSpent" tooltip="Output is spent"
                                 tooltip-placement="left">(S)</span>
@@ -60,7 +64,6 @@
                                     tooltip-placement="left">(U)</span>
                             </div>
                             <div class="ellipsis">
-                                <span data-ng-show="vout.notAddr">{{vout.addr}}</span>
                                 <span class="text-muted" title="Current Verus Address"
                                     data-ng-show="address == $root.currentAddr"
                                     data-ng-repeat="address in vout.addr.split(',')">{{vout.addr}}</span>
@@ -127,8 +130,7 @@
                 </div>
 
                 <!-- crosschainimport / crosschainexport / finalizeNotarization / reservetransfer >>> -->
-                <div data-ng-if="vout.othercommitment">
-
+                <div data-ng-if="vout.othercommitment && !vout.isMainTxAddressValueZero">
                     <div class="panel-body">
                         <div class="pull-right btc-value"
                             data-ng-class="{'text-success': $root.currentAddr == vout.addr}">
@@ -142,9 +144,18 @@
                                 tooltip-placement="left">(U)</span>
                         </div>
                         <div class="ellipsis">
-                            <span data-ng-show="vout.notAddr">
+                            <!-- Add the address on the left of the commitment if vout value is zero -->
+                            <!-- <a href="address/{{vout.uiWalletAddress}}"
+                                data-ng-show="vout.isMainTxAddressValueZero && vout.uiWalletAddress != $root.currentAddr">{{vout.uiWalletAddress}}</a>
+                            <span class="text-muted" title="Current Verus Address"
+                                data-ng-show="vout.isMainTxAddressValueZero && vout.uiWalletAddress == $root.currentAddr">{{vout.uiWalletAddress}}</span> -->
+                            <!-- End address -->
+
+                            <!-- <span data-ng-show="vout.notAddr"> -->
+                            <!-- <span data-ng-show="vout.notAddr">
                                 <span class="badge">{{vout.othercommitment}}</span>
-                            </span>
+                            </span> -->
+
                             <span class="text-muted" title="Current Verus Address"
                                 data-ng-show="address == $root.currentAddr"
                                 data-ng-repeat="address in vout.addr.split(',')">{{vout.currencydefinition.name}}</span>
@@ -158,8 +169,19 @@
                 <div data-ng-if="vout.crosschainImportCurrencyBalancePair[0] != undefined">
                     <div data-ng-repeat="pair in vout.crosschainImportCurrencyBalancePair">
                         <div class="panel-body">
-                            <div class="pull-right btc-value">{{pair.balance}} {{pair.currency}}</div>
+                            <div class="ellipsis">
+                                <span class="pull-right btc-value">{{pair.balance}} {{pair.currency}}</span>
+                            </div>
                         </div>
+                    </div>
+                </div>
+                
+                <!-- Fee pool or stake guard >>> -->
+                <div class="panel-body" data-ng-if="vout.isTxWithFeePoolOrStakeGuard">
+                    <div class="ellipsis">
+                        <span class="pull-right btc-value">
+                            <span class="badge">💰 Fee Pool</span>
+                        </span>
                     </div>
                 </div>
 
