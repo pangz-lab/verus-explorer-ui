@@ -1,5 +1,5 @@
 const currentApiVersion = 'v1.0.0'
-const currentUiVersion = 'v1.0.0'
+const currentUiVersion = 'v1.1.0'
 const netSymbol = 'vDEX';
 const chainName = "vDEX";
 const firstBlockStartDate = new Date(2024, 7, 2);//Aug. 2, 2024 GMT

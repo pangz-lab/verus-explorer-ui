@@ -1,7 +1,7 @@
 {
   "name": "verus-explorer-ui",
   "description": "Verus Coin Explorer UI",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "repository": "git@github.com:pangz-lab/verus-explorer-ui.git",
   "contributors": [],
   "bugs": {

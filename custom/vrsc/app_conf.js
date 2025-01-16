@@ -1,5 +1,5 @@
 const currentApiVersion = 'v1.0.0'
-const currentUiVersion = 'v1.0.0'
+const currentUiVersion = 'v1.1.0'
 const netSymbol = 'VRSC';
 const chainName = "Verus";
 const firstBlockStartDate = new Date(2018, 4, 21);//GMT

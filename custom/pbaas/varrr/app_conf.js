@@ -1,5 +1,5 @@
 const currentApiVersion = 'v1.0.0'
-const currentUiVersion = 'v1.0.0'
+const currentUiVersion = 'v1.1.0'
 const netSymbol = 'vARRR';
 const chainName = "vARRR";
 const firstBlockStartDate = new Date(2024, 3, 3);//GMT
