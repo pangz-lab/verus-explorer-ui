@@ -77,6 +77,8 @@ angular.module('insight')
       symbol: netSymbol,
     }
 
+    $rootScope.wsServer == wsServer;
+
     $rootScope.$on('$routeChangeStart', function() {
       ngProgress.start();
     });

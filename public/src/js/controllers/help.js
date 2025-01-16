@@ -25,7 +25,10 @@ angular
                 console.error('Error occurred:', error);
             });
         }
-
+        
+        $scope.openExternalPage = function(url) {
+            $window.open(url, '_blank');
+        }
         $scope.apis = [
             {"title": "Blockchain Height", "url": "/api/" + ver + "/blockchain/height", "urlText": host + "/api/" + ver + "/blockchain/height"},
             {"title": "Blockchain Status", "url": "/api/" + ver + "/blockchain/status", "urlText": host + "/api/" + ver + "/blockchain/status"},
@@ -43,8 +46,8 @@ angular
             { label: 'Network Symbol', value: netSymbol },
             { label: 'Genesis Block', value: firstBlockStartDate.toISOString() },
             { label: 'Containerized', value: isContainerized ? '✅': '⛔️'},
-            { label: 'Explorer UI Version', value: currentUiVersion },
-            { label: 'Explorer API Version', value: currentApiVersion },
+            { label: 'Explorer UI Version', value: currentUiVersion, hasLink: 'https://github.com/pangz-lab/verus-explorer-ui' },
+            { label: 'Explorer API Version', value: currentApiVersion, hasLink: 'https://github.com/pangz-lab/verus-explorer-api' },
             { label: 'Extras', value: extras },
         ]
     }

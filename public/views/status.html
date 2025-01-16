@@ -21,7 +21,7 @@
                                 <div class="progress">
                                     <!-- <div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width: {{ sync.syncPercentage}}%"> -->
                                     <div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="40"
-                                        aria-valuemin="0" aria-valuemax="100" style="width:{{sync.syncPercentage}}%">
+                                        aria-valuemin="0" aria-valuemax="100" style="{{'width:'+sync.syncPercentage + '%'}}">
                                         <span data-ng-show="sync.syncPercentage>0">{{sync.syncPercentage}}%
                                             <span translate>Complete</span>
                                         </span>
@@ -73,7 +73,7 @@
                         <tr>
                             <td translate>VRSC Version</td>
                             <td class="text-right">
-                                {{ info.VRSCversion}}
+                                {{info.VRSCversion}}
                                 <span class="loader-gif" data-ng-if="!loaded"></span>
                             </td>
                         </tr>
@@ -106,7 +106,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td translate>Circulating Supply in Z addresses</td>
+                            <td translate>Circulating Supply in Z Addresses</td>
                             <td class="text-right">
                                 {{shortenValue(info.circulatingZSupply)}} {{$root.chainInfo.symbol}}
                                 <span class="loader-gif" data-ng-if="!loaded"></span>

@@ -162,6 +162,10 @@ module.exports = function(grunt) {
         files: ['public/src/css/theme2.scss'],
         tasks: ['concat:cssCommonDark', 'cssmin'],
       },
+      html: {
+        files: ['public/views/**/*.html'],
+        tasks: [],
+      },
     },
     nggettext_extract: {
       pot: {
